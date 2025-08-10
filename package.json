@@ -1,0 +1,19 @@
+{
+  "name": "slidytabs",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --dts --format esm"
+  },
+  "peerDependencies": {
+    "svelte": "^5"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.mts",
+  "exports": "./dist/index.mjs"
+}
