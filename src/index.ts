@@ -34,11 +34,11 @@ const slidyTabStyles = {
 
 const activeSelector = "focus-visible:";
 
-export const slidytabs = (): Attachment => (tabList) => {
-  if (!(tabList instanceof HTMLElement && tabList.children.length > 0)) {
+export const slidytabs = (): Attachment => (tabList: HTMLElement) => {
+  if (!(tabList.children.length > 0)) {
     return;
   }
-  const triggers = [...tabList.children] as HTMLElement[];
+  const triggers = [...tabList.children];
   const triggerActiveClasses = [...triggers[0].classList]
     .filter((item) => item.includes(activeSelector))
     .map((item) => item.replace(activeSelector, ""));
@@ -46,7 +46,7 @@ export const slidytabs = (): Attachment => (tabList) => {
     (item) => !item.includes(activeSelector)
   );
   const onfocus = ({ target }) => {
-    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) {
+    if (!(target instanceof HTMLElement && target.matches(":focus-visible"))) {
       return;
     }
     slidyTab.classList.add(...triggerActiveClasses);
@@ -54,7 +54,7 @@ export const slidytabs = (): Attachment => (tabList) => {
   const onblur = () => {
     slidyTab.classList.remove(...triggerActiveClasses);
   };
-  triggers.forEach((item) => {
+  triggers.forEach((item: HTMLElement) => {
     Object.assign(item.style, triggersAddedStyles);
     item.addEventListener("focus", onfocus);
     item.addEventListener("keydown", onfocus, true);
@@ -72,11 +72,8 @@ export const slidytabs = (): Attachment => (tabList) => {
     mutationList.map(({ target }) => target).forEach(syncTab);
   };
 
-  const syncTab = (tab: Node) => {
-    if (
-      !(tab instanceof HTMLElement) ||
-      tab.getAttribute("data-state") !== "active"
-    ) {
+  const syncTab = (tab: HTMLElement) => {
+    if (tab.getAttribute("data-state") !== "active") {
       return;
     }
     const childRect = tab.getBoundingClientRect();
