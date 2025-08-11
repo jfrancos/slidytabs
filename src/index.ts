@@ -53,8 +53,13 @@ export const slidytabs: Attachment = (tabList) => {
   const triggerBaseClasses = [...triggers[0].classList].filter(
     (item) => !item.includes(activeSelector)
   );
-  const onfocus = ({ target }: Event) => {
-    if (!(target instanceof Element && target.matches(":focus-visible"))) {
+  const onfocus = ({ currentTarget }: Event) => {
+    if (
+      !(
+        currentTarget instanceof Element &&
+        currentTarget.matches(":focus-visible")
+      )
+    ) {
       return;
     }
     slidyTab.classList.add(...triggerActiveClasses);
