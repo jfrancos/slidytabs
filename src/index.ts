@@ -1,5 +1,3 @@
-import type { Attachment } from "svelte/attachments";
-
 const transitionDuration = "250ms";
 
 const triggersAddedStyles = {
@@ -34,7 +32,8 @@ const slidyTabStyles = {
 
 const activeSelector = "focus-visible:";
 
-export const slidytabs = (): Attachment => (tabList: HTMLElement) => {
+// would a stricter typescript config catch the param
+export const slidytabs = (tabList) => {
   if (!(tabList.children.length > 0)) {
     return;
   }
