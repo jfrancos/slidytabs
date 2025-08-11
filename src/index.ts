@@ -1,4 +1,5 @@
 import { Attachment } from "svelte/attachments";
+import { twMerge } from "tailwind-merge";
 
 const transitionDuration = "250ms";
 
@@ -62,10 +63,12 @@ export const slidytabs: Attachment = (tabList) => {
     ) {
       return;
     }
-    slidyTab.classList.add(...triggerActiveClasses);
+    slidyTab.classList = twMerge(
+      [...triggerBaseClasses, ...triggerActiveClasses].join(" ")
+    );
   };
   const onblur = () => {
-    slidyTab.classList.remove(...triggerActiveClasses);
+    slidyTab.classList = [...triggerBaseClasses].join(" ");
   };
   triggers.forEach((item) => {
     if (hasStyle(item)) {

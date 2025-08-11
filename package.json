@@ -15,5 +15,8 @@
     "dist"
   ],
   "types": "./dist/index.d.mts",
-  "exports": "./dist/index.mjs"
+  "exports": "./dist/index.mjs",
+  "dependencies": {
+    "tailwind-merge": "^3.3.1"
+  }
 }
