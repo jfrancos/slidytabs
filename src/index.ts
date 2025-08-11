@@ -1,3 +1,5 @@
+import { Attachment } from "svelte/attachments";
+
 const transitionDuration = "250ms";
 
 const triggersAddedStyles = {
@@ -32,9 +34,16 @@ const slidyTabStyles = {
 
 const activeSelector = "focus-visible:";
 
-// would a stricter typescript config catch the param
-export const slidytabs = (tabList) => {
-  if (!(tabList.children.length > 0)) {
+// TODOs
+// Orientation check?
+// Other parity behavior
+// Can child be last?
+
+const hasStyle = (el: Element): el is Element & ElementCSSInlineStyle =>
+  "style" in el;
+
+export const slidytabs: Attachment = (tabList) => {
+  if (!(tabList.children.length > 0 && hasStyle(tabList))) {
     return;
   }
   const triggers = [...tabList.children];
@@ -44,8 +53,8 @@ export const slidytabs = (tabList) => {
   const triggerBaseClasses = [...triggers[0].classList].filter(
     (item) => !item.includes(activeSelector)
   );
-  const onfocus = ({ target }) => {
-    if (!(target instanceof HTMLElement && target.matches(":focus-visible"))) {
+  const onfocus = ({ target }: Event) => {
+    if (!(target instanceof Element && target.matches(":focus-visible"))) {
       return;
     }
     slidyTab.classList.add(...triggerActiveClasses);
@@ -53,8 +62,10 @@ export const slidytabs = (tabList) => {
   const onblur = () => {
     slidyTab.classList.remove(...triggerActiveClasses);
   };
-  triggers.forEach((item: HTMLElement) => {
-    Object.assign(item.style, triggersAddedStyles);
+  triggers.forEach((item) => {
+    if (hasStyle(item)) {
+      Object.assign(item.style, triggersAddedStyles);
+    }
     item.addEventListener("focus", onfocus);
     item.addEventListener("keydown", onfocus, true);
     item.addEventListener("blur", onblur);
@@ -71,8 +82,10 @@ export const slidytabs = (tabList) => {
     mutationList.map(({ target }) => target).forEach(syncTab);
   };
 
-  const syncTab = (tab: HTMLElement) => {
-    if (tab.getAttribute("data-state") !== "active") {
+  const syncTab = (tab: Node) => {
+    if (
+      !(tab instanceof Element && tab.getAttribute("data-state") === "active")
+    ) {
       return;
     }
     const childRect = tab.getBoundingClientRect();
