@@ -19,31 +19,52 @@ const slidyTabStyles = {
   inset: 0,
 };
 
+[...document.styleSheets].forEach((styleSheet) => {
+  [...styleSheet.cssRules]
+    .filter(
+      (item) =>
+        item.cssText.includes("focus-visible") && item instanceof CSSStyleRule
+    )
+    .forEach(({ cssText }) => {
+      styleSheet.insertRule(
+        cssText.replace("focus-visible\\:", "").replace(":focus-visible", "")
+      );
+    });
+});
+
+const activeSelector = "focus-visible:";
+
 export const slidytabs = (): Attachment => (tabList) => {
   if (!(tabList instanceof HTMLElement && tabList.children.length > 0)) {
     return;
   }
-
   const triggers = [...tabList.children] as HTMLElement[];
-  const transferFocus = () => {
-    slidyTab.focus();
+  const triggerActiveClasses = [...triggers[0].classList]
+    .filter((item) => item.includes(activeSelector))
+    .map((item) => item.replace(activeSelector, ""));
+  const triggerBaseClasses = [...triggers[0].classList].filter(
+    (item) => !item.includes(activeSelector)
+  );
+  const onfocus = ({ target }) => {
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) {
+      return;
+    }
+    slidyTab.classList.add(...triggerActiveClasses);
+  };
+  const onblur = () => {
+    slidyTab.classList.remove(...triggerActiveClasses);
   };
   triggers.forEach((item) => {
     Object.assign(item.style, triggersAddedStyles);
-    item.addEventListener("focus", transferFocus);
+    item.addEventListener("focus", onfocus);
+    item.addEventListener("keydown", onfocus, true);
+    item.addEventListener("blur", onblur);
   });
 
-  const slidyTab = document.createElement("button");
-  const onKeyDown = (e: KeyboardEvent) => {
-    triggers
-      .find((item) => item.getAttribute("data-state") === "active")
-      ?.dispatchEvent(new KeyboardEvent(e.type, e));
-  };
-  slidyTab.addEventListener("keydown", onKeyDown);
+  const slidyTab = document.createElement("div");
   slidyTab.setAttribute("data-state", "active");
   Object.assign(slidyTab.style, slidyTabStyles);
-  slidyTab.className = triggers[0].className;
-
+  slidyTab.className = [...triggerBaseClasses].join(" ");
   tabList.insertBefore(slidyTab, tabList.firstChild);
   tabList.style.position = "relative";
 
@@ -58,7 +79,6 @@ export const slidytabs = (): Attachment => (tabList) => {
     ) {
       return;
     }
-    tab.setAttribute("tabindex", "-1");
     const childRect = tab.getBoundingClientRect();
     const parentRect = tabList.getBoundingClientRect();
     const left = childRect.left - parentRect.left;
@@ -88,7 +108,9 @@ export const slidytabs = (): Attachment => (tabList) => {
     dataStateObserver.disconnect();
     resizeObserver.disconnect();
     triggers.forEach((item) => {
-      item.removeEventListener("focus", transferFocus);
+      item.removeEventListener("focus", onfocus);
+      item.removeEventListener("blur", onblur);
+      item.removeEventListener("keydown", onfocus, true);
     });
   };
 };
