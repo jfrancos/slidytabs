@@ -38,7 +38,6 @@ const activeSelector = "focus-visible:";
 // TODOs
 // Orientation check?
 // Other parity behavior
-// Can child be last?
 
 const hasStyle = (el: Element): el is Element & ElementCSSInlineStyle =>
   "style" in el;
@@ -83,7 +82,7 @@ export const slidytabs: Attachment = (tabList) => {
   slidyTab.setAttribute("data-state", "active");
   Object.assign(slidyTab.style, slidyTabStyles);
   slidyTab.className = [...triggerBaseClasses].join(" ");
-  tabList.insertBefore(slidyTab, tabList.firstChild);
+  tabList.append(slidyTab);
   tabList.style.position = "relative";
 
   const callback: MutationCallback = (mutationList) => {
