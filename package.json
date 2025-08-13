@@ -17,6 +17,7 @@
   "types": "./dist/index.d.mts",
   "exports": "./dist/index.mjs",
   "dependencies": {
+    "@webref/css": "^6.23.6",
     "tailwind-merge": "^3.3.1"
   }
 }

@@ -1,23 +1,17 @@
 import { Attachment } from "svelte/attachments";
 import { twMerge } from "tailwind-merge";
+// import css from "@webref/css";
+
+// console.log(css.listAll({ folder: "./" }));
 
 const transitionDuration = "250ms";
-
-const triggersAddedStyles = {
-  backgroundColor: "transparent",
-  background: "unset",
-  boxShadow: "unset",
-  filter: "unset",
-  outlineColor: "transparent",
-  borderColor: "transparent",
-  zIndex: "10",
-};
 
 const slidyTabStyles = {
   transitionDuration,
   transitionProperty: "all",
   position: "absolute",
-  inset: 0,
+  inset: "0",
+  // zIndex: 9,
 };
 
 const focusSelector = ":focus-visible";
@@ -25,29 +19,42 @@ const focusPrefix = "focus-visible:";
 const escapedFocusPrefix = "focus-visible\\:";
 
 const activeSelector = '[data-state="active"]';
-// const activePrefix = "data-[state=active]:";
+const activePrefix = "data-[state=active]:";
 const escapedActivePrefix = "data-\\[state\\=active\\]\\:";
 
-// not doing anything with the active-stripped styles just yet
-// could remove them
-// or extract the styles that get stripped
+// console.log(document);
+
+// [...document.styleSheets].forEach((styleSheet) => {
+//   [...styleSheet.cssRules]
+//     .filter(
+//       (item) =>
+//         item instanceof CSSStyleRule &&
+//         // firefox exposes reset styles but chrome does not
+//         ![focusSelector, activeSelector].includes(item.selectorText.trim())
+//         //  &&
+//         // (item.selectorText.includes(focusSelector) ||
+//         //   item.selectorText.includes(activeSelector))
+//     )
+//     .forEach(({ cssText }) => {
+//       styleSheet.insertRule(
+//         cssText
+//           .replace(escapedFocusPrefix, "")
+//           .replace(focusSelector, "")
+//           // .replace(escapedActivePrefix, "")
+//           // .replace(activeSelector, "")
+//       );
+//     });
+// });
+
 [...document.styleSheets].forEach((styleSheet) => {
   [...styleSheet.cssRules]
     .filter(
       (item) =>
-        item instanceof CSSStyleRule &&
-        // for firefox
-        ![focusSelector, activeSelector].includes(item.selectorText.trim()) &&
-        (item.selectorText.includes(focusSelector) ||
-          item.selectorText.includes(activeSelector))
+        item.cssText.includes("focus-visible") && item instanceof CSSStyleRule
     )
     .forEach(({ cssText }) => {
       styleSheet.insertRule(
-        cssText
-          .replace(escapedFocusPrefix, "")
-          .replace(focusSelector, "")
-          .replace(escapedActivePrefix, "")
-          .replace(activeSelector, "")
+        cssText.replace("focus-visible\\:", "").replace(":focus-visible", "")
       );
     });
 });
@@ -55,6 +62,8 @@ const escapedActivePrefix = "data-\\[state\\=active\\]\\:";
 // TODOs
 // Orientation check?
 // Other parity behavior
+// I think we can do the weird green thing if we do more class filtering
+// but maybe that's a sign to some other ? approach?
 
 const hasStyle = (el: Element): el is Element & ElementCSSInlineStyle =>
   "style" in el;
@@ -64,12 +73,21 @@ export const slidytabs: Attachment = (tabList) => {
     return;
   }
   const triggers = [...tabList.children];
+  const triggerActiveClasses = [...triggers[0].classList]
+    .filter((item) => item.includes(activePrefix))
+    .map((item) => item.replace(activePrefix, ""));
   const triggerFocusClasses = [...triggers[0].classList]
     .filter((item) => item.includes(focusPrefix))
     .map((item) => item.replace(focusPrefix, ""));
   const triggerBaseClasses = [...triggers[0].classList].filter(
-    (item) => !item.includes(focusPrefix)
+    (item) => !item.includes(activePrefix) && !item.includes(focusPrefix)
   );
+
+  console.log(triggerFocusClasses);
+
+  // const triggerNotActiveClasses = [...triggers[0].classList].filter(
+  //   (item) => !item.includes("data-[state=active]:")
+  // );
   const onfocus = ({ currentTarget }: Event) => {
     if (
       !(
@@ -79,17 +97,24 @@ export const slidytabs: Attachment = (tabList) => {
     ) {
       return;
     }
+    console.log("focus");
     slidyTab.classList = twMerge(
-      [...triggerBaseClasses, ...triggerFocusClasses].join(" ")
+      ...triggerBaseClasses,
+      ...triggerActiveClasses,
+      ...triggerFocusClasses
     );
   };
   const onblur = () => {
-    slidyTab.classList = [...triggerBaseClasses].join(" ");
+    console.log("blur");
+    slidyTab.className = [...triggerBaseClasses, ...triggerActiveClasses].join(
+      " "
+    );
   };
   triggers.forEach((item) => {
     if (hasStyle(item)) {
-      Object.assign(item.style, triggersAddedStyles);
+      item.style.zIndex = "10";
     }
+    item.classList = triggerBaseClasses.join(" ");
     item.addEventListener("focus", onfocus);
     item.addEventListener("keydown", onfocus, true);
     item.addEventListener("blur", onblur);
@@ -98,9 +123,13 @@ export const slidytabs: Attachment = (tabList) => {
   const slidyTab = document.createElement("div");
   slidyTab.setAttribute("data-state", "active");
   Object.assign(slidyTab.style, slidyTabStyles);
-  slidyTab.className = [...triggerBaseClasses].join(" ");
+  slidyTab.className = [...triggerBaseClasses, ...triggerActiveClasses].join(
+    " "
+  );
+  // slidyTab.className = twMerge([...triggerBaseClasses].join(" "));
   tabList.append(slidyTab);
   tabList.style.position = "relative";
+  console.log([...tabList.computedStyleMap().entries()]);
 
   const callback: MutationCallback = (mutationList) => {
     mutationList.map(({ target }) => target).forEach(syncTab);
