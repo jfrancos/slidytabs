@@ -11,13 +11,17 @@ const triggersAddedStyles = {
   outlineColor: "transparent",
   borderColor: "transparent",
   zIndex: "10",
+  // pointerEvents: "none",
+  // cursor: "pointer",
 };
 
 const slidyTabStyles = {
   transitionDuration,
   transitionProperty: "all",
   position: "absolute",
-  inset: 0,
+  height: "unset",
+  // inset: 0,
+  // pointerEvents: "none",
 };
 
 const focusSelector = ":focus-visible";
@@ -147,3 +151,115 @@ export const slidytabs: Attachment = (tabList) => {
     });
   };
 };
+
+export const slidertabs: Attachment = (tablist) => {
+  if (!(tablist instanceof HTMLElement)) {
+    return;
+  }
+  let pointerDown = false;
+  const onpointerdown = (e: PointerEvent) => {
+    pointerDown = true;
+    tablist.setPointerCapture(e.pointerId);
+  };
+  const onpointermove = (e: PointerEvent) => {
+    if (!pointerDown) {
+      return;
+    }
+    const { y, height } = tablist.getBoundingClientRect();
+    document
+      .elementFromPoint(e.clientX, y + height / 2)
+      ?.closest("button")
+      ?.click();
+  };
+  const onpointerup = () => {
+    pointerDown = false;
+  };
+  tablist.addEventListener("pointerdown", onpointerdown);
+  tablist.addEventListener("pointerup", onpointerup);
+  tablist.addEventListener("pointermove", onpointermove);
+  return () => {
+    tablist.removeEventListener("pointerdown", onpointerdown);
+    tablist.removeEventListener("pointerup", onpointerup);
+    tablist.removeEventListener("pointermove", onpointermove);
+  };
+};
+
+const getTriggerForX = (tablist: HTMLElement, x: number) => {
+  const { y, height } = tablist.getBoundingClientRect();
+  // console.log(y, height, x);
+  return document.elementFromPoint(x, y + height / 2)?.closest("button");
+  // ?.click();
+};
+
+export const rangetabs: Attachment = (tablist) => {
+  if (!(tablist instanceof HTMLElement)) {
+    return;
+  }
+  const triggers = [...tablist.children].filter(
+    (item) => item instanceof HTMLElement
+  );
+  const triggerFocusClasses = [...triggers[0].classList]
+    .filter((item) => item.includes(focusPrefix))
+    .map((item) => item.replace(focusPrefix, ""));
+  const triggerBaseClasses = [...triggers[0].classList].filter(
+    (item) => !item.includes(focusPrefix)
+  );
+  const slidyTab = document.createElement("div");
+  tablist.append(slidyTab);
+  tablist.style.position = "relative";
+  slidyTab.setAttribute("data-state", "active");
+  Object.assign(slidyTab.style, slidyTabStyles);
+  slidyTab.className = [...triggerBaseClasses].join(" ");
+
+  let down: "left" | "right" | null = null;
+  const indices: [number, number] = [0, 12];
+
+  triggers.forEach((item) => {
+    if (hasStyle(item)) {
+      Object.assign(item.style, triggersAddedStyles);
+    }
+  });
+  const onpointerdown = (e: PointerEvent) => {
+    const currentTargetX = getCurrentTargetX(e);
+    const xCoords = getXCoords(triggers, indices);
+    down =
+      Math.abs(currentTargetX - xCoords[0]) <
+        Math.abs(currentTargetX - xCoords[1]) || e.clientX < xCoords[0]
+        ? "left"
+        : "right";
+    // console.log(down);
+    // console.log(e);
+    // const trigger = getTriggerForX(tablist, e.clientX);
+    const trigger = e.target;
+
+    if (!trigger || !(trigger instanceof HTMLElement)) {
+      console.log("no trigger");
+      return;
+    }
+    indices[down === "left" ? 0 : 1] = triggers.indexOf(trigger);
+    // console.log(indices);
+    // STYLE slidytab to match indices
+    const leftRect = triggers[indices[0]].getBoundingClientRect();
+    const rightRect = triggers[indices[1]].getBoundingClientRect();
+    const parentRect = tablist.getBoundingClientRect();
+    slidyTab.style.left = `${leftRect.left - parentRect.left}px`;
+    slidyTab.style.top = `${leftRect.top - parentRect.top}px`;
+
+    slidyTab.style.bottom = `${parentRect.bottom - leftRect.bottom}px`;
+    slidyTab.style.right = `${parentRect.right - rightRect.right}px`;
+    // tablist.setPointerCapture(e.pointerId);
+  };
+  tablist.addEventListener("pointerdown", onpointerdown);
+};
+
+const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
+  return [
+    triggers[x0].offsetLeft + triggers[x0].offsetWidth,
+    triggers[x1].offsetLeft,
+  ];
+};
+
+// FUNCTIONS SHOULD DO ONE THING
+
+const getCurrentTargetX = (e: PointerEvent) =>
+  e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
