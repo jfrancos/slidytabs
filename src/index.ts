@@ -11,8 +11,6 @@ const triggersAddedStyles = {
   outlineColor: "transparent",
   borderColor: "transparent",
   zIndex: "10",
-  // pointerEvents: "none",
-  // cursor: "pointer",
 };
 
 const slidyTabStyles = {
@@ -21,7 +19,6 @@ const slidyTabStyles = {
   position: "absolute",
   height: "unset",
   // inset: 0,
-  // pointerEvents: "none",
 };
 
 const focusSelector = ":focus-visible";
@@ -184,72 +181,49 @@ export const slidertabs: Attachment = (tablist) => {
   };
 };
 
-const getTriggerForX = (tablist: HTMLElement, x: number) => {
-  const { y, height } = tablist.getBoundingClientRect();
-  // console.log(y, height, x);
-  return document.elementFromPoint(x, y + height / 2)?.closest("button");
-  // ?.click();
-};
-
-export const rangetabs: Attachment = (tablist) => {
-  if (!(tablist instanceof HTMLElement)) {
-    return;
-  }
-  const triggers = [...tablist.children].filter(
-    (item) => item instanceof HTMLElement
-  );
-  const triggerFocusClasses = [...triggers[0].classList]
-    .filter((item) => item.includes(focusPrefix))
-    .map((item) => item.replace(focusPrefix, ""));
-  const triggerBaseClasses = [...triggers[0].classList].filter(
-    (item) => !item.includes(focusPrefix)
-  );
-  const slidyTab = document.createElement("div");
-  tablist.append(slidyTab);
-  tablist.style.position = "relative";
-  slidyTab.setAttribute("data-state", "active");
-  Object.assign(slidyTab.style, slidyTabStyles);
-  slidyTab.className = [...triggerBaseClasses].join(" ");
-
+export const rangetabs: Attachment<HTMLElement> = (tablistElement) => {
+  const triggerElements = [...tablistElement.querySelectorAll("button")];
+  const fakeIndicatorElement = setupIndicator(tablistElement);
   let down: "left" | "right" | null = null;
   const indices: [number, number] = [0, 12];
 
-  triggers.forEach((item) => {
-    if (hasStyle(item)) {
-      Object.assign(item.style, triggersAddedStyles);
-    }
+  // Remove active/bg styles from individual triggers
+  // But maintain active/fg styles
+  triggerElements.forEach((item) => {
+    Object.assign(item.style, triggersAddedStyles);
   });
+
   const onpointerdown = (e: PointerEvent) => {
+    const trigger = e.target;
+    if (!(trigger instanceof HTMLButtonElement)) {
+      return;
+    }
+
     const currentTargetX = getCurrentTargetX(e);
-    const xCoords = getXCoords(triggers, indices);
+    const xCoords = getXCoords(triggerElements, indices);
     down =
       Math.abs(currentTargetX - xCoords[0]) <
         Math.abs(currentTargetX - xCoords[1]) || e.clientX < xCoords[0]
         ? "left"
         : "right";
-    // console.log(down);
-    // console.log(e);
-    // const trigger = getTriggerForX(tablist, e.clientX);
-    const trigger = e.target;
 
-    if (!trigger || !(trigger instanceof HTMLElement)) {
-      console.log("no trigger");
-      return;
-    }
-    indices[down === "left" ? 0 : 1] = triggers.indexOf(trigger);
-    // console.log(indices);
+    indices[down === "left" ? 0 : 1] = triggerElements.indexOf(trigger);
     // STYLE slidytab to match indices
-    const leftRect = triggers[indices[0]].getBoundingClientRect();
-    const rightRect = triggers[indices[1]].getBoundingClientRect();
-    const parentRect = tablist.getBoundingClientRect();
-    slidyTab.style.left = `${leftRect.left - parentRect.left}px`;
-    slidyTab.style.top = `${leftRect.top - parentRect.top}px`;
 
-    slidyTab.style.bottom = `${parentRect.bottom - leftRect.bottom}px`;
-    slidyTab.style.right = `${parentRect.right - rightRect.right}px`;
+    const leftRect = triggerElements[indices[0]].getBoundingClientRect();
+    const rightRect = triggerElements[indices[1]].getBoundingClientRect();
+    const parentRect = tablistElement.getBoundingClientRect();
+
+    Object.assign(fakeIndicatorElement.style, {
+      left: `${leftRect.left - parentRect.left}px`,
+      top: `${leftRect.top - parentRect.top}px`,
+      bottom: `${parentRect.bottom - leftRect.bottom}px`,
+      right: `${parentRect.right - rightRect.right}px`,
+    });
+
     // tablist.setPointerCapture(e.pointerId);
   };
-  tablist.addEventListener("pointerdown", onpointerdown);
+  tablistElement.addEventListener("pointerdown", onpointerdown);
 };
 
 const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
@@ -263,3 +237,17 @@ const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
 
 const getCurrentTargetX = (e: PointerEvent) =>
   e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
+
+const setupIndicator = (tablistElement: HTMLElement) => {
+  const triggerElements = [...tablistElement.querySelectorAll("button")];
+  const triggerBaseClasses = [...triggerElements[0].classList].filter(
+    (item) => !item.includes(focusPrefix)
+  );
+  tablistElement.style.position = "relative";
+  const fakeIndicatorElement = document.createElement("div");
+  Object.assign(fakeIndicatorElement.style, slidyTabStyles);
+  fakeIndicatorElement.setAttribute("data-state", "active");
+  fakeIndicatorElement.className = [...triggerBaseClasses].join(" ");
+  tablistElement.append(fakeIndicatorElement);
+  return fakeIndicatorElement;
+};
