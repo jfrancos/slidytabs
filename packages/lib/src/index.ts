@@ -251,3 +251,21 @@ const setupIndicator = (tablistElement: HTMLElement) => {
   tablistElement.append(fakeIndicatorElement);
   return fakeIndicatorElement;
 };
+
+interface SlidyTabProps {
+  slider?:
+    | true
+    | [number, (value: number) => void]
+    | [[number, number], (values: [number, number]) => void];
+}
+
+// const slidyTabs: (props: SlidyTabProps) => Attachment<HTMLElement> =
+//   ({ slider }) =>
+//   (tablistElement) => {
+
+//   };
+
+// draggable
+//
+
+console.log("hi");
