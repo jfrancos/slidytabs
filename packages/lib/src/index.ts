@@ -1,7 +1,7 @@
 import { Attachment } from "svelte/attachments";
 import { twMerge } from "tailwind-merge";
 
-const transitionDuration = "250ms";
+const transitionDuration = "125ms";
 
 const triggersAddedStyles = {
   backgroundColor: "transparent",
@@ -181,50 +181,62 @@ export const slidertabs: Attachment = (tablist) => {
   };
 };
 
-export const rangetabs: Attachment<HTMLElement> = (tablistElement) => {
-  const triggerElements = [...tablistElement.querySelectorAll("button")];
-  const fakeIndicatorElement = setupIndicator(tablistElement);
-  let down: "left" | "right" | null = null;
-  const indices: [number, number] = [0, 12];
+export const rangetabs =
+  ({
+    transitionDuration = 125,
+    value = [0, 0],
+    setValue,
+  }: {
+    transitionDuration?: number;
+    value?: [number, number];
+    setValue?: (value: [number, number]) => void;
+  } = {}): Attachment<HTMLElement> =>
+  (tablistElement) => {
+    const triggerElements = [...tablistElement.querySelectorAll("button")];
+    const fakeIndicatorElement = setupIndicator(tablistElement);
+    let down: "left" | "right" | null = null;
+    // const indices: [number, number] = [0, 10];
 
-  // Remove active/bg styles from individual triggers
-  // But maintain active/fg styles
-  triggerElements.forEach((item) => {
-    Object.assign(item.style, triggersAddedStyles);
-  });
-
-  const onpointerdown = (e: PointerEvent) => {
-    const trigger = e.target;
-    if (!(trigger instanceof HTMLButtonElement)) {
-      return;
-    }
-
-    const currentTargetX = getCurrentTargetX(e);
-    const xCoords = getXCoords(triggerElements, indices);
-    down =
-      Math.abs(currentTargetX - xCoords[0]) <
-        Math.abs(currentTargetX - xCoords[1]) || e.clientX < xCoords[0]
-        ? "left"
-        : "right";
-
-    indices[down === "left" ? 0 : 1] = triggerElements.indexOf(trigger);
-    // STYLE slidytab to match indices
-
-    const leftRect = triggerElements[indices[0]].getBoundingClientRect();
-    const rightRect = triggerElements[indices[1]].getBoundingClientRect();
-    const parentRect = tablistElement.getBoundingClientRect();
-
-    Object.assign(fakeIndicatorElement.style, {
-      left: `${leftRect.left - parentRect.left}px`,
-      top: `${leftRect.top - parentRect.top}px`,
-      bottom: `${parentRect.bottom - leftRect.bottom}px`,
-      right: `${parentRect.right - rightRect.right}px`,
+    // Remove active/bg styles from individual triggers
+    // But maintain active/fg styles
+    triggerElements.forEach((item) => {
+      Object.assign(item.style, triggersAddedStyles);
     });
 
-    // tablist.setPointerCapture(e.pointerId);
+    const onpointerdown = (e: PointerEvent) => {
+      const trigger = e.target;
+      if (!(trigger instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const tabListX = getCurrentTargetX(e);
+      const xCoords = getXCoords(triggerElements, value);
+      console.log(tabListX, xCoords);
+      down =
+        // e.clientX < xCoords[0] ||
+        // tabListX < xCoords[0] ||
+        Math.abs(tabListX - xCoords[0]) < Math.abs(tabListX - xCoords[1])
+          ? "left"
+          : "right";
+      console.log(down);
+      value[down === "left" ? 0 : 1] = triggerElements.indexOf(trigger);
+      // STYLE slidytab to match indices
+
+      const leftRect = triggerElements[value[0]].getBoundingClientRect();
+      const rightRect = triggerElements[value[1]].getBoundingClientRect();
+      const parentRect = tablistElement.getBoundingClientRect();
+
+      Object.assign(fakeIndicatorElement.style, {
+        left: `${leftRect.left - parentRect.left}px`,
+        top: `${leftRect.top - parentRect.top}px`,
+        bottom: `${parentRect.bottom - leftRect.bottom}px`,
+        right: `${parentRect.right - rightRect.right}px`,
+      });
+
+      // tablist.setPointerCapture(e.pointerId);
+    };
+    tablistElement.addEventListener("pointerdown", onpointerdown);
   };
-  tablistElement.addEventListener("pointerdown", onpointerdown);
-};
 
 const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
   return [
