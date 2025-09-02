@@ -184,14 +184,16 @@ export const slidertabs: Attachment = (tablist) => {
 export const rangetabs =
   ({
     transitionDuration = 125,
-    value = [0, 0],
+    value: _value = () => 0,
     setValue,
   }: {
     transitionDuration?: number;
-    value?: [number, number];
-    setValue?: (value: [number, number]) => void;
+    value?: () => number | [number, number];
+    setValue?: (value: number | [number, number]) => void;
   } = {}): Attachment<HTMLElement> =>
   (tablistElement) => {
+    const value = _value();
+    const range = Array.isArray(value) && value.length === 2;
     const triggerElements = [...tablistElement.querySelectorAll("button")];
     const fakeIndicatorElement = setupIndicator(tablistElement);
     let down: "left" | "right" | null = null;
@@ -202,7 +204,7 @@ export const rangetabs =
     triggerElements.forEach((item) => {
       Object.assign(item.style, triggersAddedStyles);
     });
-
+    console.log("asdf");
     const onpointerdown = (e: PointerEvent) => {
       const trigger = e.target;
       if (!(trigger instanceof HTMLButtonElement)) {
@@ -210,20 +212,27 @@ export const rangetabs =
       }
 
       const tabListX = getCurrentTargetX(e);
-      const xCoords = getXCoords(triggerElements, value);
-      console.log(tabListX, xCoords);
-      down =
-        // e.clientX < xCoords[0] ||
-        // tabListX < xCoords[0] ||
-        Math.abs(tabListX - xCoords[0]) < Math.abs(tabListX - xCoords[1])
-          ? "left"
-          : "right";
-      console.log(down);
-      value[down === "left" ? 0 : 1] = triggerElements.indexOf(trigger);
+      let leftRect, rightRect;
+      if (range) {
+        const values = value as [number, number];
+        const xCoords = getXCoords(triggerElements, values);
+        down =
+          // e.clientX < xCoords[0] ||
+          // tabListX < xCoords[0] ||
+          Math.abs(tabListX - xCoords[0]) < Math.abs(tabListX - xCoords[1])
+            ? "left"
+            : "right";
+        values[down === "left" ? 0 : 1] = triggerElements.indexOf(trigger);
+        setValue?.([...values]);
+        leftRect = triggerElements[values[0]].getBoundingClientRect();
+        rightRect = triggerElements[values[1]].getBoundingClientRect();
+      } else {
+        const value = triggerElements.indexOf(trigger);
+        setValue?.(value);
+        leftRect = rightRect = triggerElements[value].getBoundingClientRect();
+      }
       // STYLE slidytab to match indices
 
-      const leftRect = triggerElements[value[0]].getBoundingClientRect();
-      const rightRect = triggerElements[value[1]].getBoundingClientRect();
       const parentRect = tablistElement.getBoundingClientRect();
 
       Object.assign(fakeIndicatorElement.style, {
@@ -236,6 +245,9 @@ export const rangetabs =
       // tablist.setPointerCapture(e.pointerId);
     };
     tablistElement.addEventListener("pointerdown", onpointerdown);
+    return () => {
+      fakeIndicatorElement.remove();
+    };
   };
 
 const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {

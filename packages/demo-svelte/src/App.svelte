@@ -5,15 +5,16 @@
 
   let value = $state("0");
   let values: [number, number] = $state([0, 10]);
+  // let values = $state(4);
 </script>
 
 <div
   class="flex w-full .max-w-sm .flex-col gap-6 justify-center items-center h-screen"
 >
-  <Tabs.Root bind:value>
+  <Tabs.Root>
     <Tabs.List
       {@attach rangetabs({
-        value: values,
+        value: () => values,
         setValue: (newValue) => {
           values = newValue;
         },
