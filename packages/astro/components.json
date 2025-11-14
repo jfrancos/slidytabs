@@ -1,12 +1,8 @@
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
   "style": "default",
   "tailwind": {
-    "config": "tailwind.config.js",
     "css": "styles/global.css",
-    "baseColor": "neutral",
-    "cssVariables": true,
-    "prefix": ""
+    "baseColor": "neutral"
   },
   "rsc": false,
   "tsx": true,

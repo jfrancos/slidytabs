@@ -1,7 +1,7 @@
 ---
-import SvelteDemo from "../components/demo.svelte";
+import SvelteDemo from "../components/svelte/demo.svelte";
+import ReactDemo from "../components/react/demo";
 import AstroLogo from "../assets/astro-logo-dark.svg";
-import ReactDemo from "../components/demo";
 ---
 
 <html lang="en" class="bg-white h-full">
@@ -28,10 +28,14 @@ import ReactDemo from "../components/demo";
       </div>
     </div>
     <div
-      class="flex *:flex-1 gap-4 children:bg-gray-200 h-full *:first:rounded-tr-lg *:last:rounded-tl-lg"
+      class="flex *:flex-1 gap-4 *:bg-gray-200 h-full *:first:rounded-tr-lg *:last:rounded-tl-lg"
     >
-      <SvelteDemo />
-      <ReactDemo />
+      <div>
+        <SvelteDemo client:load />
+      </div>
+      <div>
+        <ReactDemo client:load />
+      </div>
     </div>
   </body>
 </html>
