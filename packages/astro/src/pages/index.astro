@@ -4,7 +4,7 @@ import ReactDemo from "../components/react/demo";
 import AstroLogo from "../assets/astro-logo-dark.svg";
 ---
 
-<html lang="en" class="bg-white h-full">
+<html lang="en" class="h-full">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -12,13 +12,13 @@ import AstroLogo from "../assets/astro-logo-dark.svg";
     <meta name="generator" content={Astro.generator} />
     <title>slidytabs</title>
   </head>
-  <body class="flex flex-col h-full">
-    <div class="bg-white px-8 py-6 color-gray-700">
+  <body class="flex flex-col h-full bg-gray-200">
+    <div class="px-8 py-6 color-gray-700">
       <div class="font-bold color-fuchsia-700 tracking-wide text-2xl">
         slidytabs
       </div><div class="font-medium">
         dead simple utility for animating shadcn <span
-          class="font-mono px-1.5 py-1 rounded text-xs bg-gray-200 color-sky-700"
+          class="font-mono px-2 mx-0.5 py-1 rounded text-xs bg-white color-sky-700"
         >
           {"<Tabs />"}
         </span>
@@ -28,7 +28,7 @@ import AstroLogo from "../assets/astro-logo-dark.svg";
       </div>
     </div>
     <div
-      class="flex *:flex-1 gap-4 *:bg-gray-200 h-full *:first:rounded-tr-lg *:last:rounded-tl-lg"
+      class="flex *:flex-1 gap-8 *:bg-white *:shadow-xl h-full *:first:rounded-tr-xl *:last:rounded-tl-xl"
     >
       <div>
         <SvelteDemo client:load />
@@ -39,3 +39,5 @@ import AstroLogo from "../assets/astro-logo-dark.svg";
     </div>
   </body>
 </html>
+
+<!-- linear-gradient(to bottom, transparent, var(--sk-bg-1)), radial-gradient(circle at 40% 30%, #ebf3f9, #d6dee4) -->
