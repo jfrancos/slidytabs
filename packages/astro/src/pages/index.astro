@@ -1,0 +1,37 @@
+---
+import SvelteDemo from "../components/demo.svelte";
+import AstroLogo from "../assets/astro-logo-dark.svg";
+import ReactDemo from "../components/demo";
+---
+
+<html lang="en" class="bg-white h-full">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>slidytabs</title>
+  </head>
+  <body class="flex flex-col h-full">
+    <div class="bg-white px-8 py-6 color-gray-700">
+      <div class="font-bold color-fuchsia-700 tracking-wide text-2xl">
+        slidytabs
+      </div><div class="font-medium">
+        dead simple utility for animating shadcn <span
+          class="font-mono px-1.5 py-1 rounded text-xs bg-gray-200 color-sky-700"
+        >
+          {"<Tabs />"}
+        </span>
+      </div>
+      <div class="text-sm color-gray-700">
+        multi-framework demo powered by<AstroLogo class="w-18 h-fit inline" />
+      </div>
+    </div>
+    <div
+      class="flex *:flex-1 gap-4 children:bg-gray-200 h-full *:first:rounded-tr-lg *:last:rounded-tl-lg"
+    >
+      <SvelteDemo />
+      <ReactDemo />
+    </div>
+  </body>
+</html>
