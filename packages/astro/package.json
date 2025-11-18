@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -17,6 +17,7 @@
     "astro": "^5.15.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "nanostores": "^1.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "svelte": "^5.43.6",
