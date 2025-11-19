@@ -5,7 +5,7 @@ import ShikiHighlighter from "react-shiki";
 const highlight = "ref={() => {}}";
 const start = exampleCode.indexOf(highlight);
 const end = start + highlight.length;
-const properties = { class: "bg-neutral-600 rounded-sm p-1 -m-1" };
+const properties = { class: "bg-neutral-700 rounded-sm p-1 -m-1" };
 
 const decoration = { start, end, properties };
 
