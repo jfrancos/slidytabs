@@ -5,13 +5,13 @@ import ShikiHighlighter from "react-shiki";
 const highlight = "ref={() => {}}";
 const start = exampleCode.indexOf(highlight);
 const end = start + highlight.length;
-const properties = { class: "bg-neutral-600 rounded-sm p-1 -m-1" };
+const properties = { class: "highlighted" };
 const decoration = { start, end, properties };
 
 export default () => {
   return (
     <div className="flex items-center flex-col p-4">
-      React / shadcn
+      shadcn (react)
       <TabsDemo />
       <ShikiHighlighter
         className="text-sm"
