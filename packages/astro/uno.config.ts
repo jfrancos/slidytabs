@@ -10,5 +10,5 @@ export default defineConfig({
     }),
     presetShadcn,
   ],
-  shortcuts: { highlighted: "bg-neutral-600 rounded-sm p-1 -m-1" },
+  shortcuts: { highlighted: "bg-neutral-200 rounded-sm p-1 -m-1" },
 });

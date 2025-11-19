@@ -5,7 +5,7 @@
 
 <Tabs.Root
   value="svelte"
-  class="items-center sm:hidden"
+  class="items-center lg:hidden"
   onValueChange={(value) => setFramework(value as Framework)}
 >
   <Tabs.List>
