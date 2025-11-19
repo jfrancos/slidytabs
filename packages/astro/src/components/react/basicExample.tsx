@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from "./tabs.js";
 // import { rangetabs } from "slidytabs";
 
-export const BasicExample = () => (
+export const TabsDemo = () => (
   <Tabs defaultValue="account" ref={() => {}}>
     <TabsList>
       <TabsTrigger value="account">Account</TabsTrigger>
