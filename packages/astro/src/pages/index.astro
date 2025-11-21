@@ -1,8 +1,8 @@
 ---
-import SvelteDemo from "../components/svelte/demo.svelte";
-import ReactDemo from "../components/react/demo";
+import ReactDemo from "../components/react/demo.astro";
 import Toggle from "../components/svelte/toggle.svelte";
 import AstroLogo from "../assets/astro-logo-dark.svg";
+import SvelteDemo from "../components/svelte/demo.astro";
 ---
 
 <html lang="en" class="h-full">
@@ -35,11 +35,14 @@ import AstroLogo from "../assets/astro-logo-dark.svg";
       <div
         class="flex *:flex-1 gap-8 *:bg-white *:shadow-xl h-full *:first:rounded-tr-xl *:last:rounded-tl-xl"
       >
-        <div id="svelte-demo" class="lg:block">
-          <SvelteDemo client:load>asdf</SvelteDemo>
+        <div
+          id="svelte-demo"
+          class="lg:.block flex justify-center items-center"
+        >
+          <SvelteDemo filename="basicExample" highlight="{@attach () => {}}" />
         </div>
-        <div id="react-demo" class="lg:block">
-          <ReactDemo client:load />
+        <div id="react-demo" class="lg:.block flex justify-center items-center">
+          <ReactDemo />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Tabs from "./tabs";
+  import * as Tabs from "../tabs";
   // import { rangetabs } from "slidytabs";
 </script>
 
