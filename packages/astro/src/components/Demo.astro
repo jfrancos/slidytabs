@@ -4,11 +4,9 @@ import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
 
 const { filename, highlight, lang } = Astro.props;
-
 const { default: Component } = await import(
   `./${lang}/examples/${filename}.${lang}`
 );
-console.log(`./${lang}/examples/${filename}.${lang}`);
 const { default: code } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
