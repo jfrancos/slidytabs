@@ -1,11 +1,10 @@
 ---
 import { Code } from "astro:components";
 import { transformerMetaWordHighlight } from "@shikijs/transformers";
-import Shell from "./shell.svelte";
+import Shell from "./Shell.svelte";
 
 const { filename, highlight } = Astro.props;
 const { default: code } = await import(`./examples/${filename}.svelte?raw`);
-const meta = `/${highlight}/`;
 ---
 
 <div class="flex flex-col border-gray-100 border-4 rounded-lg w-xl">
@@ -17,7 +16,7 @@ const meta = `/${highlight}/`;
     lang="svelte"
     class="text-sm px-6 py-5 !bg-neutral-100"
     transformers={[transformerMetaWordHighlight()]}
+    meta={`/${highlight}/`}
     {code}
-    {meta}
   />
 </div>

@@ -1,8 +1,8 @@
 ---
-import ReactDemo from "../components/react/demo.astro";
-import Toggle from "../components/svelte/toggle.svelte";
+import ReactDemo from "../components/react/Demo.astro";
+import Toggle from "../components/svelte/Toggle.svelte";
 import AstroLogo from "../assets/astro-logo-dark.svg";
-import SvelteDemo from "../components/svelte/demo.astro";
+import SvelteDemo from "../components/svelte/Demo.astro";
 ---
 
 <html lang="en" class="h-full">
@@ -39,7 +39,7 @@ import SvelteDemo from "../components/svelte/demo.astro";
           id="svelte-demo"
           class="lg:.block flex justify-center items-center"
         >
-          <SvelteDemo filename="basicExample" highlight="{@attach () => {}}" />
+          <SvelteDemo filename="BasicExample" highlight="{@attach () => {}}" />
         </div>
         <div id="react-demo" class="lg:.block flex justify-center items-center">
           <ReactDemo />
