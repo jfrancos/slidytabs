@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function ({ filename }: { filename: string }) {
-  const [Component, setComponent] = useState<React.ComponentType | null>(null);
+  const [Component, setComponent] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -9,6 +9,5 @@ export default function ({ filename }: { filename: string }) {
       setComponent(component);
     })();
   }, []);
-
   return Component;
 }
