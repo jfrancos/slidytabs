@@ -1,0 +1,25 @@
+---
+import Code from "./Code.astro";
+import { transformerMetaWordHighlight } from "@shikijs/transformers";
+import SvelteShell from "./svelte/Shell.svelte";
+// import TsxShell from "./tsx/Shell.svelte";
+
+const { filename, highlight, lang } = Astro.props;
+
+const { default: Component } = await import(
+  `./${lang}/examples/${filename}.${lang}`
+);
+const { default: code } = await import(
+  `./${lang}/examples/${filename}.${lang}?raw`
+);
+---
+
+<div class="flex flex-col border-gray-100 border-4 rounded-lg w-xl">
+  <div class="p-8 flex justify-center">
+    {lang === "svelte" && <SvelteShell {filename} client:load />}
+    <div class="[*:has(>*)~&]:hidden">
+      {lang === "svelte" && <SvelteShell {Component} />}
+    </div>
+  </div>
+  <Code {highlight} {code} {lang} />
+</div>

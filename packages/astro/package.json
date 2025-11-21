@@ -13,17 +13,17 @@
     "@astrojs/react": "^4.4.2",
     "@astrojs/svelte": "^7.2.2",
     "@radix-ui/react-tabs": "^1.1.13",
-    "@types/react": "^19.2.4",
+    "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
-    "astro": "^5.15.6",
+    "astro": "^5.16.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "nanostores": "^1.0.1",
+    "nanostores": "^1.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "shiki": "^3.15.0",
     "slidytabs": "link:../lib",
-    "svelte": "^5.43.6",
+    "svelte": "^5.43.14",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.17",
@@ -33,9 +33,9 @@
   "devDependencies": {
     "@internationalized/date": "^3.10.0",
     "@shikijs/transformers": "^3.15.0",
-    "@unocss/reset": "^66.5.6",
-    "bits-ui": "^2.14.3",
+    "@unocss/reset": "^66.5.9",
+    "bits-ui": "^2.14.4",
     "react-shiki": "^0.9.0",
-    "unocss": "^66.5.6"
+    "unocss": "^66.5.9"
   }
 }

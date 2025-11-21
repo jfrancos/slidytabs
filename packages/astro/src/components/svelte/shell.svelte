@@ -1,7 +1,11 @@
 <script lang="ts">
-  const { filename } = $props();
+  let { Component: SSRComponent, filename } = $props();
 </script>
 
-{#await import(`./examples/${filename}.svelte`) then { default: Demo }}
-  <Demo />
-{/await}
+{#if SSRComponent}
+  <SSRComponent />
+{:else}
+  {#await import(`./examples/${filename}.svelte`) then { default: ClientComponent }}
+    <ClientComponent />
+  {/await}
+{/if}

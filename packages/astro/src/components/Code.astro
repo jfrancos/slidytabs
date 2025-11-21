@@ -1,0 +1,14 @@
+---
+import { Code as AstroCode } from "astro:components";
+import { transformerMetaWordHighlight } from "@shikijs/transformers";
+const { code, highlight, lang } = Astro.props;
+---
+
+<AstroCode
+  theme="github-light"
+  class="text-sm px-6 py-5 !bg-neutral-100"
+  transformers={[transformerMetaWordHighlight()]}
+  meta={`/${highlight}/`}
+  {code}
+  {lang}
+/>
