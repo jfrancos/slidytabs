@@ -26,7 +26,10 @@ import Demo from "../components/Demo.astro";
         </span>
       </div>
       <div class="text-sm color-neutral-700">
-        multi-framework demo powered by<AstroLogo class="w-18 h-auto inline" />
+        multi-framework demo powered by <div
+          class="i-logos:astro align-middle inline-block"
+        >
+        </div>
       </div>
     </div>
     <div class="flex flex-col h-full gap-4">
@@ -34,10 +37,7 @@ import Demo from "../components/Demo.astro";
       <div
         class="flex *:flex-1 gap-8 *:bg-white *:shadow-xl h-full *:first:rounded-tr-xl *:last:rounded-tl-xl"
       >
-        <div
-          id="svelte-demo"
-          class="lg:block flex justify-center items-center"
-        >
+        <div id="svelte-demo" class="lg:block flex justify-center items-center">
           <Demo
             lang="svelte"
             filename="BasicExample"
