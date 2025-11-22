@@ -16,6 +16,9 @@ const { default: code } = await import(
   <div class="p-8 flex justify-center">
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
+
+    <!-- flash between SSR awaited component and client awaited component so we
+    have both simultaneously and hide the SSR once the client is visible -->
     <div class="[:has(*)~&]:hidden">
       <Component />
     </div>
