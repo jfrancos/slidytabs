@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
 export default function ({ filename }: { filename: string }) {
-  const [Component, setComponent] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      setComponent((await import(`./examples/${filename}.tsx`)).default);
-    })();
-  }, []);
-  return Component;
+  const Component = lazy(() => import(`./examples/${filename}.tsx`));
+  return (
+    <Suspense>
+      <Component />
+    </Suspense>
+  );
 }
