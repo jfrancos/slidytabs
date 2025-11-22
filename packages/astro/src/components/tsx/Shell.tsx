@@ -5,8 +5,7 @@ export default function ({ filename }: { filename: string }) {
 
   useEffect(() => {
     (async () => {
-      const { default: component } = await import(`./examples/${filename}.tsx`);
-      setComponent(component);
+      setComponent((await import(`./examples/${filename}.tsx`)).default);
     })();
   }, []);
   return Component;
