@@ -25,31 +25,38 @@ import Demo from "../components/Demo.astro";
           {"<Tabs />"}
         </span>
       </div>
-      <div class="text-sm color-neutral-700">
+      <!-- <div class="text-sm color-neutral-700">
         multi-framework demo powered by <div
           class="i-logos:astro align-middle inline-block"
         >
-        </div>
-      </div>
+        </div> -->
     </div>
-    <div class="flex flex-col h-full gap-4">
-      <Toggle client:load />
-      <div
-        class="flex *:flex-1 gap-8 *:bg-white *:shadow-xl h-full *:first:rounded-tr-xl *:last:rounded-tl-xl"
-      >
-        <div id="svelte-demo" class="lg:block flex justify-center items-center">
+  </body>
+  <div class="flex flex-col h-full gap-4">
+    <Toggle client:load />
+    <div class="flex gap-8 h-full *:xl:first:rounded-tr-xl *:xl:last:rounded-tl-xl">
+      <div id="svelte-demo" class="xl:block bg-white flex-1 shadow-xl">
+        <div class="flex justify-center items-center flex-col gap-8 py-8">
+          <Demo
+            lang="svelte"
+            filename="BasicExample"
+            highlight="{@attach () => {}}"
+          />
           <Demo
             lang="svelte"
             filename="BasicExample"
             highlight="{@attach () => {}}"
           />
         </div>
-        <div id="react-demo" class="lg:block flex justify-center items-center">
+      </div>
+      <div id="react-demo" class="xl:block bg-white flex-1 shadow-xl">
+        <div class="flex justify-center items-center flex-col gap-8 py-8">
+          <Demo lang="tsx" filename="BasicExample" highlight="ref={() => {}}" />
           <Demo lang="tsx" filename="BasicExample" highlight="ref={() => {}}" />
         </div>
       </div>
     </div>
-  </body>
+  </div>
 </html>
 
 <script>

@@ -1,7 +1,13 @@
-import { defineConfig, presetWind4, presetIcons } from "unocss";
+import {
+  defineConfig,
+  presetWind4,
+  presetIcons,
+  transformerVariantGroup,
+} from "unocss";
 import { presetShadcn } from "unocss-preset-shadcn";
 
 export default defineConfig({
+  transformers: [transformerVariantGroup()],
   presets: [
     presetWind4({
       preflights: {
