@@ -10,13 +10,18 @@ const { default: Component } = await import(
 const { default: code } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
+
+const logos = {
+  "i-logos:react": lang === "tsx",
+  "i-logos:svelte-icon": lang === "svelte",
+};
 ---
 
-<div class="flex flex-col border-gray-100 border-4 rounded-lg w-xl">
-  <div class="p-8 flex justify-center">
+<div class="flex flex-col border-gray-100 border-4 rounded-lg w-xl relative">
+  <div class:list={[logos, "absolute right-4 top-4 text-xl"]}></div>
+  <div class="flex justify-center h-32 items-center">
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
-
     <!-- flash between SSR awaited component and client awaited component so we
     have both simultaneously and hide the SSR once the client is visible -->
     <div class="[:has(*)~&]:hidden">

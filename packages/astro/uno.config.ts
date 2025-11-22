@@ -1,4 +1,4 @@
-import { defineConfig, presetWind4 } from "unocss";
+import { defineConfig, presetWind4, presetIcons } from "unocss";
 import { presetShadcn } from "unocss-preset-shadcn";
 
 export default defineConfig({
@@ -8,8 +8,9 @@ export default defineConfig({
         reset: true,
       },
     }),
+    presetIcons,
     presetShadcn,
   ],
   safelist: ["highlighted-word"],
-  shortcuts: { "highlighted-word": "bg-neutral-200 rounded-sm p-1 -m-1" },
+  shortcuts: { "highlighted-word": "bg-neutral-300 rounded-sm p-1 -m-1" },
 });
