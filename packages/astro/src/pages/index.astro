@@ -1,10 +1,9 @@
 ---
 import Toggle from "../components/svelte/Toggle.svelte";
-import AstroLogo from "../assets/astro-logo-dark.svg";
 import Demo from "../components/Demo.astro";
 ---
 
-<html lang="en" class="h-full">
+<html lang="en" class="h-screen">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -12,13 +11,13 @@ import Demo from "../components/Demo.astro";
     <meta name="generator" content={Astro.generator} />
     <title>slidytabs</title>
   </head>
-  <body class="flex flex-col h-full bg-neutral-200 .gap-4 .sm:gap-0 .pt-6">
+  <body class="flex flex-col h-screen bg-neutral-200 .gap-4 .sm:gap-0 .pt-6">
     <div class="px-8 py-6 color-neutral-700 flex flex-col gap-1">
       <div class="font-bold color-pink-700 tracking-wide text-2xl">
         slidytabs
       </div>
       <div class="font-medium">
-        dead simple utility for animating shadcn&ensp;
+        a simple utility for animating shadcn&ensp;
         <span
           class="font-mono font-semibold p-1 -m-1 rounded-sm text-xs bg-white color-sky-700 text-nowrap"
         >
@@ -31,32 +30,57 @@ import Demo from "../components/Demo.astro";
         >
         </div> -->
     </div>
-  </body>
-  <div class="flex flex-col h-full gap-4">
-    <Toggle client:load />
-    <div class="flex gap-8 h-full *:xl:first:rounded-tr-xl *:xl:last:rounded-tl-xl">
-      <div id="svelte-demo" class="xl:block bg-white flex-1 shadow-xl">
-        <div class="flex justify-center items-center flex-col gap-8 py-8">
-          <Demo
-            lang="svelte"
-            filename="BasicExample"
-            highlight="{@attach () => {}}"
-          />
-          <Demo
-            lang="svelte"
-            filename="BasicExample"
-            highlight="{@attach () => {}}"
-          />
+    <div class="flex flex-col grow gap-4">
+      <Toggle client:load />
+      <div
+        class="flex gap-8 grow *:xl:first:rounded-tr-xl *:xl:last:rounded-tl-xl"
+      >
+        <div id="svelte-demo" class="xl:block bg-white flex-1 shadow-xl">
+          <div class="flex justify-center items-center flex-col gap-6 py-6">
+            <a
+              rel="noopener"
+              target="_blank"
+              class="text-sm. font-semibold underline"
+              href="https://www.shadcn-svelte.com/docs/components/tabs"
+              >shadcn-svelte</a
+            ><div class="flex flex-col gap-12">
+              <Demo
+                lang="svelte"
+                filename="BasicExample"
+                highlight="{@attach () => {}}"
+              />
+              <Demo
+                lang="svelte"
+                filename="BasicExample"
+                highlight="{@attach () => {}}"
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      <div id="react-demo" class="xl:block bg-white flex-1 shadow-xl">
-        <div class="flex justify-center items-center flex-col gap-8 py-8">
-          <Demo lang="tsx" filename="BasicExample" highlight="ref={() => {}}" />
-          <Demo lang="tsx" filename="BasicExample" highlight="ref={() => {}}" />
+        <div id="react-demo" class="xl:block bg-white flex-1 shadow-xl">
+          <div class="flex justify-center items-center flex-col gap-6 py-6">
+            <a
+              rel="noopener"
+              target="_blank"
+              class="text-sm. font-semibold underline"
+              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+            ><div class="flex flex-col gap-12">
+              <Demo
+                lang="tsx"
+                filename="BasicExample"
+                highlight="ref={() => {}}"
+              />
+              <Demo
+                lang="tsx"
+                filename="BasicExample"
+                highlight="ref={() => {}}"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </body>
 </html>
 
 <script>

@@ -31,16 +31,19 @@ const shadcn = {
 ---
 
 <div class="flex flex-col border-gray-100 border-4 rounded-lg w-xl relative">
-  <div class="absolute top-4 inset-x-4 flex justify-between items-center">
-    <a
+  <div class="flex justify-center h-32 items-center relative">
+    <!-- <div
+      class="absolute top-4. inset-y-4 inset-r-4 flex flex-col justify-between items-center"
+    > -->
+    <div class:list={[logos, "text-xl absolute top-4 right-4"]}></div>
+    <!-- <a
       rel="noopener"
       target="_blank"
-      class="text-xs font-semibold underline"
+      class="text-xs font-semibold underline -bottom-5 right-4 absolute"
       href={shadcn.href}>{shadcn.text}</a
-    >
-    <div class:list={[logos, "text-xl"]}></div>
-  </div>
-  <div class="flex justify-center h-32 items-center">
+    > -->
+    <!-- okay maybe at the bottom (right?) since it's associated with the code -->
+    <!-- </div> -->
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
