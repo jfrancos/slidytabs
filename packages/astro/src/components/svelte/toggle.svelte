@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tabs from "./tabs/index.js";
-  import { setFramework, type Framework } from "$lib/store.js";
+  import * as Tabs from "$lib/shadcn/tabs";
+  import { setFramework, type Framework } from "A/lib/store.js";
 </script>
 
 <Tabs.Root

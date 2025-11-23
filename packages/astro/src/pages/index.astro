@@ -84,7 +84,7 @@ import Demo from "../components/Demo.astro";
 </html>
 
 <script>
-  import { $framework } from "../lib/store";
+  import { $framework } from "A/lib/store";
 
   $framework.subscribe((framework) => {
     if (framework === "react") {

@@ -7,9 +7,10 @@
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./src/components/tsx/*"],
       "$lib": ["./src/lib"],
-      "$lib/*": ["./src/lib/*"]
+      "$lib/*": ["./src/components/svelte/*"],
+      "A/*": ["./src/*"]
     }
   }
 }

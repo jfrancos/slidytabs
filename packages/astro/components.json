@@ -7,8 +7,8 @@
   "rsc": false,
   "tsx": true,
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
+    "components": "$lib/shadcn",
+    "utils": "A/lib/utils",
     "ui": "@/components/ui"
   }
 }

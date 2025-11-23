@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "../tabs.js";
+import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs"; // should be
 // import { rangetabs } from "slidytabs";
 
 export default () => (
