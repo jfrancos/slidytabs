@@ -192,8 +192,9 @@ export const rangetabs =
     transitionDuration?: number;
     value?: () => number | [number, number];
     setValue?: (value: number | [number, number]) => void;
-  } = {}): Attachment<HTMLElement> =>
-  (tablistElement) => {
+  } = {}) =>
+  (tablistElement: HTMLElement | null) => {
+    if (!tablistElement) return;
     const value = _value();
     const range = Array.isArray(value) && value.length === 2;
     const triggerElements = [...tablistElement.querySelectorAll("button")];
