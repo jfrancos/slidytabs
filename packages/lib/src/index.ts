@@ -32,26 +32,28 @@ const escapedActivePrefix = "data-\\[state\\=active\\]\\:";
 // not doing anything with the active-stripped styles just yet
 // could remove them
 // or extract the styles that get stripped
-[...document.styleSheets].forEach((styleSheet) => {
-  [...styleSheet.cssRules]
-    .filter(
-      (item) =>
-        item instanceof CSSStyleRule &&
-        // for firefox
-        ![focusSelector, activeSelector].includes(item.selectorText.trim()) &&
-        (item.selectorText.includes(focusSelector) ||
-          item.selectorText.includes(activeSelector))
-    )
-    .forEach(({ cssText }) => {
-      styleSheet.insertRule(
-        cssText
-          .replace(escapedFocusPrefix, "")
-          .replace(focusSelector, "")
-          .replace(escapedActivePrefix, "")
-          .replace(activeSelector, "")
-      );
-    });
-});
+if (typeof document !== "undefined") {
+  [...document.styleSheets].forEach((styleSheet) => {
+    [...styleSheet.cssRules]
+      .filter(
+        (item) =>
+          item instanceof CSSStyleRule &&
+          // for firefox
+          ![focusSelector, activeSelector].includes(item.selectorText.trim()) &&
+          (item.selectorText.includes(focusSelector) ||
+            item.selectorText.includes(activeSelector))
+      )
+      .forEach(({ cssText }) => {
+        styleSheet.insertRule(
+          cssText
+            .replace(escapedFocusPrefix, "")
+            .replace(focusSelector, "")
+            .replace(escapedActivePrefix, "")
+            .replace(activeSelector, "")
+        );
+      });
+  });
+}
 
 // TODOs
 // Orientation check?
