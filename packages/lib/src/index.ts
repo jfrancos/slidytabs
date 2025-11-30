@@ -165,7 +165,7 @@ export const slidertabs: Attachment = (tablist) => {
   };
 };
 
-export const rangetabs =
+export const _rangetabs =
   ({
     transitionDuration = 125,
     value: _value = () => 0,
@@ -283,30 +283,37 @@ interface SlidyTabProps {
 //   return [...tablist.querySelectorAll("button")];
 // };
 
-interface SlidytabOptions {
-  value?: number | [number, number];
+type ValueType = number | [number, number];
+
+interface BaseOptions<T extends ValueType> {
+  value?: T;
   transitionDuration?: number;
-  onValueChange?: () => void;
+  onValueChange?: (value: T) => void;
   swipe?: boolean;
 }
 
+export type SlidyOptions = BaseOptions<number>;
+export type RangeOptions = BaseOptions<[number, number]>;
+
 export const slidytabs =
-  (options: SlidytabOptions = { transitionDuration: 125, swipe: false }) =>
+  (options: SlidyOptions = { transitionDuration: 125, swipe: false }) =>
   (tablist: HTMLElement | null) => {
     if (tablist === null) {
       return;
-      // could be a ref unmounting??
-      // in which case st.cleanup() but ...
-      //  "if you pass an inline arrow as a ref, it'll go through unset / set cycle on every render"
     }
     let st: Slidytabs;
-    // if (!state) {
-    st = new Slidytabs(tablist, options);
-    // }
-    // if (value) {
-    //   st.setValue(value);
-    //   console.log("setting vlaue");
-    // }
+    st = new Slidytabs(tablist, options as BaseOptions<ValueType>);
+    return () => st.cleanup();
+  };
+
+export const rangetabs =
+  (options: RangeOptions = { transitionDuration: 125, swipe: false }) =>
+  (tablist: HTMLElement | null) => {
+    if (tablist === null) {
+      return;
+    }
+    let st: Slidytabs;
+    st = new Slidytabs(tablist, options as BaseOptions<ValueType>);
     return () => st.cleanup();
   };
 
@@ -316,9 +323,11 @@ class Slidytabs {
   private triggers;
   private trigger;
   private slidytab;
-  private value: [number, number] | number;
+  private value: ValueType;
+  private onValueChange?: (value: ValueType) => void;
+  private resizeObserver: ResizeObserver;
 
-  constructor(root: HTMLElement, options: SlidytabOptions = {}) {
+  constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     this.root = root;
     this.triggers = [...this.root.querySelectorAll("button")];
     this.trigger = this.triggers[0];
@@ -331,14 +340,15 @@ class Slidytabs {
     const slidytab = list.querySelector<HTMLDivElement>("div[slidytab]");
     this.slidytab = slidytab || this.setupSlidytab();
     list.addEventListener("pointerdown", this.onpointerdown);
-    if (options.value) {
+    this.onValueChange = options.onValueChange;
+    if (options.value != null) {
       this.value = options.value;
       this.setValue(options.value);
     } else {
       this.value = this.activeIndex;
       this.setValue(this.activeIndex);
     }
-    this.setupResizeObserver();
+    this.resizeObserver = this.setupResizeObserver();
   }
 
   private removeActiveStyles = () => {
@@ -353,19 +363,14 @@ class Slidytabs {
     }
     // explain this
     const pressedIndex = this.triggers.indexOf(e.target);
-    const tabListX = this.getCurrentTargetX(e);
-    const xCoords = this.getXCoords();
-    const down =
-      Math.abs(tabListX - xCoords[0]) < Math.abs(tabListX - xCoords[1])
-        ? "left"
-        : "right";
-    this.setValue(
-      !Array.isArray(this.value)
-        ? pressedIndex
-        : down === "left"
-        ? [pressedIndex, this.value[1]]
-        : [this.value[0], pressedIndex]
-    );
+    const tabListX = getCurrentTargetX(e);
+    const [x0, x1] = this.getXCoords();
+    const down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
+    const newValue = Array.isArray(this.value)
+      ? (this.value.with(down, pressedIndex) as [number, number])
+      : pressedIndex;
+    this.setValue(newValue);
+    this.onValueChange?.(newValue);
   };
 
   get activeIndex() {
@@ -386,8 +391,6 @@ class Slidytabs {
       transitionProperty: "all",
       position: "absolute",
       height: "unset",
-      // marginRight: "3px",
-      // width: "",
     };
     Object.assign(this.slidytab.style, slidytabStyles);
     const triggerBaseClasses = this.trigger.classList;
@@ -398,7 +401,7 @@ class Slidytabs {
     return this.slidytab;
   };
 
-  setValue = (value: number | [number, number]) => {
+  setValue = (value: ValueType) => {
     this.value = value;
     console.log(value);
     if (this.valueDuple[0] > this.valueDuple[1]) {
@@ -428,6 +431,7 @@ class Slidytabs {
       this.slidytab.style.transitionDuration = transitionDuration;
     });
     resizeObserver.observe(this.list);
+    return resizeObserver;
   };
 
   getXCoords = () => {
@@ -438,8 +442,8 @@ class Slidytabs {
     ];
   };
 
-  getCurrentTargetX = (e: PointerEvent) =>
-    e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
-
-  cleanup() {}
+  cleanup() {
+    this.list.removeEventListener("pointerdown", this.onpointerdown);
+    this.resizeObserver.disconnect();
+  }
 }

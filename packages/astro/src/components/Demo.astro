@@ -13,14 +13,19 @@ const { filename, highlight, lang } = Astro.props;
 const { default: Component } = await import(
   `./${lang}/examples/${filename}.${lang}`
 );
-const { default: code } = await import(
+const { default: raw } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
 
+const prefix = {
+  svelte: `<!-- ${filename}.svelte -->`,
+  tsx: `// ${filename}.tsx`,
+}[lang];
 const logos = {
   "i-logos:react?mask text-#087EA4": lang === "tsx",
   "i-logos:svelte-icon": lang === "svelte",
 };
+const code = `${prefix}\n${raw}`;
 ---
 
 <div
