@@ -2,6 +2,7 @@
 import Code from "./Code.astro";
 import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
+import { react, svelte } from "./icons";
 
 interface Props {
   filename: string;
@@ -22,8 +23,8 @@ const prefix = {
   tsx: `// ${filename}.tsx`,
 }[lang];
 const logos = {
-  "i-logos:react?mask text-#087EA4": lang === "tsx",
-  "i-logos:svelte-icon": lang === "svelte",
+  [react]: lang === "tsx",
+  [svelte]: lang === "svelte",
 };
 const code = `${prefix}\n${raw}`;
 ---
