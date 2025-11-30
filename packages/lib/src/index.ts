@@ -287,14 +287,12 @@ interface SlidytabOptions {
   value?: number | [number, number];
   transitionDuration?: number;
   onValueChange?: () => void;
+  swipe?: boolean;
 }
 
 export const slidytabs =
-  (options: SlidytabOptions = {}) =>
+  (options: SlidytabOptions = { transitionDuration: 125, swipe: false }) =>
   (tablist: HTMLElement | null) => {
-    // const { value, transitionDuration = 125, onValueChange } = options;
-    console.log(tablist);
-    // func({ hi: "hi" });
     if (tablist === null) {
       return;
       // could be a ref unmounting??
@@ -353,8 +351,8 @@ class Slidytabs {
     if (!(e.target instanceof HTMLButtonElement)) {
       return;
     }
+    // explain this
     const pressedIndex = this.triggers.indexOf(e.target);
-
     const tabListX = this.getCurrentTargetX(e);
     const xCoords = this.getXCoords();
     const down =
@@ -368,7 +366,6 @@ class Slidytabs {
         ? [pressedIndex, this.value[1]]
         : [this.value[0], pressedIndex]
     );
-    console.log(down);
   };
 
   get activeIndex() {
@@ -402,14 +399,11 @@ class Slidytabs {
   };
 
   setValue = (value: number | [number, number]) => {
-    console.log(value);
     this.value = value;
-    console.log(this.value);
+    console.log(value);
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
     }
-    // console.log(this.value);
-    // console.log(this.valueDuple);
     const leftRect = this.triggers[this.valueDuple[0]].getBoundingClientRect();
     const rightRect = this.triggers[this.valueDuple[1]].getBoundingClientRect();
     const parentRect = this.list.getBoundingClientRect();
@@ -439,8 +433,8 @@ class Slidytabs {
   getXCoords = () => {
     const [x0, x1] = this.valueDuple;
     return [
-      this.triggers[x0].offsetLeft + this.triggers[x0].offsetWidth,
-      this.triggers[x1].offsetLeft,
+      this.triggers[x0].offsetLeft,
+      this.triggers[x1].offsetLeft + this.triggers[x1].offsetWidth,
     ];
   };
 

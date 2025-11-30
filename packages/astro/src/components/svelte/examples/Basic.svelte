@@ -4,7 +4,7 @@
 </script>
 
 <Tabs.Root {@attach slidytabs()} value="account" class="text-center">
-  <Tabs.List class="">
+  <Tabs.List>
     <Tabs.Trigger value="account">Account</Tabs.Trigger>
     <Tabs.Trigger value="password">Password</Tabs.Trigger>
   </Tabs.List>

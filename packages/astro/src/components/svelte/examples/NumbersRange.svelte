@@ -3,18 +3,10 @@
   import { slidytabs } from "slidytabs";
 </script>
 
-<Tabs.Root {@attach slidytabs({ value: 5 })}>
-  <Tabs.List>
-    {#each { length: 12 }, i}
+<Tabs.Root {@attach slidytabs({ value: [2, 4] })}>
+  <Tabs.List class="*:min-w-0">
+    {#each { length: 11 }, i}
       <Tabs.Trigger value={String(i)}>{i}</Tabs.Trigger>
     {/each}
   </Tabs.List>
 </Tabs.Root>
-
-<!-- <Tabs.Root value="account">
-  <Tabs.List {@attach rangetabs()}>
-    {#each { length: 12 }, i}
-      <Tabs.Trigger value={String(i)}>{i}</Tabs.Trigger>
-    {/each}
-  </Tabs.List>
-</Tabs.Root> -->
