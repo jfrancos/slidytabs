@@ -243,9 +243,6 @@ const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
 
 // FUNCTIONS SHOULD DO ONE THING
 
-const getCurrentTargetX = (e: PointerEvent) =>
-  e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
-
 interface SlidyTabProps {
   slider?:
     | true
@@ -364,7 +361,7 @@ class Slidytabs {
     // explain this
     const pressedIndex = this.triggers.indexOf(e.target);
     const tabListX = getCurrentTargetX(e);
-    const [x0, x1] = this.getXCoords();
+    const [x0, x1] = this.getEndpoints();
     const down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     const newValue = Array.isArray(this.value)
       ? (this.value.with(down, pressedIndex) as [number, number])
@@ -434,7 +431,7 @@ class Slidytabs {
     return resizeObserver;
   };
 
-  getXCoords = () => {
+  getEndpoints = () => {
     const [x0, x1] = this.valueDuple;
     return [
       this.triggers[x0].offsetLeft,
@@ -447,3 +444,6 @@ class Slidytabs {
     this.resizeObserver.disconnect();
   }
 }
+
+const getCurrentTargetX = (e: PointerEvent) =>
+  e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
