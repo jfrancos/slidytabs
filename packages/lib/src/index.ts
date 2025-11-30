@@ -289,8 +289,8 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-export type SlidyOptions = BaseOptions<number>;
-export type RangeOptions = BaseOptions<[number, number]>;
+type SlidyOptions = BaseOptions<number>;
+type RangeOptions = BaseOptions<[number, number]>;
 
 export const slidytabs =
   (options: SlidyOptions = { transitionDuration: 125, swipe: false }) =>
