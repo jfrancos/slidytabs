@@ -46,13 +46,23 @@ import Demo from "../components/Demo.astro";
             ><div class="flex flex-col gap-12">
               <Demo
                 lang="svelte"
-                filename="BasicExample"
-                highlight="{@attach () => {}}"
+                filename="Basic"
+                highlight="{@attach slidytabs()}"
               />
               <Demo
                 lang="svelte"
-                filename="BasicExample"
-                highlight="{@attach () => {}}"
+                filename="Styles"
+                highlight="{@attach slidytabs()}"
+              />
+              <Demo
+                lang="svelte"
+                filename="Vertical"
+                highlight="{@attach slidytabs()}"
+              />
+              <Demo
+                lang="svelte"
+                filename="NumbersRange"
+                highlight="{@attach rangetabs()}"
               />
             </div>
           </div>
@@ -67,8 +77,8 @@ import Demo from "../components/Demo.astro";
             ><div class="flex flex-col gap-12">
               <Demo
                 lang="tsx"
-                filename="BasicExample"
-                highlight="ref={() => {}}"
+                filename="NumbersRange"
+                highlight="ref={tabs([3])}"
               />
               <Demo
                 lang="tsx"

@@ -1,9 +1,11 @@
 import { Attachment } from "svelte/attachments";
 import { twMerge } from "tailwind-merge";
+import { setupIndicator } from "./util";
+// import { escapeSelector as _escapeSelector } from "@unocss/core";
 
 const transitionDuration = "125ms";
 
-const triggersAddedStyles = {
+const triggersAddedStyles: Partial<CSSStyleDeclaration> = {
   backgroundColor: "transparent",
   background: "unset",
   boxShadow: "unset",
@@ -18,7 +20,6 @@ const slidyTabStyles = {
   transitionProperty: "all",
   position: "absolute",
   height: "unset",
-  // inset: 0,
 };
 
 const focusSelector = ":focus-visible";
@@ -26,34 +27,14 @@ const focusPrefix = "focus-visible:";
 const escapedFocusPrefix = "focus-visible\\:";
 
 const activeSelector = '[data-state="active"]';
-// const activePrefix = "data-[state=active]:";
+const activePrefix = "data-[state=active]:";
 const escapedActivePrefix = "data-\\[state\\=active\\]\\:";
+
+// can i use a regex to find selectors by ignorning \\s?
 
 // not doing anything with the active-stripped styles just yet
 // could remove them
 // or extract the styles that get stripped
-if (typeof document !== "undefined") {
-  [...document.styleSheets].forEach((styleSheet) => {
-    [...styleSheet.cssRules]
-      .filter(
-        (item) =>
-          item instanceof CSSStyleRule &&
-          // for firefox
-          ![focusSelector, activeSelector].includes(item.selectorText.trim()) &&
-          (item.selectorText.includes(focusSelector) ||
-            item.selectorText.includes(activeSelector))
-      )
-      .forEach(({ cssText }) => {
-        styleSheet.insertRule(
-          cssText
-            .replace(escapedFocusPrefix, "")
-            .replace(focusSelector, "")
-            .replace(escapedActivePrefix, "")
-            .replace(activeSelector, "")
-        );
-      });
-  });
-}
 
 // TODOs
 // Orientation check?
@@ -62,12 +43,13 @@ if (typeof document !== "undefined") {
 const hasStyle = (el: Element): el is Element & ElementCSSInlineStyle =>
   "style" in el;
 
-export const slidytabs: Attachment = (tabList) => {
-  if (!(tabList.children.length > 0 && hasStyle(tabList))) {
+export const slidyTabs = (tabList: HTMLElement | null) => {
+  if (!(tabList && tabList.children.length > 0 && hasStyle(tabList))) {
     return;
   }
   const triggers = [...tabList.children];
   const triggerFocusClasses = [...triggers[0].classList]
+    // what does this line do
     .filter((item) => item.includes(focusPrefix))
     .map((item) => item.replace(focusPrefix, ""));
   const triggerBaseClasses = [...triggers[0].classList].filter(
@@ -207,7 +189,6 @@ export const rangetabs =
     triggerElements.forEach((item) => {
       Object.assign(item.style, triggersAddedStyles);
     });
-    console.log("asdf");
     const onpointerdown = (e: PointerEvent) => {
       const trigger = e.target;
       if (!(trigger instanceof HTMLButtonElement)) {
@@ -265,20 +246,6 @@ const getXCoords = (triggers: HTMLElement[], [x0, x1]: [number, number]) => {
 const getCurrentTargetX = (e: PointerEvent) =>
   e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
 
-const setupIndicator = (tablistElement: HTMLElement) => {
-  const triggerElements = [...tablistElement.querySelectorAll("button")];
-  const triggerBaseClasses = [...triggerElements[0].classList].filter(
-    (item) => !item.includes(focusPrefix)
-  );
-  tablistElement.style.position = "relative";
-  const fakeIndicatorElement = document.createElement("div");
-  Object.assign(fakeIndicatorElement.style, slidyTabStyles);
-  fakeIndicatorElement.setAttribute("data-state", "active");
-  fakeIndicatorElement.className = [...triggerBaseClasses].join(" ");
-  tablistElement.append(fakeIndicatorElement);
-  return fakeIndicatorElement;
-};
-
 interface SlidyTabProps {
   slider?:
     | true
@@ -295,4 +262,190 @@ interface SlidyTabProps {
 // draggable
 //
 
-console.log("hi");
+// export const tabs = () => (tablist: HTMLElement | null) => {
+//   if (!tablist) {
+//     return;
+//   }
+//   const activeIndex = getActiveIndex(tablist);
+//   console.log(activeIndex);
+
+//   removeActiveStyles(tablist);
+// };
+
+// const removeActiveStyles = (tablist: HTMLElement) => {
+//   const triggers = getTriggers(tablist);
+//   triggers.forEach((item) => {
+//     Object.assign(item.style, triggersAddedStyles);
+//   });
+// };
+
+// const getTriggers = (tablist: HTMLElement) => {
+//   return [...tablist.querySelectorAll("button")];
+// };
+
+interface SlidytabOptions {
+  value?: number | [number, number];
+  transitionDuration?: number;
+  onValueChange?: () => void;
+}
+
+export const slidytabs =
+  (options: SlidytabOptions = {}) =>
+  (tablist: HTMLElement | null) => {
+    // const { value, transitionDuration = 125, onValueChange } = options;
+    console.log(tablist);
+    // func({ hi: "hi" });
+    if (tablist === null) {
+      return;
+      // could be a ref unmounting??
+      // in which case st.cleanup() but ...
+      //  "if you pass an inline arrow as a ref, it'll go through unset / set cycle on every render"
+    }
+    let st: Slidytabs;
+    // if (!state) {
+    st = new Slidytabs(tablist, options);
+    // }
+    // if (value) {
+    //   st.setValue(value);
+    //   console.log("setting vlaue");
+    // }
+    return () => st.cleanup();
+  };
+
+class Slidytabs {
+  private root;
+  private list;
+  private triggers;
+  private trigger;
+  private slidytab;
+  private value: [number, number] | number;
+
+  constructor(root: HTMLElement, options: SlidytabOptions = {}) {
+    this.root = root;
+    this.triggers = [...this.root.querySelectorAll("button")];
+    this.trigger = this.triggers[0];
+    const list = this.trigger.parentElement;
+    if (!list) {
+      throw "no list";
+    }
+    this.list = list;
+    this.removeActiveStyles();
+    const slidytab = list.querySelector<HTMLDivElement>("div[slidytab]");
+    this.slidytab = slidytab || this.setupSlidytab();
+    list.addEventListener("pointerdown", this.onpointerdown);
+    if (options.value) {
+      this.value = options.value;
+      this.setValue(options.value);
+    } else {
+      this.value = this.activeIndex;
+      this.setValue(this.activeIndex);
+    }
+    this.setupResizeObserver();
+  }
+
+  private removeActiveStyles = () => {
+    for (const trigger of this.triggers) {
+      Object.assign(trigger.style, triggersAddedStyles);
+    }
+  };
+
+  private onpointerdown = (e: PointerEvent) => {
+    if (!(e.target instanceof HTMLButtonElement)) {
+      return;
+    }
+    const pressedIndex = this.triggers.indexOf(e.target);
+
+    const tabListX = this.getCurrentTargetX(e);
+    const xCoords = this.getXCoords();
+    const down =
+      Math.abs(tabListX - xCoords[0]) < Math.abs(tabListX - xCoords[1])
+        ? "left"
+        : "right";
+    this.setValue(
+      !Array.isArray(this.value)
+        ? pressedIndex
+        : down === "left"
+        ? [pressedIndex, this.value[1]]
+        : [this.value[0], pressedIndex]
+    );
+    console.log(down);
+  };
+
+  get activeIndex() {
+    const activeElement = this.root.querySelector<HTMLButtonElement>(
+      "button[data-state=active]"
+    );
+    if (!activeElement) {
+      return -1;
+    }
+    return this.triggers.indexOf(activeElement);
+  }
+
+  private setupSlidytab = (): HTMLDivElement => {
+    this.slidytab = document.createElement("div");
+    this.slidytab.setAttribute("slidytab", "");
+    const slidytabStyles: Partial<CSSStyleDeclaration> = {
+      transitionDuration,
+      transitionProperty: "all",
+      position: "absolute",
+      height: "unset",
+      // marginRight: "3px",
+      // width: "",
+    };
+    Object.assign(this.slidytab.style, slidytabStyles);
+    const triggerBaseClasses = this.trigger.classList;
+    this.list.style.position = "relative";
+    this.slidytab.setAttribute("data-state", "active");
+    this.slidytab.className = [...triggerBaseClasses].join(" ");
+    this.list.append(this.slidytab);
+    return this.slidytab;
+  };
+
+  setValue = (value: number | [number, number]) => {
+    console.log(value);
+    this.value = value;
+    console.log(this.value);
+    if (this.valueDuple[0] > this.valueDuple[1]) {
+      throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
+    }
+    // console.log(this.value);
+    // console.log(this.valueDuple);
+    const leftRect = this.triggers[this.valueDuple[0]].getBoundingClientRect();
+    const rightRect = this.triggers[this.valueDuple[1]].getBoundingClientRect();
+    const parentRect = this.list.getBoundingClientRect();
+    Object.assign(this.slidytab.style, {
+      left: `${leftRect.left - parentRect.left}px`,
+      top: `${leftRect.top - parentRect.top}px`,
+      bottom: `${parentRect.bottom - leftRect.bottom}px`,
+      right: `${parentRect.right - rightRect.right}px`,
+    });
+  };
+
+  get valueDuple() {
+    return Array.isArray(this.value) ? this.value : [this.value, this.value];
+  }
+
+  setupResizeObserver = () => {
+    const resizeObserver = new ResizeObserver(async () => {
+      // we want instant adjustments, so temporarily remove transition
+      this.slidytab.style.transitionDuration = "0ms";
+      this.setValue(this.value);
+      await new Promise(requestAnimationFrame);
+      this.slidytab.style.transitionDuration = transitionDuration;
+    });
+    resizeObserver.observe(this.list);
+  };
+
+  getXCoords = () => {
+    const [x0, x1] = this.valueDuple;
+    return [
+      this.triggers[x0].offsetLeft + this.triggers[x0].offsetWidth,
+      this.triggers[x1].offsetLeft,
+    ];
+  };
+
+  getCurrentTargetX = (e: PointerEvent) =>
+    e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
+
+  cleanup() {}
+}

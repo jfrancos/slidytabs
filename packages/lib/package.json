@@ -2,7 +2,7 @@
   "name": "slidytabs",
   "version": "0.0.0",
   "scripts": {
-    "dev": "tsup src/index.ts --watch --dts --format esm"
+    "dev": "tsup src/*.ts --watch --dts --format esm"
   },
   "peerDependencies": {
     "svelte": "^5"
@@ -17,6 +17,8 @@
   "types": "./dist/index.d.mts",
   "exports": "./dist/index.mjs",
   "dependencies": {
+    "@unocss/core": "^66.5.9",
+    "@unocss/preset-wind4": "^66.5.9",
     "@webref/css": "^6.23.6",
     "tailwind-merge": "^3.3.1"
   }
