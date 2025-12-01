@@ -419,6 +419,7 @@ class Slidytabs {
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
+    trigger.click();
     this.setValue(newValue);
     this.onValueChange?.(newValue);
   };
