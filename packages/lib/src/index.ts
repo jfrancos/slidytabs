@@ -388,6 +388,8 @@ class Slidytabs {
 
   onpointermove = (e: PointerEvent) => {
     if (e.buttons === 0) {
+      // need this for when browser weirdly doesn't pick up on
+      // pointer up, so no point in also putting it in a onpointerup
       this.down = null;
     }
     const { orientation } = this.root.dataset;
@@ -420,6 +422,7 @@ class Slidytabs {
     this.setValue(newValue);
     this.onValueChange?.(newValue);
   };
+
   get activeIndex() {
     const activeElement = this.root.querySelector<HTMLButtonElement>(
       "button[data-state=active]"
@@ -442,7 +445,7 @@ class Slidytabs {
     Object.assign(this.slidytab.style, slidytabStyles);
     const triggerBaseClasses = this.trigger.classList;
     this.list.style.position = "relative";
-    this.slidytab.setAttribute("data-state", "active");
+    this.slidytab.dataset.state = "active";
     this.slidytab.className = [...triggerBaseClasses].join(" ");
     this.list.append(this.slidytab);
     return this.slidytab;
@@ -466,10 +469,10 @@ class Slidytabs {
     // wait till after the framework has updated data-state
     await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.triggers.length; i++) {
-      if (i >= this.valueDuple[0] && i <= this.valueDuple[1])
-        this.triggers[i].setAttribute("data-state", "active");
-      else {
-        this.triggers[i].setAttribute("data-state", "inactive");
+      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
+        this.triggers[i].dataset.state = "active";
+      } else {
+        this.triggers[i].dataset.state = "inactive";
       }
     }
   };
