@@ -13,6 +13,7 @@ const triggersAddedStyles: Partial<CSSStyleDeclaration> = {
   outlineColor: "transparent",
   borderColor: "transparent",
   zIndex: "10",
+  touchAction: "none",
 };
 
 const slidyTabStyles = {
@@ -293,24 +294,30 @@ type SlidyOptions = BaseOptions<number>;
 type RangeOptions = BaseOptions<[number, number]>;
 
 export const slidytabs =
-  (options: SlidyOptions = { transitionDuration: 125, swipe: false }) =>
+  (options: SlidyOptions = {}) =>
   (tablist: HTMLElement | null) => {
     if (tablist === null) {
       return;
     }
-    let st: Slidytabs;
-    st = new Slidytabs(tablist, options as BaseOptions<ValueType>);
+    const st = new Slidytabs(tablist, {
+      transitionDuration: 125,
+      swipe: true,
+      ...options,
+    } as BaseOptions<ValueType>);
     return () => st.cleanup();
   };
 
 export const rangetabs =
-  (options: RangeOptions = { transitionDuration: 125, swipe: false }) =>
+  (options: RangeOptions = {}) =>
   (tablist: HTMLElement | null) => {
     if (tablist === null) {
       return;
     }
-    let st: Slidytabs;
-    st = new Slidytabs(tablist, options as BaseOptions<ValueType>);
+    const st = new Slidytabs(tablist, {
+      transitionDuration: 125,
+      swipe: true,
+      ...options,
+    } as BaseOptions<ValueType>);
     return () => st.cleanup();
   };
 
@@ -323,6 +330,7 @@ class Slidytabs {
   private value: ValueType;
   private onValueChange?: (value: ValueType) => void;
   private resizeObserver: ResizeObserver;
+  private down: number | null;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     this.root = root;
@@ -337,6 +345,10 @@ class Slidytabs {
     const slidytab = list.querySelector<HTMLDivElement>("div[slidytab]");
     this.slidytab = slidytab || this.setupSlidytab();
     list.addEventListener("pointerdown", this.onpointerdown);
+    if (options.swipe) {
+      list.addEventListener("pointermove", this.onpointermove);
+      list.addEventListener("pointerup", this.onpointerup);
+    }
     this.onValueChange = options.onValueChange;
     if (options.value != null) {
       this.value = options.value;
@@ -346,6 +358,7 @@ class Slidytabs {
       this.setValue(this.activeIndex);
     }
     this.resizeObserver = this.setupResizeObserver();
+    this.down = null;
   }
 
   private removeActiveStyles = () => {
@@ -362,14 +375,52 @@ class Slidytabs {
     const pressedIndex = this.triggers.indexOf(e.target);
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.getEndpoints();
-    const down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
+    this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     const newValue = Array.isArray(this.value)
-      ? (this.value.with(down, pressedIndex) as [number, number])
+      ? (this.value.with(this.down, pressedIndex) as [number, number])
       : pressedIndex;
+    if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
+      return;
+    }
+    this.setValue(newValue);
+    this.onValueChange?.(newValue);
+    this.list.setPointerCapture(e.pointerId);
+  };
+
+  onpointermove = (e: PointerEvent) => {
+    const { orientation } = this.root.dataset;
+    if (
+      this.down === null ||
+      (orientation !== "horizontal" && orientation !== "vertical")
+    ) {
+      return;
+    }
+    const { x, y, width, height } = this.list.getBoundingClientRect();
+    const point = {
+      horizontal: [e.clientX, y + height / 2] as const,
+      vertical: [x + width / 2, e.clientY] as const,
+    }[orientation];
+    const trigger = document.elementFromPoint(...point)?.closest("button");
+    if (!trigger) {
+      return;
+    }
+    const i = this.triggers.indexOf(trigger);
+    if (i < 0) {
+      return;
+    }
+
+    const newValue = Array.isArray(this.value)
+      ? (this.value.with(this.down, i) as [number, number])
+      : i;
+    if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
+      return;
+    }
     this.setValue(newValue);
     this.onValueChange?.(newValue);
   };
-
+  onpointerup = () => {
+    this.down = null;
+  };
   get activeIndex() {
     const activeElement = this.root.querySelector<HTMLButtonElement>(
       "button[data-state=active]"
