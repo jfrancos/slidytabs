@@ -347,7 +347,6 @@ class Slidytabs {
     list.addEventListener("pointerdown", this.onpointerdown);
     if (options.swipe) {
       list.addEventListener("pointermove", this.onpointermove);
-      list.addEventListener("pointerup", this.onpointerup);
     }
     this.onValueChange = options.onValueChange;
     if (options.value != null) {
@@ -388,6 +387,9 @@ class Slidytabs {
   };
 
   onpointermove = (e: PointerEvent) => {
+    if (e.buttons === 0) {
+      this.down = null;
+    }
     const { orientation } = this.root.dataset;
     if (
       this.down === null ||
@@ -417,9 +419,6 @@ class Slidytabs {
     }
     this.setValue(newValue);
     this.onValueChange?.(newValue);
-  };
-  onpointerup = () => {
-    this.down = null;
   };
   get activeIndex() {
     const activeElement = this.root.querySelector<HTMLButtonElement>(
