@@ -398,9 +398,9 @@ class Slidytabs {
     return this.slidytab;
   };
 
-  setValue = (value: ValueType) => {
+  setValue = async (value: ValueType) => {
     this.value = value;
-    console.log(value);
+    // console.log(value);
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
     }
@@ -413,6 +413,15 @@ class Slidytabs {
       bottom: `${parentRect.bottom - leftRect.bottom}px`,
       right: `${parentRect.right - rightRect.right}px`,
     });
+    // wait till after the framework has updated data-state
+    await new Promise(requestAnimationFrame);
+    for (let i = 0; i < this.triggers.length; i++) {
+      if (i >= this.valueDuple[0] && i <= this.valueDuple[1])
+        this.triggers[i].setAttribute("data-state", "active");
+      else {
+        this.triggers[i].setAttribute("data-state", "inactive");
+      }
+    }
   };
 
   get valueDuple() {
