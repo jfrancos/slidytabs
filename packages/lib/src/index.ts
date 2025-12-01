@@ -367,6 +367,7 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
+    // button or child of button
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -378,10 +379,11 @@ class Slidytabs {
     const newValue = Array.isArray(this.value)
       ? (this.value.with(this.down, pressedIndex) as [number, number])
       : pressedIndex;
+    // should consolidate this as it is exactly the same in
+    // onpointermove
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
-    console.log(newValue);
     this.setValue(newValue);
     this.onValueChange?.(newValue);
     this.list.setPointerCapture(e.pointerId);
