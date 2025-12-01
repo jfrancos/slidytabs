@@ -367,11 +367,11 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
-    if (!(e.target instanceof HTMLButtonElement)) {
+    const button = (e.target as Element).closest("button");
+    if (!button) {
       return;
     }
-    // explain this
-    const pressedIndex = this.triggers.indexOf(e.target);
+    const pressedIndex = this.triggers.indexOf(button);
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.getEndpoints();
     this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
@@ -381,6 +381,7 @@ class Slidytabs {
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
+    console.log(newValue);
     this.setValue(newValue);
     this.onValueChange?.(newValue);
     this.list.setPointerCapture(e.pointerId);
