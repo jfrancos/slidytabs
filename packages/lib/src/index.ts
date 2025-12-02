@@ -2,8 +2,11 @@ import { Attachment } from "svelte/attachments";
 import { twMerge } from "tailwind-merge";
 import { setupIndicator } from "./util";
 // import { escapeSelector as _escapeSelector } from "@unocss/core";
+import { safelistGeneralizedClasses } from "./util";
 
-const transitionDuration = "125ms";
+safelistGeneralizedClasses();
+
+const transitionDuration = "200ms";
 
 const triggersAddedStyles: Partial<CSSStyleDeclaration> = {
   backgroundColor: "transparent",
@@ -12,6 +15,8 @@ const triggersAddedStyles: Partial<CSSStyleDeclaration> = {
   filter: "unset",
   outlineColor: "transparent",
   borderColor: "transparent",
+  // outlineColor: "unset",
+  // borderColor: "unset",
   zIndex: "10",
   touchAction: "none",
 };
@@ -88,10 +93,6 @@ export const slidyTabs = (tabList: HTMLElement | null) => {
   tabList.append(slidyTab);
   tabList.style.position = "relative";
 
-  const callback: MutationCallback = (mutationList) => {
-    mutationList.map(({ target }) => target).forEach(syncTab);
-  };
-
   const syncTab = (tab: Node) => {
     if (
       !(tab instanceof Element && tab.getAttribute("data-state") === "active")
@@ -106,7 +107,9 @@ export const slidyTabs = (tabList: HTMLElement | null) => {
     slidyTab.style.height = `${childRect.height}px`;
     slidyTab.style.transform = `translate3d(${left}px, ${top}px, 0)`;
   };
-
+  const callback: MutationCallback = (mutationList) => {
+    mutationList.map(({ target }) => target).forEach(syncTab);
+  };
   const dataStateObserver = new MutationObserver(callback);
   dataStateObserver.observe(tabList, {
     subtree: true,
@@ -357,6 +360,7 @@ class Slidytabs {
       this.setValue(this.activeIndex);
     }
     this.resizeObserver = this.setupResizeObserver();
+    this.setupDataStateObserver();
     this.down = null;
   }
 
@@ -368,6 +372,8 @@ class Slidytabs {
 
   private onpointerdown = (e: PointerEvent) => {
     // button or child of button
+    // this.trigger.focus();
+
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -457,7 +463,6 @@ class Slidytabs {
 
   setValue = async (value: ValueType) => {
     this.value = value;
-    // console.log(value);
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
     }
@@ -503,6 +508,25 @@ class Slidytabs {
       this.triggers[x0].offsetLeft,
       this.triggers[x1].offsetLeft + this.triggers[x1].offsetWidth,
     ];
+  };
+
+  setupDataStateObserver = () => {
+    const callback: MutationCallback = (mutationList) => {
+      mutationList
+        .map(({ target }) => target)
+        .forEach((trigger) => {
+          // const index = this.triggers.indexOf(trigger as HTMLButtonElement);
+          if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
+            this.setValue(this.activeIndex);
+          }
+          // console.log(index);
+        });
+    };
+    const dataStateObserver = new MutationObserver(callback);
+    dataStateObserver.observe(this.list, {
+      subtree: true,
+      attributeFilter: ["data-state"],
+    });
   };
 
   cleanup() {

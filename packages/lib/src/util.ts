@@ -20,7 +20,7 @@ import { escapeSelector as _escapeSelector } from "@unocss/core";
 // preset-mini/src/_variants/data.ts matching "-data"
 // rule-utils/src/pseudo.ts
 
-const safelistGeneralizedClasses = () => {
+export const safelistGeneralizedClasses = () => {
   // changed `replace` to `replaceAll`??
 
   const focusSelector = ":focus-visible";
@@ -41,18 +41,25 @@ const safelistGeneralizedClasses = () => {
             ![focusSelector, activeSelector].includes(
               item.selectorText.trim()
             ) &&
-            (item.selectorText.includes(focusSelector) ||
-              item.selectorText.includes(activeSelector))
+            item.selectorText.includes(focusSelector)
+          // (item.selectorText.includes(focusSelector) ||
+          //   item.selectorText.includes(activeSelector))
         )
-        .forEach(({ cssText }) => {
-          console.log("\n", cssText);
-          const newRule = cssText
-            .replaceAll(escapedFocusPrefix, "")
-            .replaceAll(focusSelector, "")
-            .replaceAll(escapedActivePrefix, "")
-            .replaceAll(activeSelector, "");
-          console.log("\n", newRule);
-          styleSheet.insertRule(newRule);
+        .forEach((sheet) => {
+          // .forEach(({ cssText }) => {
+          console.log(sheet);
+          if (!(sheet instanceof CSSStyleRule)) {
+            return;
+          }
+          console.log([...sheet.styleMap.entries()]);
+          //   console.log("\n", cssText);
+          //   const newRule = cssText
+          // .replaceAll(escapedFocusPrefix, "")
+          // .replaceAll(focusSelector, "")
+          // .replaceAll(escapedActivePrefix, "")
+          // .replaceAll(activeSelector, "");
+          //   console.log("\n", newRule);
+          //   styleSheet.insertRule(newRule);
         });
     });
   }
@@ -75,10 +82,10 @@ export const setupIndicator = (tablistElement: HTMLElement) => {
     throw "Tabs Trigger <button /> not found";
   }
 
-//   const triggerBaseClasses = [...triggerElement.classList].filter(
-//     (item) => !item.includes(focusPrefix)
-//   );
-  const triggerBaseClasses = [...triggerElement.classList]
+  //   const triggerBaseClasses = [...triggerElement.classList].filter(
+  //     (item) => !item.includes(focusPrefix)
+  //   );
+  const triggerBaseClasses = [...triggerElement.classList];
   tablistElement.style.position = "relative";
   const fakeIndicatorElement = document.createElement("div");
   Object.assign(fakeIndicatorElement.style, slidyTabStyles);
