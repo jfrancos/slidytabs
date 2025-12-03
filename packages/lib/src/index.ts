@@ -3,18 +3,21 @@ import { twMerge } from "tailwind-merge";
 import { setupIndicator } from "./util";
 // import { escapeSelector as _escapeSelector } from "@unocss/core";
 import { safelistGeneralizedClasses } from "./util";
+import { presetWind4, theme } from "@unocss/preset-wind4";
 
-safelistGeneralizedClasses();
+// console.log(presetWind4());
+// console.log(theme);
+// safelistGeneralizedClasses();
 
 const transitionDuration = "200ms";
 
 const triggersAddedStyles: Partial<CSSStyleDeclaration> = {
-  backgroundColor: "transparent",
-  background: "unset",
-  boxShadow: "unset",
-  filter: "unset",
-  outlineColor: "transparent",
-  borderColor: "transparent",
+  // backgroundColor: "transparent",
+  // background: "unset",
+  // boxShadow: "unset",
+  // filter: "unset",
+  // outlineColor: "transparent",
+  // borderColor: "transparent",
   // outlineColor: "unset",
   // borderColor: "unset",
   zIndex: "10",
@@ -334,6 +337,7 @@ class Slidytabs {
   private onValueChange?: (value: ValueType) => void;
   private resizeObserver: ResizeObserver;
   private down: number | null;
+  private classes;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     this.root = root;
@@ -344,6 +348,7 @@ class Slidytabs {
       throw "no list";
     }
     this.list = list;
+    this.classes = this.categorizeClasses();
     this.removeActiveStyles();
     const slidytab = list.querySelector<HTMLDivElement>("div[slidytab]");
     this.slidytab = slidytab || this.setupSlidytab();
@@ -359,13 +364,41 @@ class Slidytabs {
       this.value = this.activeIndex;
       this.setValue(this.activeIndex);
     }
+    safelistGeneralizedClasses();
     this.resizeObserver = this.setupResizeObserver();
     this.setupDataStateObserver();
     this.down = null;
+    console.log(this.classes);
   }
+
+  private categorizeClasses = () => {
+    const textClasses =
+      /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
+
+    const activeVariant = "data-[state=active]:";
+    const focusVariant = "focus-visible:";
+    const classList = [...this.trigger.classList];
+    const active = classList
+      .filter((item) => item.includes(activeVariant))
+      .map((item) => item.replace(activeVariant, ""));
+    const focus = classList
+      .filter((item) => item.includes(focusVariant))
+      .map((item) => item.replace(focusVariant, ""));
+    const base = classList.filter(
+      (item) => !(item.includes(focusVariant) || item.includes(activeVariant))
+    );
+    const activeText = active.filter((item) => item.match(textClasses));
+    const activeIndicator = active.filter((item) => !item.match(textClasses));
+    const focusText = focus.filter((item) => item.match(textClasses));
+    const focusIndicator = focus.filter((item) => !item.match(textClasses));
+    console.log(base);
+    return { activeText, activeIndicator, focusText, focusIndicator, base };
+  };
 
   private removeActiveStyles = () => {
     for (const trigger of this.triggers) {
+      // Object.assign(trigger.style, triggersAddedStyles);
+      trigger.className = this.classes.base.join(" ");
       Object.assign(trigger.style, triggersAddedStyles);
     }
   };
@@ -453,10 +486,14 @@ class Slidytabs {
       height: "unset",
     };
     Object.assign(this.slidytab.style, slidytabStyles);
-    const triggerBaseClasses = this.trigger.classList;
+    this.slidytab.className = [
+      ...this.classes.base,
+      ...this.classes.activeIndicator,
+    ].join(" ");
+    // const triggerBaseClasses = this.trigger.classList;
     this.list.style.position = "relative";
-    this.slidytab.dataset.state = "active";
-    this.slidytab.className = [...triggerBaseClasses].join(" ");
+    // this.slidytab.dataset.state = "active";
+    // this.slidytab.className = [...triggerBaseClasses].join(" ");
     this.list.append(this.slidytab);
     return this.slidytab;
   };
@@ -476,13 +513,16 @@ class Slidytabs {
       right: `${parentRect.right - rightRect.right}px`,
     });
     // wait till after the framework has updated data-state
-    await new Promise(requestAnimationFrame);
+    // await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.triggers.length; i++) {
-      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
-        this.triggers[i].dataset.state = "active";
-      } else {
-        this.triggers[i].dataset.state = "inactive";
-      }
+      // THIS SHOULDN'T GO HERE
+      // Object.assign(this.triggers[i].style, triggersAddedStyles);
+      // this.triggers[i].style = triggersAddedStyles;
+      // if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
+      //   // this.triggers[i].dataset.state = "active";
+      // } else {
+      //   // this.triggers[i].dataset.state = "inactive";
+      // }
     }
   };
 
@@ -511,19 +551,12 @@ class Slidytabs {
   };
 
   setupDataStateObserver = () => {
-    const callback: MutationCallback = (mutationList) => {
-      mutationList
-        .map(({ target }) => target)
-        .forEach((trigger) => {
-          // const index = this.triggers.indexOf(trigger as HTMLButtonElement);
-          if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
-            this.setValue(this.activeIndex);
-          }
-          // console.log(index);
-        });
-    };
-    const dataStateObserver = new MutationObserver(callback);
-    dataStateObserver.observe(this.list, {
+    // this works but messses with controlled component
+    const dataStateObserver = new MutationObserver(() => {
+      if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
+        this.setValue(this.activeIndex);
+      }
+    }).observe(this.list, {
       subtree: true,
       attributeFilter: ["data-state"],
     });

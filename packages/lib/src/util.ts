@@ -41,25 +41,32 @@ export const safelistGeneralizedClasses = () => {
             ![focusSelector, activeSelector].includes(
               item.selectorText.trim()
             ) &&
-            item.selectorText.includes(focusSelector)
-          // (item.selectorText.includes(focusSelector) ||
-          //   item.selectorText.includes(activeSelector))
+            // item.selectorText.includes(focusSelector)
+            (item.selectorText.includes(focusSelector) ||
+              item.selectorText.includes(activeSelector))
         )
-        .forEach((sheet) => {
-          // .forEach(({ cssText }) => {
-          console.log(sheet);
-          if (!(sheet instanceof CSSStyleRule)) {
-            return;
-          }
-          console.log([...sheet.styleMap.entries()]);
-          //   console.log("\n", cssText);
-          //   const newRule = cssText
-          // .replaceAll(escapedFocusPrefix, "")
-          // .replaceAll(focusSelector, "")
-          // .replaceAll(escapedActivePrefix, "")
-          // .replaceAll(activeSelector, "");
-          //   console.log("\n", newRule);
-          //   styleSheet.insertRule(newRule);
+        // .forEach((sheet) => {
+        .forEach(({ cssText }) => {
+          //   console.log(sheet);
+          // if (!(sheet instanceof CSSStyleRule)) {
+          //   return;
+          // }
+          // const { cssText, selectorText } = sheet;
+          //   console.log({ cssText, selectorText });
+
+          // console.log(selectorText);
+          // console.log(cssText.slice(selectorText.length));
+          // console.log("\n");
+
+          //   console.log([...sheet.styleMap.entries()]);
+          console.log("\n", cssText);
+          const newRule = cssText
+            .replaceAll(escapedFocusPrefix, "")
+            .replaceAll(focusSelector, "")
+            .replaceAll(escapedActivePrefix, "")
+            .replaceAll(activeSelector, "");
+          console.log("\n", newRule);
+          styleSheet.insertRule(newRule);
         });
     });
   }
