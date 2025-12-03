@@ -7,7 +7,7 @@ import { presetWind4, theme } from "@unocss/preset-wind4";
 
 // console.log(presetWind4());
 // console.log(theme);
-// safelistGeneralizedClasses();
+safelistGeneralizedClasses();
 
 const transitionDuration = "200ms";
 
@@ -335,7 +335,7 @@ class Slidytabs {
   private slidytab;
   private value: ValueType;
   private onValueChange?: (value: ValueType) => void;
-  private resizeObserver: ResizeObserver;
+  private resizeObserver;
   private down: number | null;
   private classes;
 
@@ -356,6 +356,7 @@ class Slidytabs {
     if (options.swipe) {
       list.addEventListener("pointermove", this.onpointermove);
     }
+
     this.onValueChange = options.onValueChange;
     if (options.value != null) {
       this.value = options.value;
@@ -364,12 +365,44 @@ class Slidytabs {
       this.value = this.activeIndex;
       this.setValue(this.activeIndex);
     }
-    safelistGeneralizedClasses();
+    // safelistGeneralizedClasses();
     this.resizeObserver = this.setupResizeObserver();
     this.setupDataStateObserver();
     this.down = null;
     console.log(this.classes);
+    this.setupFakeFocus();
   }
+
+  private onfocus = ({ currentTarget }: Event) => {
+    if (
+      !(
+        currentTarget instanceof Element &&
+        currentTarget.matches(":focus-visible")
+      )
+    ) {
+      return;
+    }
+    this.slidytab.className = [
+      ...this.classes.base,
+      ...this.classes.activeIndicator,
+      ...this.classes.focusIndicator,
+    ].join(" ");
+  };
+
+  private onblur = () => {
+    this.slidytab.className = [
+      ...this.classes.base,
+      ...this.classes.activeIndicator,
+    ].join(" ");
+  };
+
+  private setupFakeFocus = () => {
+    for (const trigger of this.triggers) {
+      trigger.addEventListener("focus", this.onfocus);
+      trigger.addEventListener("blur", this.onblur);
+      trigger.addEventListener("keydown", this.onfocus, true);
+    }
+  };
 
   private categorizeClasses = () => {
     const textClasses =
@@ -396,10 +429,16 @@ class Slidytabs {
   };
 
   private removeActiveStyles = () => {
+    const triggerStyles: Partial<CSSStyleDeclaration> = {
+      zIndex: "10",
+      touchAction: "none",
+      outline: "unset",
+    };
     for (const trigger of this.triggers) {
       // Object.assign(trigger.style, triggersAddedStyles);
       trigger.className = this.classes.base.join(" ");
-      Object.assign(trigger.style, triggersAddedStyles);
+
+      Object.assign(trigger.style, triggerStyles);
     }
   };
 
@@ -484,6 +523,7 @@ class Slidytabs {
       transitionProperty: "all",
       position: "absolute",
       height: "unset",
+      outlineColor: "transparent",
     };
     Object.assign(this.slidytab.style, slidytabStyles);
     this.slidytab.className = [
