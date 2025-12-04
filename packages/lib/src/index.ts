@@ -9,6 +9,7 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
+const defaultTransitionDuration = 150;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
@@ -20,7 +21,7 @@ export const slidytabs =
     let instance = instances.get(tabroot);
     if (!instance) {
       instance = new Slidytabs(tabroot, {
-        transitionDuration: 150,
+        transitionDuration: defaultTransitionDuration,
         swipe: true,
         ...options,
       } as BaseOptions<ValueType>);
@@ -28,16 +29,6 @@ export const slidytabs =
     } else if (options.value != null) {
       instance.setValue(options.value);
     }
-    // const st = new Slidytabs(tabroot, {
-    //   transitionDuration: 125,
-    //   swipe: true,
-    //   ...options,
-    // } as BaseOptions<ValueType>);
-    // return () => instance.destroy();
-    return () => {
-      // return { update: () => "hillo" };
-      // console.log("destroy");
-    };
   };
 
 export const rangetabs =
@@ -46,12 +37,17 @@ export const rangetabs =
     if (tabroot === null) {
       return;
     }
-    const st = new Slidytabs(tabroot, {
-      transitionDuration: 150,
-      swipe: true,
-      ...options,
-    } as BaseOptions<ValueType>);
-    return () => st.destroy();
+    let instance = instances.get(tabroot);
+    if (!instance) {
+      instance = new Slidytabs(tabroot, {
+        transitionDuration: defaultTransitionDuration,
+        swipe: true,
+        ...options,
+      } as BaseOptions<ValueType>);
+      instances.set(tabroot, instance);
+    } else if (options.value != null) {
+      instance.setValue(options.value);
+    }
   };
 
 class Slidytabs {
@@ -85,6 +81,7 @@ class Slidytabs {
     this.setTriggerStyles();
     this.slidytab = this.setupSlidytab();
     list.addEventListener("pointerdown", this.onpointerdown);
+    list.addEventListener("pointerup", this.onpointerup);
     if (options.swipe) {
       list.addEventListener("pointermove", this.onpointermove);
     }
@@ -166,9 +163,6 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
-    // button or child of button
-    // this.trigger.focus();
-
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -194,12 +188,14 @@ class Slidytabs {
     return `${this._transitionDuration}ms`;
   }
 
+  private onpointerup = () => {
+    this.slidytab.style.transitionDuration = this.transitionDuration;
+    this.down = null;
+  };
+
   private onpointermove = async (e: PointerEvent) => {
     if (e.buttons === 0) {
-      // need this for when browser weirdly doesn't pick up on
-      // pointer up, so no point in also putting it in a onpointerup
-      this.slidytab.style.transitionDuration = this.transitionDuration;
-      this.down = null;
+      this.onpointerup();
     }
     const { orientation } = this.root.dataset;
     if (
@@ -230,7 +226,7 @@ class Slidytabs {
     }
     this.slidytab.style.transitionDuration = "0ms";
     trigger.click();
-    this.setValue(this.value);
+    this.setValue(newValue);
     this.onValueChange?.(newValue);
   };
 
