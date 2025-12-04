@@ -1,9 +1,7 @@
 import { Attachment } from "svelte/attachments";
 import { twMerge } from "tailwind-merge";
 import { setupIndicator } from "./util";
-// import { escapeSelector as _escapeSelector } from "@unocss/core";
 import { safelistGeneralizedClasses } from "./util";
-import { presetWind4, theme } from "@unocss/preset-wind4";
 
 // console.log(presetWind4());
 // console.log(theme);
@@ -355,7 +353,8 @@ class Slidytabs {
   private classes;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
-    console.log("hi");
+    // can we mess with stylesheets just once or could new styles get loaded
+    // that we miss if we only process them on file load
     this.root = root;
     this.triggers = [...this.root.querySelectorAll("button")];
     this.trigger = this.triggers[0];
@@ -364,15 +363,13 @@ class Slidytabs {
       throw "no list";
     }
     this.list = list;
-    this.classes = this.categorizeClasses();
-    this.removeActiveStyles();
-    const slidytab = list.querySelector<HTMLDivElement>("div[slidytab]");
-    this.slidytab = slidytab || this.setupSlidytab();
+    this.classes = this.categorizeClasses([...this.trigger.classList]);
+    this.setTriggerStyles();
+    this.slidytab = this.setupSlidytab();
     list.addEventListener("pointerdown", this.onpointerdown);
     if (options.swipe) {
       list.addEventListener("pointermove", this.onpointermove);
     }
-
     this.onValueChange = options.onValueChange;
     if (options.value != null) {
       this.value = options.value;
@@ -381,11 +378,9 @@ class Slidytabs {
       this.value = this.activeIndex;
       this.setValue(this.activeIndex);
     }
-    // safelistGeneralizedClasses();
     this.resizeObserver = this.setupResizeObserver();
     this.dataStateObserver = this.setupDataStateObserver();
     this.down = null;
-    // console.log(this.classes);
     this.setupFakeFocus();
   }
 
@@ -406,7 +401,6 @@ class Slidytabs {
   };
 
   private onblur = () => {
-    console.log("blur");
     this.slidytab.className = [
       ...this.classes.base,
       ...this.classes.activeIndicator,
@@ -421,13 +415,11 @@ class Slidytabs {
     }
   };
 
-  private categorizeClasses = () => {
+  private categorizeClasses = (classList: string[]) => {
     const textClasses =
       /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
-
     const activeVariant = "data-[state=active]:";
     const focusVariant = "focus-visible:";
-    const classList = [...this.trigger.classList];
     const active = classList
       .filter((item) => item.includes(activeVariant))
       .map((item) => item.replace(activeVariant, ""));
@@ -441,21 +433,16 @@ class Slidytabs {
     const activeIndicator = active.filter((item) => !item.match(textClasses));
     const focusText = focus.filter((item) => item.match(textClasses));
     const focusIndicator = focus.filter((item) => !item.match(textClasses));
-    // console.log(base);
-    console.log(activeIndicator);
     return { activeText, activeIndicator, focusText, focusIndicator, base };
   };
 
-  private removeActiveStyles = () => {
+  private setTriggerStyles = () => {
     const triggerStyles: Partial<CSSStyleDeclaration> = {
       zIndex: "10",
       touchAction: "none",
       outline: "unset",
     };
     for (const trigger of this.triggers) {
-      // Object.assign(trigger.style, triggersAddedStyles);
-      trigger.className = this.classes.base.join(" ");
-
       Object.assign(trigger.style, triggerStyles);
     }
   };
@@ -485,7 +472,7 @@ class Slidytabs {
     this.list.setPointerCapture(e.pointerId);
   };
 
-  onpointermove = (e: PointerEvent) => {
+  private onpointermove = (e: PointerEvent) => {
     if (e.buttons === 0) {
       // need this for when browser weirdly doesn't pick up on
       // pointer up, so no point in also putting it in a onpointerup
@@ -548,10 +535,7 @@ class Slidytabs {
       ...this.classes.base,
       ...this.classes.activeIndicator,
     ].join(" ");
-    // const triggerBaseClasses = this.trigger.classList;
     this.list.style.position = "relative";
-    // this.slidytab.dataset.state = "active";
-    // this.slidytab.className = [...triggerBaseClasses].join(" ");
     this.list.append(this.slidytab);
     return this.slidytab;
   };
@@ -573,12 +557,7 @@ class Slidytabs {
     // wait till after the framework has updated data-state
     // await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.triggers.length; i++) {
-      // console.log(i);
-      // THIS SHOULDN'T GO HERE
-      // Object.assign(this.triggers[i].style, triggersAddedStyles);
-      // this.triggers[i].style = triggersAddedStyles;
       if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
-        // this.triggers[i].dataset.state = "active";
         this.triggers[i].className = [
           ...this.classes.base,
           ...this.classes.activeText,
