@@ -1,8 +1,6 @@
-const transitionDuration = "200ms";
-
-const instances = new WeakMap<HTMLElement, Slidytabs>();
-
 type ValueType = number | [number, number];
+type SlidyOptions = BaseOptions<number>;
+type RangeOptions = BaseOptions<[number, number]>;
 
 interface BaseOptions<T extends ValueType> {
   value?: T;
@@ -11,8 +9,7 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-type SlidyOptions = BaseOptions<number>;
-type RangeOptions = BaseOptions<[number, number]>;
+const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
   (options: SlidyOptions = {}) =>
@@ -23,7 +20,7 @@ export const slidytabs =
     let instance = instances.get(tabroot);
     if (!instance) {
       instance = new Slidytabs(tabroot, {
-        transitionDuration: 125,
+        transitionDuration: 150,
         swipe: true,
         ...options,
       } as BaseOptions<ValueType>);
@@ -50,7 +47,7 @@ export const rangetabs =
       return;
     }
     const st = new Slidytabs(tabroot, {
-      transitionDuration: 125,
+      transitionDuration: 150,
       swipe: true,
       ...options,
     } as BaseOptions<ValueType>);
@@ -69,6 +66,7 @@ class Slidytabs {
   private dataStateObserver;
   private down: number | null;
   private classes;
+  private _transitionDuration;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     // can we mess with stylesheets just once or could new styles get loaded
@@ -77,6 +75,7 @@ class Slidytabs {
     this.root = root;
     this.triggers = [...this.root.querySelectorAll("button")];
     this.trigger = this.triggers[0];
+    this._transitionDuration = options.transitionDuration;
     const list = this.trigger.parentElement;
     if (!list) {
       throw "no list";
@@ -191,11 +190,15 @@ class Slidytabs {
     this.list.setPointerCapture(e.pointerId);
   };
 
+  private get transitionDuration() {
+    return `${this._transitionDuration}ms`;
+  }
+
   private onpointermove = async (e: PointerEvent) => {
     if (e.buttons === 0) {
       // need this for when browser weirdly doesn't pick up on
       // pointer up, so no point in also putting it in a onpointerup
-      this.slidytab.style.transitionDuration = transitionDuration;
+      this.slidytab.style.transitionDuration = this.transitionDuration;
       this.down = null;
     }
     const { orientation } = this.root.dataset;
@@ -245,7 +248,7 @@ class Slidytabs {
     this.slidytab = document.createElement("div");
     this.slidytab.setAttribute("slidytab", "");
     const slidytabStyles: Partial<CSSStyleDeclaration> = {
-      transitionDuration,
+      transitionDuration: this.transitionDuration,
       transitionProperty: "all",
       position: "absolute",
       height: "unset",
@@ -299,7 +302,7 @@ class Slidytabs {
       this.slidytab.style.transitionDuration = "0ms";
       this.setValue(this.value);
       await new Promise(requestAnimationFrame);
-      this.slidytab.style.transitionDuration = transitionDuration;
+      this.slidytab.style.transitionDuration = this.transitionDuration;
     });
     resizeObserver.observe(this.list);
     return resizeObserver;
