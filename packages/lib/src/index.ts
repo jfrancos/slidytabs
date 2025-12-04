@@ -286,6 +286,7 @@ interface SlidyTabProps {
 // const getTriggers = (tablist: HTMLElement) => {
 //   return [...tablist.querySelectorAll("button")];
 // };
+const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 type ValueType = number | [number, number];
 
@@ -301,30 +302,43 @@ type RangeOptions = BaseOptions<[number, number]>;
 
 export const slidytabs =
   (options: SlidyOptions = {}) =>
-  (tablist: HTMLElement | null) => {
-    if (tablist === null) {
+  (tabroot: HTMLElement | null) => {
+    if (tabroot === null) {
       return;
     }
-    const st = new Slidytabs(tablist, {
-      transitionDuration: 125,
-      swipe: true,
-      ...options,
-    } as BaseOptions<ValueType>);
-    return () => st.cleanup();
+    let instance = instances.get(tabroot);
+    if (!instance) {
+      instance = new Slidytabs(tabroot, {
+        transitionDuration: 125,
+        swipe: true,
+        ...options,
+      } as BaseOptions<ValueType>);
+      instances.set(tabroot, instance);
+    }
+    // const st = new Slidytabs(tabroot, {
+    //   transitionDuration: 125,
+    //   swipe: true,
+    //   ...options,
+    // } as BaseOptions<ValueType>);
+    // return () => instance.destroy();
+    return () => {
+      // return { update: () => "hillo" };
+      // console.log("destroy");
+    };
   };
 
 export const rangetabs =
   (options: RangeOptions = {}) =>
-  (tablist: HTMLElement | null) => {
-    if (tablist === null) {
+  (tabroot: HTMLElement | null) => {
+    if (tabroot === null) {
       return;
     }
-    const st = new Slidytabs(tablist, {
+    const st = new Slidytabs(tabroot, {
       transitionDuration: 125,
       swipe: true,
       ...options,
     } as BaseOptions<ValueType>);
-    return () => st.cleanup();
+    return () => st.destroy();
   };
 
 class Slidytabs {
@@ -336,10 +350,12 @@ class Slidytabs {
   private value: ValueType;
   private onValueChange?: (value: ValueType) => void;
   private resizeObserver;
+  private dataStateObserver;
   private down: number | null;
   private classes;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
+    console.log("hi");
     this.root = root;
     this.triggers = [...this.root.querySelectorAll("button")];
     this.trigger = this.triggers[0];
@@ -367,9 +383,9 @@ class Slidytabs {
     }
     // safelistGeneralizedClasses();
     this.resizeObserver = this.setupResizeObserver();
-    this.setupDataStateObserver();
+    this.dataStateObserver = this.setupDataStateObserver();
     this.down = null;
-    console.log(this.classes);
+    // console.log(this.classes);
     this.setupFakeFocus();
   }
 
@@ -390,6 +406,7 @@ class Slidytabs {
   };
 
   private onblur = () => {
+    console.log("blur");
     this.slidytab.className = [
       ...this.classes.base,
       ...this.classes.activeIndicator,
@@ -424,7 +441,8 @@ class Slidytabs {
     const activeIndicator = active.filter((item) => !item.match(textClasses));
     const focusText = focus.filter((item) => item.match(textClasses));
     const focusIndicator = focus.filter((item) => !item.match(textClasses));
-    console.log(base);
+    // console.log(base);
+    console.log(activeIndicator);
     return { activeText, activeIndicator, focusText, focusIndicator, base };
   };
 
@@ -555,14 +573,19 @@ class Slidytabs {
     // wait till after the framework has updated data-state
     // await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.triggers.length; i++) {
+      // console.log(i);
       // THIS SHOULDN'T GO HERE
       // Object.assign(this.triggers[i].style, triggersAddedStyles);
       // this.triggers[i].style = triggersAddedStyles;
-      // if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
-      //   // this.triggers[i].dataset.state = "active";
-      // } else {
-      //   // this.triggers[i].dataset.state = "inactive";
-      // }
+      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
+        // this.triggers[i].dataset.state = "active";
+        this.triggers[i].className = [
+          ...this.classes.base,
+          ...this.classes.activeText,
+        ].join(" ");
+      } else {
+        this.triggers[i].className = [...this.classes.base].join(" ");
+      }
     }
   };
 
@@ -596,15 +619,24 @@ class Slidytabs {
       if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
         this.setValue(this.activeIndex);
       }
-    }).observe(this.list, {
+    });
+    dataStateObserver.observe(this.list, {
       subtree: true,
       attributeFilter: ["data-state"],
     });
+    return dataStateObserver;
   };
 
-  cleanup() {
+  destroy() {
     this.list.removeEventListener("pointerdown", this.onpointerdown);
+    // this.list.removeEventListener("pointermove", this.onpointermove);
     this.resizeObserver.disconnect();
+    this.dataStateObserver.disconnect();
+    for (const trigger of this.triggers) {
+      trigger.removeEventListener("focus", this.onfocus);
+      trigger.removeEventListener("blur", this.onblur);
+      trigger.removeEventListener("keydown", this.onfocus, true);
+    }
   }
 }
 
