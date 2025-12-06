@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 type ValueType = number | [number, number];
 type SlidyOptions = BaseOptions<number>;
 type RangeOptions = BaseOptions<[number, number]>;
@@ -9,7 +11,7 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-const defaultTransitionDuration = 150;
+const defaultTransitionDuration = 1500;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
@@ -99,37 +101,6 @@ class Slidytabs {
     this.setupFakeFocus();
   }
 
-  private onfocus = ({ currentTarget }: Event) => {
-    if (
-      !(
-        currentTarget instanceof Element &&
-        currentTarget.matches(":focus-visible")
-      )
-    ) {
-      return;
-    }
-    this.slidytab.className = [
-      ...this.classes.base,
-      ...this.classes.activeIndicator,
-      ...this.classes.focusIndicator,
-    ].join(" ");
-  };
-
-  private onblur = () => {
-    this.slidytab.className = [
-      ...this.classes.base,
-      ...this.classes.activeIndicator,
-    ].join(" ");
-  };
-
-  private setupFakeFocus = () => {
-    for (const trigger of this.triggers) {
-      trigger.addEventListener("focus", this.onfocus);
-      trigger.addEventListener("blur", this.onblur);
-      trigger.addEventListener("keydown", this.onfocus, true);
-    }
-  };
-
   private categorizeClasses = (classList: string[]) => {
     const textClasses =
       /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
@@ -151,6 +122,37 @@ class Slidytabs {
     return { activeText, activeIndicator, focusText, focusIndicator, base };
   };
 
+  private onfocus = ({ currentTarget }: Event) => {
+    if (
+      !(
+        currentTarget instanceof Element &&
+        currentTarget.matches(":focus-visible")
+      )
+    ) {
+      return;
+    }
+    this.slidytab.className = twMerge(
+      this.classes.base,
+      this.classes.activeIndicator,
+      this.classes.focusIndicator
+    );
+  };
+
+  private onblur = () => {
+    this.slidytab.className = twMerge(
+      this.classes.base,
+      this.classes.activeIndicator
+    );
+  };
+
+  private setupFakeFocus = () => {
+    for (const trigger of this.triggers) {
+      trigger.addEventListener("focus", this.onfocus);
+      trigger.addEventListener("blur", this.onblur);
+      trigger.addEventListener("keydown", this.onfocus, true);
+    }
+  };
+
   private setTriggerStyles = () => {
     const triggerStyles: Partial<CSSStyleDeclaration> = {
       zIndex: "10",
@@ -163,6 +165,7 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
+    console.log("down");
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -194,6 +197,7 @@ class Slidytabs {
   };
 
   private onpointermove = async (e: PointerEvent) => {
+    console.log("Moving");
     if (e.buttons === 0) {
       this.onpointerup();
     }
@@ -248,19 +252,20 @@ class Slidytabs {
       transitionProperty: "all",
       position: "absolute",
       height: "unset",
+      // outlineColor: "unset",
       outlineColor: "transparent",
     };
     Object.assign(this.slidytab.style, slidytabStyles);
-    this.slidytab.className = [
-      ...this.classes.base,
-      ...this.classes.activeIndicator,
-    ].join(" ");
+    this.slidytab.className = twMerge(
+      this.classes.base,
+      this.classes.activeIndicator
+    );
     this.list.style.position = "relative";
     this.list.append(this.slidytab);
     return this.slidytab;
   };
 
-  setValue = async (value: ValueType) => {
+  setValue = async (value: ValueType, animate: boolean) => {
     this.value = value;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
@@ -278,12 +283,12 @@ class Slidytabs {
     // await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.triggers.length; i++) {
       if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
-        this.triggers[i].className = [
-          ...this.classes.base,
-          ...this.classes.activeText,
-        ].join(" ");
+        this.triggers[i].className = twMerge(
+          this.classes.base,
+          this.classes.activeText
+        );
       } else {
-        this.triggers[i].className = [...this.classes.base].join(" ");
+        this.triggers[i].className = this.classes.base.join(" ");
       }
     }
   };

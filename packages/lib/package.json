@@ -5,12 +5,15 @@
     "dev": "tsup src/*.ts --watch --dts --format esm"
   },
   "devDependencies": {
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   },
   "files": [
     "dist"
   ],
   "types": "./dist/index.d.mts",
-  "exports": "./dist/index.mjs"
+  "exports": "./dist/index.mjs",
+  "dependencies": {
+    "tailwind-merge": "^3.4.0"
+  }
 }
