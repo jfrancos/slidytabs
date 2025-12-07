@@ -11,24 +11,25 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-const defaultTransitionDuration = 1500;
+const defaultTransitionDuration = 150;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
-  (options: SlidyOptions = {}) =>
+  (_options: SlidyOptions = {}) =>
   (tabroot: HTMLElement | null) => {
     if (tabroot === null) {
       return;
     }
     let instance = instances.get(tabroot);
+    const options = {
+      swipe: true,
+      ..._options,
+    } as BaseOptions<ValueType>;
     if (!instance) {
-      instance = new Slidytabs(tabroot, {
-        transitionDuration: defaultTransitionDuration,
-        swipe: true,
-        ...options,
-      } as BaseOptions<ValueType>);
+      instance = new Slidytabs(tabroot, options);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
+      // instance.tran;
       instance.setValue(options.value);
     }
   };
@@ -42,7 +43,6 @@ export const rangetabs =
     let instance = instances.get(tabroot);
     if (!instance) {
       instance = new Slidytabs(tabroot, {
-        transitionDuration: defaultTransitionDuration,
         swipe: true,
         ...options,
       } as BaseOptions<ValueType>);
@@ -64,16 +64,16 @@ class Slidytabs {
   private dataStateObserver;
   private down: number | null;
   private classes;
-  private _transitionDuration;
+  private _transitionDuration = defaultTransitionDuration;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     // can we mess with stylesheets just once or could new styles get loaded
     // that we miss if we only process them on file load
-    console.log("new instance!");
     this.root = root;
     this.triggers = [...this.root.querySelectorAll("button")];
     this.trigger = this.triggers[0];
-    this._transitionDuration = options.transitionDuration;
+    this.transitionDuration =
+      options.transitionDuration || defaultTransitionDuration;
     const list = this.trigger.parentElement;
     if (!list) {
       throw "no list";
@@ -165,7 +165,6 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
-    console.log("down");
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -187,8 +186,12 @@ class Slidytabs {
     this.list.setPointerCapture(e.pointerId);
   };
 
-  private get transitionDuration() {
+  get transitionDuration(): string {
     return `${this._transitionDuration}ms`;
+  }
+
+  set transitionDuration(duration: number) {
+    this._transitionDuration = duration;
   }
 
   private onpointerup = () => {
@@ -196,8 +199,7 @@ class Slidytabs {
     this.down = null;
   };
 
-  private onpointermove = async (e: PointerEvent) => {
-    console.log("Moving");
+  private onpointermove = (e: PointerEvent) => {
     if (e.buttons === 0) {
       this.onpointerup();
     }
@@ -252,7 +254,6 @@ class Slidytabs {
       transitionProperty: "all",
       position: "absolute",
       height: "unset",
-      // outlineColor: "unset",
       outlineColor: "transparent",
     };
     Object.assign(this.slidytab.style, slidytabStyles);
@@ -265,7 +266,7 @@ class Slidytabs {
     return this.slidytab;
   };
 
-  setValue = async (value: ValueType, animate: boolean) => {
+  setValue = (value: ValueType) => {
     this.value = value;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
@@ -379,3 +380,7 @@ const safelistGeneralizedClasses = () => {
 };
 
 safelistGeneralizedClasses();
+
+const isIncremental = (value1: [number, number], value2: [number, number]) =>
+  (Math.abs(value1[0] - value2[0]) === 1 && value1[1] === value2[1]) ||
+  (Math.abs(value1[1] - value2[1]) === 1 && value1[0] === value2[0]);
