@@ -29,9 +29,8 @@ export const slidytabs =
       instance = new Slidytabs(tabroot, options);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
-      // instance.tran;
-      // instance.setValue(options.value);
-      instance.value = options.value;
+      // instance.value = options.value;
+      instance.updateValue(options.value);
     }
   };
 
@@ -90,15 +89,7 @@ class Slidytabs {
       list.addEventListener("pointermove", this.onpointermove);
     }
     this.onValueChange = options.onValueChange;
-    if (options.value != null) {
-      // this.value = options.value;
-      // this.setValue(options.value);
-      this.value = options.value;
-    } else {
-      // this.value = this.activeIndex;
-      // this.setValue(this.activeIndex);
-      this.value = this.activeIndex;
-    }
+    this.value = options.value ?? this.activeIndex;
     this.resizeObserver = this.setupResizeObserver();
     this.dataStateObserver = this.setupDataStateObserver();
     this.down = null;
@@ -310,7 +301,29 @@ class Slidytabs {
     return Array.isArray(this.value) ? this.value : [this.value, this.value];
   }
 
-  setupResizeObserver = () => {
+  updateValue = async (value: ValueType) => {
+    if (this.isIncremental(value)) {
+      this.slidytab.style.transitionDuration = "0ms";
+      this.value = value;
+      await new Promise(requestAnimationFrame);
+      this.slidytab.style.transitionDuration = this.transitionDuration;
+    } else {
+      this.value = value;
+    }
+  };
+
+  isIncremental = (value: ValueType) => {
+    if (Array.isArray(value) && Array.isArray(this.value)) {
+      return (
+        Math.abs(value[0] - this.valueDuple[0]) <= 1 &&
+        Math.abs(value[1] - this.valueDuple[1]) <= 1
+      );
+    } else {
+      return Math.abs((value as number) - (this.value as number)) === 1;
+    }
+  };
+
+  private setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(async () => {
       // we want instant adjustments, so temporarily remove transition
       this.slidytab.style.transitionDuration = "0ms";
@@ -394,7 +407,3 @@ const safelistGeneralizedClasses = () => {
 };
 
 safelistGeneralizedClasses();
-
-const isIncremental = (value1: [number, number], value2: [number, number]) =>
-  (Math.abs(value1[0] - value2[0]) === 1 && value1[1] === value2[1]) ||
-  (Math.abs(value1[1] - value2[1]) === 1 && value1[0] === value2[0]);
