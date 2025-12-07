@@ -30,7 +30,8 @@ export const slidytabs =
       instances.set(tabroot, instance);
     } else if (options.value != null) {
       // instance.tran;
-      instance.setValue(options.value);
+      // instance.setValue(options.value);
+      instance.value = options.value;
     }
   };
 
@@ -48,7 +49,8 @@ export const rangetabs =
       } as BaseOptions<ValueType>);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
-      instance.setValue(options.value);
+      // instance.setValue(options.value);
+      instance.value = options.value;
     }
   };
 
@@ -58,7 +60,7 @@ class Slidytabs {
   private triggers;
   private trigger;
   private slidytab;
-  private value: ValueType;
+  private _value: ValueType = 0;
   private onValueChange?: (value: ValueType) => void;
   private resizeObserver;
   private dataStateObserver;
@@ -89,11 +91,13 @@ class Slidytabs {
     }
     this.onValueChange = options.onValueChange;
     if (options.value != null) {
+      // this.value = options.value;
+      // this.setValue(options.value);
       this.value = options.value;
-      this.setValue(options.value);
     } else {
+      // this.value = this.activeIndex;
+      // this.setValue(this.activeIndex);
       this.value = this.activeIndex;
-      this.setValue(this.activeIndex);
     }
     this.resizeObserver = this.setupResizeObserver();
     this.dataStateObserver = this.setupDataStateObserver();
@@ -181,9 +185,11 @@ class Slidytabs {
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
-    this.setValue(newValue);
+    // this.setValue(newValue);
+    this.value = newValue;
     this.onValueChange?.(newValue);
     this.list.setPointerCapture(e.pointerId);
+    this.triggers[pressedIndex].click();
   };
 
   get transitionDuration(): string {
@@ -210,6 +216,7 @@ class Slidytabs {
     ) {
       return;
     }
+
     const { x, y, width, height } = this.list.getBoundingClientRect();
     const point = {
       horizontal: [e.clientX, y + height / 2] as const,
@@ -232,7 +239,8 @@ class Slidytabs {
     }
     this.slidytab.style.transitionDuration = "0ms";
     trigger.click();
-    this.setValue(newValue);
+    // this.setValue(newValue);
+    this.value = newValue;
     this.onValueChange?.(newValue);
   };
 
@@ -266,8 +274,12 @@ class Slidytabs {
     return this.slidytab;
   };
 
-  setValue = (value: ValueType) => {
-    this.value = value;
+  get value() {
+    return this._value;
+  }
+
+  set value(newValue: ValueType) {
+    this._value = newValue;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
     }
@@ -292,7 +304,7 @@ class Slidytabs {
         this.triggers[i].className = this.classes.base.join(" ");
       }
     }
-  };
+  }
 
   get valueDuple() {
     return Array.isArray(this.value) ? this.value : [this.value, this.value];
@@ -302,7 +314,8 @@ class Slidytabs {
     const resizeObserver = new ResizeObserver(async () => {
       // we want instant adjustments, so temporarily remove transition
       this.slidytab.style.transitionDuration = "0ms";
-      this.setValue(this.value);
+      // this.setValue(this.value);
+      this.value = this.value;
       await new Promise(requestAnimationFrame);
       this.slidytab.style.transitionDuration = this.transitionDuration;
     });
@@ -322,7 +335,8 @@ class Slidytabs {
     // this works but messses with controlled component
     const dataStateObserver = new MutationObserver(() => {
       if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
-        this.setValue(this.activeIndex);
+        // this.setValue(this.activeIndex);
+        this.value = this.activeIndex;
       }
     });
     dataStateObserver.observe(this.list, {
