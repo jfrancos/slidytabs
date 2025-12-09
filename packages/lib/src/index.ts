@@ -16,8 +16,6 @@ interface BaseOptions<T extends ValueType> {
 const defaultTransitionDuration = 200;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
-// TODO keyboard movement starts in wrong place
-
 export const slidytabs =
   (_options: SlidyOptions = {}) =>
   (tabroot: HTMLElement | null) => {
@@ -252,8 +250,10 @@ class Slidytabs {
     }
     this.slidytab.style.transitionDuration = "0ms";
     trigger.click();
+    trigger.focus();
     this.value = newValue;
     this.onValueChange?.(newValue);
+    console.log("hi");
   };
 
   get activeIndex() {
