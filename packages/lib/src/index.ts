@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { isEqual } from "radashi";
+import { escapeSelector, toEscapedSelector } from "@unocss/core";
 
 type ValueType = number | [number, number];
 type SlidyOptions = BaseOptions<number>;
@@ -80,6 +81,8 @@ class Slidytabs {
     }
     this.list = list;
     this.classes = this.categorizeClasses([...this.trigger.classList]);
+    safelistGeneralizedClasses(this.trigger);
+
     this.setTriggerStyles();
     this.slidytab = this.setupSlidytab();
     list.addEventListener("pointerdown", this.onpointerdown);
@@ -372,35 +375,50 @@ class Slidytabs {
 const getCurrentTargetX = (e: PointerEvent) =>
   e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
 
-const safelistGeneralizedClasses = () => {
+const inserted = new Set<string>();
+if (typeof document !== "undefined" && !(globalThis as any).sheet) {
+  const sheet = new CSSStyleSheet();
+  (globalThis as any).sheet = sheet;
+  document.adoptedStyleSheets.push(sheet);
+}
+
+const safelistGeneralizedClasses = (el: HTMLElement) => {
   const focusSelector = ":focus-visible";
-  const escapedFocusPrefix = "focus-visible\\:";
+  const focusPrefix = "focus-visible:";
   const activeSelector = '[data-state="active"]';
-  const escapedActivePrefix = "data-\\[state\\=active\\]\\:";
+  const activePrefix = "data-[state=active]:";
+
+  const classes = [...el.classList]
+    .filter(
+      (item) => item.startsWith(focusPrefix) || item.startsWith(activePrefix)
+    )
+    .map(toEscapedSelector);
 
   if (typeof document !== "undefined") {
-    [...document.styleSheets].forEach((styleSheet) => {
-      [...styleSheet.cssRules]
-        .filter(
-          (item) =>
-            // for firefox
-            item instanceof CSSStyleRule &&
-            ![focusSelector, activeSelector].includes(
-              item.selectorText.trim()
-            ) &&
-            (item.selectorText.includes(focusSelector) ||
-              item.selectorText.includes(activeSelector))
-        )
-        .forEach(({ cssText }) => {
-          const newRule = cssText
-            .replaceAll(escapedFocusPrefix, "")
-            .replaceAll(focusSelector, "")
-            .replaceAll(escapedActivePrefix, "")
-            .replaceAll(activeSelector, "");
-          styleSheet.insertRule(newRule);
-        });
-    });
+    try {
+      [...document.styleSheets].forEach((styleSheet) => {
+        [...styleSheet.cssRules]
+          .filter(
+            (item) =>
+              // for firefox
+              item instanceof CSSStyleRule &&
+              ![focusSelector, activeSelector].includes(
+                item.selectorText.trim()
+              ) &&
+              classes.some((prefix) => item.selectorText.startsWith(prefix))
+          )
+          .forEach(({ cssText }) => {
+            const newRule = cssText
+              .replaceAll(escapeSelector(focusPrefix), "")
+              .replaceAll(focusSelector, "")
+              .replaceAll(escapeSelector(activePrefix), "")
+              .replaceAll(activeSelector, "");
+            if (!inserted.has(newRule)) {
+              inserted.add(newRule);
+              (globalThis as any).sheet.insertRule(newRule);
+            }
+          });
+      });
+    } catch {}
   }
 };
-
-safelistGeneralizedClasses();

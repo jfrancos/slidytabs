@@ -209,6 +209,9 @@ importers:
 
   packages/lib:
     dependencies:
+      '@unocss/core':
+        specifier: ^66.5.10
+        version: 66.5.10
       radashi:
         specifier: ^12.7.1
         version: 12.7.1
@@ -1954,6 +1957,9 @@ packages:
 
   '@unocss/core@66.4.2':
     resolution: {integrity: sha512-cYgMQrLhB9nRekv5c+yPDDa+5dzlMkA2UMQRil0s5D9Lb5n7NsCMcr6+nfxkcSYVLy92SbwDV45c6T7vIxFTOA==}
+
+  '@unocss/core@66.5.10':
+    resolution: {integrity: sha512-SEmPE4pWNn9VcCvZqovPwFGuG/j69W3zh+x1Ky4z/I2pnyoB0Y0lBmq22KVu/dwExe+ZKKTQpxa0j5rbE27rDQ==}
 
   '@unocss/core@66.5.6':
     resolution: {integrity: sha512-9hmpPXLi41YFTPexi7cT57PRWCgwtGLa1QHlPvRgx2kqjYicy7zEDylIY2ObwQien75VCDOcGpmQ/5XdZ473Rg==}
@@ -5777,6 +5783,8 @@ snapshots:
       unconfig: 7.4.1
 
   '@unocss/core@66.4.2': {}
+
+  '@unocss/core@66.5.10': {}
 
   '@unocss/core@66.5.6': {}
 

@@ -14,6 +14,7 @@
   "types": "./dist/index.d.mts",
   "exports": "./dist/index.mjs",
   "dependencies": {
+    "@unocss/core": "^66.5.10",
     "radashi": "^12.7.1",
     "tailwind-merge": "^3.4.0"
   }
