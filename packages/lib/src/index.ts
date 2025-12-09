@@ -16,6 +16,8 @@ interface BaseOptions<T extends ValueType> {
 const defaultTransitionDuration = 200;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
+// TODO keyboard movement starts in wrong place
+
 export const slidytabs =
   (_options: SlidyOptions = {}) =>
   (tabroot: HTMLElement | null) => {
@@ -33,6 +35,14 @@ export const slidytabs =
     } else if (options.value != null) {
       instance.updateValue(options.value);
     }
+    return () => {
+      queueMicrotask(() => {
+        if (tabroot.isConnected) {
+          return;
+        }
+        instance.destroy();
+      });
+    };
   };
 
 export const rangetabs =
@@ -52,6 +62,14 @@ export const rangetabs =
     } else if (options.value != null) {
       instance.updateValue(options.value);
     }
+    return () => {
+      queueMicrotask(() => {
+        if (tabroot.isConnected) {
+          return;
+        }
+        instance.destroy();
+      });
+    };
   };
 
 class Slidytabs {
