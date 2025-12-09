@@ -36,20 +36,21 @@ export const slidytabs =
   };
 
 export const rangetabs =
-  (options: RangeOptions = {}) =>
+  (_options: RangeOptions = {}) =>
   (tabroot: HTMLElement | null) => {
     if (tabroot === null) {
       return;
     }
     let instance = instances.get(tabroot);
+    const options = {
+      swipe: true,
+      ..._options,
+    } as BaseOptions<ValueType>;
     if (!instance) {
-      instance = new Slidytabs(tabroot, {
-        swipe: true,
-        ...options,
-      } as BaseOptions<ValueType>);
+      instance = new Slidytabs(tabroot, options);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
-      instance.value = options.value;
+      instance.updateValue(options.value);
     }
   };
 
