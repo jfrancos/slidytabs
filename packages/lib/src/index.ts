@@ -320,11 +320,6 @@ class Slidytabs {
         Math.abs(value[1] - this.valueDuple[1]) <= 1
       );
     } else {
-      console.log(
-        value,
-        this.value,
-        Math.abs((value as number) - (this.value as number)) <= 1
-      );
       return Math.abs((value as number) - (this.value as number)) <= 1;
     }
   };
