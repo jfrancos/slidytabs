@@ -15,8 +15,6 @@ interface BaseOptions<T extends ValueType> {
 const defaultTransitionDuration = 200;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
-// TODO keyboard shortcuts don't update
-
 export const slidytabs =
   (_options: SlidyOptions = {}) =>
   (tabroot: HTMLElement | null) => {
@@ -353,6 +351,7 @@ class Slidytabs {
     const dataStateObserver = new MutationObserver(() => {
       if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
         this.value = this.activeIndex;
+        this.onValueChange?.(this.value);
       }
     });
     dataStateObserver.observe(this.list, {
