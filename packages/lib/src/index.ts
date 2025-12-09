@@ -32,7 +32,6 @@ export const slidytabs =
       instance = new Slidytabs(tabroot, options);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
-      // instance.value = options.value;
       instance.updateValue(options.value);
     }
   };
@@ -51,7 +50,6 @@ export const rangetabs =
       } as BaseOptions<ValueType>);
       instances.set(tabroot, instance);
     } else if (options.value != null) {
-      // instance.setValue(options.value);
       instance.value = options.value;
     }
   };
@@ -181,11 +179,9 @@ class Slidytabs {
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
-    // this.setValue(newValue);
-
     this.value = newValue;
     this.onValueChange?.(newValue);
-    // this.list.setPointerCapture(e.pointerId);
+    this.list.setPointerCapture(e.pointerId);
     this.triggers[pressedIndex].click();
   };
 
@@ -236,7 +232,6 @@ class Slidytabs {
     }
     this.slidytab.style.transitionDuration = "0ms";
     trigger.click();
-    // this.setValue(newValue);
     this.value = newValue;
     this.onValueChange?.(newValue);
   };
@@ -308,29 +303,19 @@ class Slidytabs {
   }
 
   updateValue = async (value: ValueType) => {
-    // console.log();
     if (isEqual(value, this.value)) {
       return;
     }
     if (this.isIncremental(value)) {
-      // if (true) {
       this.slidytab.style.transitionDuration = "0ms";
-      // this.slidytab.getBoundingClientRect();
-      // await new Promise(requestAnimationFrame);
       this.value = value;
-      // await new Promise(requestAnimationFrame);
-      // await new Promise(requestAnimationFrame);
-      // this.slidytab.style.transitionDuration = this.transitionDuration;
     } else {
       this.slidytab.style.transitionDuration = this.transitionDuration;
-
-      // console.log("not incremental");
       this.value = value;
     }
   };
 
   isIncremental = (value: ValueType) => {
-    // console.log(value);
     if (Array.isArray(value) && Array.isArray(this.value)) {
       return (
         Math.abs(value[0] - this.valueDuple[0]) <= 1 &&
@@ -348,12 +333,8 @@ class Slidytabs {
 
   private setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(async () => {
-      // we want instant adjustments, so temporarily remove transition
       this.slidytab.style.transitionDuration = "0ms";
-      // this.setValue(this.value);
       this.value = this.value;
-      // await new Promise(requestAnimationFrame);
-      // this.slidytab.style.transitionDuration = this.transitionDuration;
     });
     resizeObserver.observe(this.list);
     return resizeObserver;
@@ -371,7 +352,6 @@ class Slidytabs {
     // this works but messses with controlled component
     const dataStateObserver = new MutationObserver(() => {
       if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
-        // this.setValue(this.activeIndex);
         this.value = this.activeIndex;
       }
     });
@@ -384,7 +364,7 @@ class Slidytabs {
 
   destroy() {
     this.list.removeEventListener("pointerdown", this.onpointerdown);
-    // this.list.removeEventListener("pointermove", this.onpointermove);
+    this.list.removeEventListener("pointermove", this.onpointermove);
     this.resizeObserver.disconnect();
     this.dataStateObserver.disconnect();
     for (const trigger of this.triggers) {
