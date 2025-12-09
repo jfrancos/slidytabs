@@ -1,4 +1,5 @@
 import { twMerge } from "tailwind-merge";
+import { isEqual } from "radashi";
 
 type ValueType = number | [number, number];
 type SlidyOptions = BaseOptions<number>;
@@ -11,8 +12,10 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-const defaultTransitionDuration = 150;
+const defaultTransitionDuration = 200;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
+
+// TODO keyboard shortcuts don't update
 
 export const slidytabs =
   (_options: SlidyOptions = {}) =>
@@ -160,6 +163,8 @@ class Slidytabs {
   };
 
   private onpointerdown = (e: PointerEvent) => {
+    this.slidytab.style.transitionDuration = this.transitionDuration;
+
     const button = (e.target as Element).closest("button");
     if (!button) {
       return;
@@ -177,9 +182,10 @@ class Slidytabs {
       return;
     }
     // this.setValue(newValue);
+
     this.value = newValue;
     this.onValueChange?.(newValue);
-    this.list.setPointerCapture(e.pointerId);
+    // this.list.setPointerCapture(e.pointerId);
     this.triggers[pressedIndex].click();
   };
 
@@ -302,24 +308,41 @@ class Slidytabs {
   }
 
   updateValue = async (value: ValueType) => {
+    // console.log();
+    if (isEqual(value, this.value)) {
+      return;
+    }
     if (this.isIncremental(value)) {
+      // if (true) {
       this.slidytab.style.transitionDuration = "0ms";
+      // this.slidytab.getBoundingClientRect();
+      // await new Promise(requestAnimationFrame);
       this.value = value;
-      await new Promise(requestAnimationFrame);
-      this.slidytab.style.transitionDuration = this.transitionDuration;
+      // await new Promise(requestAnimationFrame);
+      // await new Promise(requestAnimationFrame);
+      // this.slidytab.style.transitionDuration = this.transitionDuration;
     } else {
+      this.slidytab.style.transitionDuration = this.transitionDuration;
+
+      // console.log("not incremental");
       this.value = value;
     }
   };
 
   isIncremental = (value: ValueType) => {
+    // console.log(value);
     if (Array.isArray(value) && Array.isArray(this.value)) {
       return (
         Math.abs(value[0] - this.valueDuple[0]) <= 1 &&
         Math.abs(value[1] - this.valueDuple[1]) <= 1
       );
     } else {
-      return Math.abs((value as number) - (this.value as number)) === 1;
+      console.log(
+        value,
+        this.value,
+        Math.abs((value as number) - (this.value as number)) <= 1
+      );
+      return Math.abs((value as number) - (this.value as number)) <= 1;
     }
   };
 
@@ -329,8 +352,8 @@ class Slidytabs {
       this.slidytab.style.transitionDuration = "0ms";
       // this.setValue(this.value);
       this.value = this.value;
-      await new Promise(requestAnimationFrame);
-      this.slidytab.style.transitionDuration = this.transitionDuration;
+      // await new Promise(requestAnimationFrame);
+      // this.slidytab.style.transitionDuration = this.transitionDuration;
     });
     resizeObserver.observe(this.list);
     return resizeObserver;
