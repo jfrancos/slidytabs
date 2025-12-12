@@ -3,20 +3,22 @@
   import { slidytabs } from "slidytabs";
   let value = $state(5);
   const onValueChange = (newValue: number) => (value = newValue);
-  let mounted = $state(true);
+  $inspect(value);
+  // $effect(() => {
+  //   setInterval(() => {
+  //     value = value + 1;
+  //   }, 1000);
+  // });
 </script>
 
-<button class="size-4 bg-green" onclick={() => (mounted = false)}></button>
-{#if mounted}
-  <div class="flex flex-col gap-4">
-    {#each { length: 2 }}
-      <Tabs.Root {@attach slidytabs({ value, onValueChange })}>
-        <Tabs.List class="*:min-w-0">
-          {#each { length: 11 }, i}
-            <Tabs.Trigger value={String(i)}>{i}</Tabs.Trigger>
-          {/each}
-        </Tabs.List>
-      </Tabs.Root>
-    {/each}
-  </div>
-{/if}
+<div class="flex flex-col gap-4">
+  {#each { length: 2 }}
+    <Tabs.Root {@attach slidytabs({ value, onValueChange })}>
+      <Tabs.List class="*:min-w-0">
+        {#each { length: 11 }, i}
+          <Tabs.Trigger value={String(i)}>{i}</Tabs.Trigger>
+        {/each}
+      </Tabs.List>
+    </Tabs.Root>
+  {/each}
+</div>

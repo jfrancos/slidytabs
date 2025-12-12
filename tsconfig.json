@@ -3,5 +3,8 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "strict": true
+    // "noUncheckedIndexedAccess": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    // "exactOptionalPropertyTypes": true
   }
 }
