@@ -3,6 +3,7 @@ import Code from "./Code.astro";
 import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
 import { react, svelte } from "./icons";
+import { extractRefString } from "../lib/extractRefString";
 
 interface Props {
   filename: string;
@@ -17,6 +18,8 @@ const { default: Component } = await import(
 const { default: raw } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
+
+let tsxHighlight = lang === "tsx" ? extractRefString(raw) : undefined;
 
 const prefix = {
   svelte: `<!-- ${filename}.svelte -->`,
@@ -42,5 +45,5 @@ const code = `${prefix}\n${raw}`;
       <Component />
     </div>
   </div>
-  <Code {highlight} {code} {lang} />
+  <Code highlight={tsxHighlight ?? highlight} {code} {lang} />
 </div>

@@ -5,15 +5,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 export default () => {
   const [value, onValueChange] = useState<RangeValue>([4, 6]);
   return (
-    <Tabs defaultValue="account" ref={rangetabs({ value, onValueChange })}>
+    <Tabs ref={rangetabs({ value, onValueChange })}>
       <TabsList>
         {Array.from({ length: 12 }, (_, i) => (
-          <TabsTrigger
-            key={i}
-            value={String(i)}
-            children={i}
-            className="min-w-0 px-2"
-          />
+          <TabsTrigger key={i} value={String(i)} className="min-w-0 px-2">
+            {i}
+          </TabsTrigger>
         ))}
       </TabsList>
     </Tabs>
