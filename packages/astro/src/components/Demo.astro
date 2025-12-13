@@ -19,7 +19,6 @@ const { default: raw } = await import(
 );
 
 const highlight = { tsx: extractRef, svelte: extractAttachment }[lang](raw);
-
 const prefix = {
   svelte: `<!-- ${filename}.svelte -->`,
   tsx: `// ${filename}.tsx`,
