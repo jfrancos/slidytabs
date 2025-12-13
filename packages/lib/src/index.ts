@@ -6,6 +6,8 @@ type ValueType = number | [number, number];
 type SlidyOptions = BaseOptions<number>;
 type RangeOptions = BaseOptions<[number, number]>;
 
+export type RangeValue = [number, number];
+
 interface BaseOptions<T extends ValueType> {
   value?: T;
   transitionDuration?: number;
@@ -13,7 +15,7 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-const defaultTransitionDuration = 1200;
+const defaultTransitionDuration = 200;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
@@ -72,42 +74,42 @@ export const rangetabs =
 
 class Slidytabs {
   private root;
-  private list;
-  private triggers;
-  private trigger;
   private slidytab!: HTMLDivElement;
   private _value: ValueType = 0;
   private onValueChange?: (value: ValueType) => void;
   private resizeObserver;
   private dataStateObserver;
   private down: number | null;
-  private classes;
+  private classes!: {
+    activeText: string[];
+    activeIndicator: string[];
+    focusText: string[];
+    focusIndicator: string[];
+    base: string[];
+  };
   private _transitionDuration = defaultTransitionDuration;
   private controlled;
   private isMoving;
+  private orientation!: "horizontal" | "vertical";
+  private list!: HTMLDivElement;
+  private triggers!: HTMLButtonElement[];
+  private trigger!: HTMLButtonElement;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     this.root = root;
-    this.triggers = [...this.root.querySelectorAll("button")];
-    this.trigger = this.triggers[0];
     this.transitionDuration =
       options.transitionDuration || defaultTransitionDuration;
-    const list = this.trigger.parentElement;
-    if (!list) {
-      throw "no list";
-    }
-    this.list = list;
+    this.extractFromDOM();
     this.classes = categorizeClasses([...this.trigger.classList]);
     safelistGeneralizedClasses(this.trigger);
-    this.setTriggerStyles();
-    this.setupSlidytab();
-    list.addEventListener("pointerdown", this.onpointerdown);
-    list.addEventListener("pointerup", this.onpointerup);
+    this.slidytab = this.setupSlidytab();
+    this.onblur();
+    this.list.addEventListener("pointerdown", this.onpointerdown);
+    this.list.addEventListener("pointerup", this.onpointerup);
     if (options.swipe) {
-      list.addEventListener("pointermove", this.onpointermove);
+      this.list.addEventListener("pointermove", this.onpointermove);
     }
     this.onValueChange = options.onValueChange;
-    this.value = options.value ?? this.activeIndex;
     this.controlled = options.value !== undefined;
     this.resizeObserver = this.setupResizeObserver();
     if (!this.controlled) {
@@ -116,24 +118,50 @@ class Slidytabs {
     this.down = null;
     this.setupFakeFocus();
     this.isMoving = false;
+    this.value = options.value ?? this.activeIndex;
+    const triggerStyles: Partial<CSSStyleDeclaration> = {
+      zIndex: "10",
+      touchAction: "none",
+      outline: "unset",
+    };
+    for (const trigger of this.triggers) {
+      Object.assign(trigger.style, triggerStyles);
+    }
+    this.list.append(this.slidytab);
   }
 
+  private extractFromDOM = () => {
+    this.triggers = [...this.root.querySelectorAll("button")];
+    this.trigger = this.triggers[0];
+    const list = this.trigger.closest(
+      "div[role=tablist]"
+    ) as HTMLDivElement | null;
+    if (!list) {
+      throw new Error("no list");
+    }
+    this.list = list;
+    const { orientation } = this.root.dataset;
+    if (orientation !== "horizontal" && orientation !== "vertical") {
+      throw new Error("invalid orientation");
+    }
+    this.orientation = orientation;
+  };
+
   private onpointerdown = (e: PointerEvent) => {
-    const button = (e.target as Element).closest("button");
-    if (!button) {
+    this.extractFromDOM();
+    const trigger = (e.target as Element).closest("button");
+    if (!trigger) {
       return;
     }
-    const pressedIndex = this.triggers.indexOf(button);
+    const pressedIndex = this.triggers.indexOf(trigger);
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.getEndpoints();
-    const { orientation } = this.root.dataset;
-
-    const { x, y, width, height } = this.list.getBoundingClientRect();
-    const point = {
-      horizontal: [e.clientX, y + height / 2] as const,
-      vertical: [x + width / 2, e.clientY] as const,
-    }[orientation!];
-    const trigger = document.elementFromPoint(...point!)?.closest("button");
+    // const { orientation } = this.root.dataset;
+    // const { x, y, width, height } = this.list.getBoundingClientRect();
+    // const point = {
+    //   horizontal: [e.clientX, y + height / 2] as const,
+    //   vertical: [x + width / 2, e.clientY] as const,
+    // }[orientation!];
 
     this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     this.slidytab.style.transitionDuration = this.transitionDuration;
@@ -142,7 +170,9 @@ class Slidytabs {
       : pressedIndex;
     // should consolidate this as it is exactly the same in
     // onpointermove
+    console.log(newValue);
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
+      console.log("asdf");
       return;
     }
     if (!this.controlled) {
@@ -152,6 +182,7 @@ class Slidytabs {
     // keep getting events when pointer leaves tabs:
     this.list.setPointerCapture(e.pointerId);
     this.triggers[pressedIndex].click();
+    console.log("down");
   };
 
   private onpointerup = () => {
@@ -164,18 +195,14 @@ class Slidytabs {
     if (e.buttons === 0) {
       this.onpointerup();
     }
-    const { orientation } = this.root.dataset;
-    if (
-      this.down === null ||
-      !(orientation === "horizontal" || orientation === "vertical")
-    ) {
+    if (this.down === null) {
       return;
     }
     const { x, y, width, height } = this.list.getBoundingClientRect();
     const point = {
       horizontal: [e.clientX, y + height / 2] as const,
       vertical: [x + width / 2, e.clientY] as const,
-    }[orientation];
+    }[this.orientation];
     const trigger = document.elementFromPoint(...point)?.closest("button");
     if (!trigger) {
       return;
@@ -205,9 +232,20 @@ class Slidytabs {
   };
 
   set value(newValue: ValueType) {
+    console.log("setting value", newValue);
     this._value = newValue;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
+    }
+    for (let i = 0; i < this.triggers.length; i++) {
+      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
+        this.triggers[i].className = twMerge(
+          this.classes.base,
+          this.classes.activeText
+        );
+      } else {
+        this.triggers[i].className = twMerge(this.classes.base);
+      }
     }
     const leftRect = this.triggers[this.valueDuple[0]].getBoundingClientRect();
     const rightRect = this.triggers[this.valueDuple[1]].getBoundingClientRect();
@@ -218,19 +256,9 @@ class Slidytabs {
       bottom: `${parentRect.bottom - leftRect.bottom}px`,
       right: `${parentRect.right - rightRect.right}px`,
     });
-    for (let i = 0; i < this.triggers.length; i++) {
-      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
-        this.triggers[i].className = twMerge(
-          this.classes.base,
-          this.classes.activeText
-        );
-      } else {
-        this.triggers[i].className = this.classes.base.join(" ");
-      }
-    }
   }
 
-  updateValue = async (value: ValueType) => {
+  updateValue = (value: ValueType) => {
     if (isEqual(value, this.value)) {
       return;
     }
@@ -245,10 +273,8 @@ class Slidytabs {
 
   private onfocus = ({ currentTarget }: Event) => {
     if (
-      !(
-        currentTarget instanceof Element &&
-        currentTarget.matches(":focus-visible")
-      )
+      !(currentTarget instanceof Element) ||
+      !currentTarget.matches(":focus-visible")
     ) {
       return;
     }
@@ -274,17 +300,6 @@ class Slidytabs {
     }
   };
 
-  private setTriggerStyles = () => {
-    const triggerStyles: Partial<CSSStyleDeclaration> = {
-      zIndex: "10",
-      touchAction: "none",
-      outline: "unset",
-    };
-    for (const trigger of this.triggers) {
-      Object.assign(trigger.style, triggerStyles);
-    }
-  };
-
   get transitionDuration(): string {
     return `${this._transitionDuration}ms`;
   }
@@ -304,8 +319,8 @@ class Slidytabs {
   }
 
   private setupSlidytab = () => {
-    this.slidytab = document.createElement("div");
-    this.slidytab.setAttribute("slidytab", "");
+    // this.slidytab = document.createElement("div");
+    const slidytab = document.createElement("div");
     const slidytabStyles: Partial<CSSStyleDeclaration> = {
       transitionDuration: this.transitionDuration,
       transitionProperty: "all",
@@ -313,13 +328,10 @@ class Slidytabs {
       height: "unset",
       outlineColor: "transparent",
     };
-    Object.assign(this.slidytab.style, slidytabStyles);
-    this.slidytab.className = twMerge(
-      this.classes.base,
-      this.classes.activeIndicator
-    );
+    Object.assign(slidytab.style, slidytabStyles);
     this.list.style.position = "relative";
-    this.list.append(this.slidytab);
+    // this.list.append(this.slidytab);
+    return slidytab;
   };
 
   get value() {
@@ -342,7 +354,8 @@ class Slidytabs {
   };
 
   private setupResizeObserver = () => {
-    const resizeObserver = new ResizeObserver(async () => {
+    const resizeObserver = new ResizeObserver(() => {
+      console.log("obsever");
       this.slidytab.style.transitionDuration = "0ms";
       this.value = this.value;
     });
@@ -389,8 +402,8 @@ class Slidytabs {
 const getCurrentTargetX = (e: PointerEvent) =>
   e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
 
-if (typeof document !== "undefined" && !(globalThis as any).sheet) {
+if (typeof document !== "undefined" && !globalThis.sheet) {
   const sheet = new CSSStyleSheet();
-  (globalThis as any).sheet = sheet;
+  globalThis.sheet = sheet;
   document.adoptedStyleSheets.push(sheet);
 }

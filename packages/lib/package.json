@@ -5,8 +5,14 @@
     "dev": "tsup src/*.ts --watch --dts --format esm"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "biome": "^0.3.3",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.3.0",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.41.0"
   },
   "files": [
     "dist"

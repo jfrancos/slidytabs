@@ -1,4 +1,7 @@
 import { escapeSelector, toEscapedSelector } from "@unocss/core";
+declare global {
+  var sheet: CSSStyleSheet;
+}
 
 export const categorizeClasses = (classList: string[]) => {
   const textClasses =
@@ -56,7 +59,7 @@ export const safelistGeneralizedClasses = (el: HTMLElement) => {
               .replaceAll(activeSelector, "");
             if (!inserted.has(newRule)) {
               inserted.add(newRule);
-              (globalThis as any).sheet.insertRule(newRule);
+              globalThis.sheet.insertRule(newRule);
             }
           });
       });

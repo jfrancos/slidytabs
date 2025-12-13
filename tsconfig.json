@@ -3,8 +3,10 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "strict": true
+    // "noImplicitAny": true,
     // "noUncheckedIndexedAccess": true,
     // "noPropertyAccessFromIndexSignature": true,
-    // "exactOptionalPropertyTypes": true
+    // "exactOptionalPropertyTypes": true,
+    // "useDefineForClassFields": true
   }
 }
