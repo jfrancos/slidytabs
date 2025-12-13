@@ -3,15 +3,14 @@ import Code from "./Code.astro";
 import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
 import { react, svelte } from "./icons";
-import { extractRefString } from "../lib/extractRefString";
+import { extractRef, extractAttachment } from "../lib/findHighlight.ts";
 
 interface Props {
   filename: string;
-  highlight: string;
   lang: "tsx" | "svelte";
 }
 
-const { filename, highlight, lang } = Astro.props;
+const { filename, lang } = Astro.props;
 const { default: Component } = await import(
   `./${lang}/examples/${filename}.${lang}`
 );
@@ -19,7 +18,7 @@ const { default: raw } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
 
-let tsxHighlight = lang === "tsx" ? extractRefString(raw) : undefined;
+let highlight = lang === "tsx" ? extractRef(raw) : extractAttachment(raw);
 
 const prefix = {
   svelte: `<!-- ${filename}.svelte -->`,
@@ -45,5 +44,5 @@ const code = `${prefix}\n${raw}`;
       <Component />
     </div>
   </div>
-  <Code highlight={tsxHighlight ?? highlight} {code} {lang} />
+  <Code {highlight} {code} {lang} />
 </div>

@@ -44,31 +44,11 @@ import Demo from "../components/Demo.astro";
               href="https://www.shadcn-svelte.com/docs/components/tabs"
               >shadcn-svelte</a
             ><div class="flex flex-col gap-12">
-              <Demo
-                lang="svelte"
-                filename="Basic"
-                highlight="{@attach slidytabs()}"
-              />
-              <Demo
-                lang="svelte"
-                filename="Styles"
-                highlight="{@attach slidytabs()}"
-              />
-              <Demo
-                lang="svelte"
-                filename="Vertical"
-                highlight="{@attach slidytabs()}"
-              />
-              <Demo
-                lang="svelte"
-                filename="Controlled"
-                highlight="{@attach slidytabs({ value, onValueChange })}"
-              />
-              <Demo
-                lang="svelte"
-                filename="NumbersRange"
-                highlight="{@attach rangetabs()}"
-              />
+              <Demo lang="svelte" filename="Basic" />
+              <Demo lang="svelte" filename="Styles" />
+              <Demo lang="svelte" filename="Vertical" />
+              <Demo lang="svelte" filename="Controlled" />
+              <Demo lang="svelte" filename="NumbersRange" />
             </div>
           </div>
         </div>
@@ -80,16 +60,8 @@ import Demo from "../components/Demo.astro";
               class="font-medium underline"
               href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
             ><div class="flex flex-col gap-12">
-              <Demo
-                lang="tsx"
-                filename="NumbersRange"
-                highlight="ref={tabs([3])}"
-              />
-              <Demo
-                lang="tsx"
-                filename="BasicExample"
-                highlight="ref={() => {}}"
-              />
+              <Demo lang="tsx" filename="NumbersRange" />
+              <Demo lang="tsx" filename="BasicExample" />
             </div>
           </div>
         </div>
