@@ -88,7 +88,6 @@ class Slidytabs {
     base: string[];
   };
   private _transitionDuration = defaultTransitionDuration;
-  private controlled;
   private isMoving;
   private orientation!: "horizontal" | "vertical";
   private list!: HTMLDivElement;
@@ -109,12 +108,13 @@ class Slidytabs {
     if (options.swipe) {
       this.list.addEventListener("pointermove", this.onpointermove);
     }
-    this.onValueChange = options.onValueChange;
-    this.controlled = options.value !== undefined;
+    this.onValueChange =
+      options.onValueChange ??
+      (options.value === undefined
+        ? (newValue) => (this.value = newValue)
+        : undefined);
     this.resizeObserver = this.setupResizeObserver();
-    if (!this.controlled) {
-      this.dataStateObserver = this.setupDataStateObserver();
-    }
+    this.dataStateObserver = this.setupDataStateObserver();
     this.down = null;
     this.setupFakeFocus();
     this.isMoving = false;
@@ -175,9 +175,6 @@ class Slidytabs {
       console.log("asdf");
       return;
     }
-    if (!this.controlled) {
-      this.value = newValue;
-    }
     this.onValueChange?.(newValue);
     // keep getting events when pointer leaves tabs:
     this.list.setPointerCapture(e.pointerId);
@@ -225,9 +222,6 @@ class Slidytabs {
     trigger.click();
     // focus trigger so keyboard events come from the correct trigger
     trigger.focus();
-    if (!this.controlled) {
-      this.value = newValue;
-    }
     this.onValueChange?.(newValue);
   };
 
@@ -250,14 +244,13 @@ class Slidytabs {
     const leftRect = this.triggers[this.valueDuple[0]].getBoundingClientRect();
     const rightRect = this.triggers[this.valueDuple[1]].getBoundingClientRect();
     const parentRect = this.list.getBoundingClientRect();
-    Object.assign(this.slidytab.style, {
-      left: `${leftRect.left - parentRect.left}px`,
-      top: `${leftRect.top - parentRect.top}px`,
-      bottom: `${parentRect.bottom - leftRect.bottom}px`,
-      right: `${parentRect.right - rightRect.right}px`,
-    });
+    const left = `${leftRect.left - parentRect.left}px`;
+    const top = `${leftRect.top - parentRect.top}px`;
+    const bottom = `${parentRect.bottom - leftRect.bottom}px`;
+    const right = `${parentRect.right - rightRect.right}px`;
+    console.log(left, top, bottom, right);
+    Object.assign(this.slidytab.style, { left, top, bottom, right });
   }
-
   updateValue = (value: ValueType) => {
     if (isEqual(value, this.value)) {
       return;
@@ -327,6 +320,7 @@ class Slidytabs {
       position: "absolute",
       height: "unset",
       outlineColor: "transparent",
+      inset: "0",
     };
     Object.assign(slidytab.style, slidytabStyles);
     this.list.style.position = "relative";
@@ -372,11 +366,9 @@ class Slidytabs {
   };
 
   setupDataStateObserver = () => {
-    // this works but messses with controlled component
     const dataStateObserver = new MutationObserver(() => {
       if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
-        this.value = this.activeIndex;
-        this.onValueChange?.(this.value);
+        this.onValueChange?.(this.activeIndex);
       }
     });
     dataStateObserver.observe(this.list, {
