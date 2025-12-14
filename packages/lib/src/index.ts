@@ -157,20 +157,11 @@ class Slidytabs {
     const pressedIndex = this.#triggers.indexOf(trigger);
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
-    // const { orientation } = this.root.dataset;
-    // const { x, y, width, height } = this.list.getBoundingClientRect();
-    // const point = {
-    //   horizontal: [e.clientX, y + height / 2] as const,
-    //   vertical: [x + width / 2, e.clientY] as const,
-    // }[orientation!];
-
     this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     this.#slidytab.style.transitionDuration = this.transitionDuration;
     const newValue = Array.isArray(this.value)
       ? (this.value.with(this.#down, pressedIndex) as [number, number])
       : pressedIndex;
-    // should consolidate this as it is exactly the same in
-    // onpointermove
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
