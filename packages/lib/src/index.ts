@@ -93,6 +93,7 @@ class Slidytabs {
   private list!: HTMLDivElement;
   private triggers!: HTMLButtonElement[];
   private trigger!: HTMLButtonElement;
+  private isFocused = false;
 
   constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
     this.root = root;
@@ -251,17 +252,20 @@ class Slidytabs {
     console.log(left, top, bottom, right);
     Object.assign(this.slidytab.style, { left, top, bottom, right });
   }
+
   updateValue = (value: ValueType) => {
     if (isEqual(value, this.value)) {
       return;
     }
-    if (this.isIncremental(value) && (this.down === null || this.isMoving)) {
-      this.slidytab.style.transitionDuration = "0ms";
-      this.value = value;
-    } else {
-      this.slidytab.style.transitionDuration = this.transitionDuration;
-      this.value = value;
-    }
+
+    this.slidytab.style.transitionDuration =
+      this.isFocused || (this.down !== null && !this.isMoving)
+        ? this.transitionDuration
+        : "0ms";
+
+    // this.slidytab.style.transitionDuration =
+    //   this.down === null || this.isMoving ? "0ms" : this.transitionDuration;
+    this.value = value;
   };
 
   private onfocus = ({ currentTarget }: Event) => {
@@ -271,6 +275,7 @@ class Slidytabs {
     ) {
       return;
     }
+    this.isFocused = true;
     this.slidytab.className = twMerge(
       this.classes.base,
       this.classes.activeIndicator,
@@ -279,6 +284,7 @@ class Slidytabs {
   };
 
   private onblur = () => {
+    this.isFocused = false;
     this.slidytab.className = twMerge(
       this.classes.base,
       this.classes.activeIndicator
@@ -335,17 +341,6 @@ class Slidytabs {
   get valueDuple() {
     return Array.isArray(this.value) ? this.value : [this.value, this.value];
   }
-
-  isIncremental = (value: ValueType) => {
-    if (Array.isArray(value) && Array.isArray(this.value)) {
-      return (
-        Math.abs(value[0] - this.valueDuple[0]) <= 1 &&
-        Math.abs(value[1] - this.valueDuple[1]) <= 1
-      );
-    } else {
-      return Math.abs((value as number) - (this.value as number)) <= 1;
-    }
-  };
 
   private setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
