@@ -75,7 +75,7 @@ export const rangetabs =
 class Slidytabs {
   #root;
   #slidytab!: HTMLDivElement;
-  _value: ValueType = 0;
+  #_value: ValueType = 0;
   #onValueChange?: (value: ValueType) => void;
   #resizeObserver;
   #dataStateObserver;
@@ -87,7 +87,7 @@ class Slidytabs {
     focusIndicator: string[];
     base: string[];
   };
-  _transitionDuration = defaultTransitionDuration;
+  #_transitionDuration = defaultTransitionDuration;
   #isMoving;
   #orientation!: "horizontal" | "vertical";
   #list!: HTMLDivElement;
@@ -224,7 +224,7 @@ class Slidytabs {
   };
 
   set value(newValue: ValueType) {
-    this._value = newValue;
+    this.#_value = newValue;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
     }
@@ -292,11 +292,11 @@ class Slidytabs {
   };
 
   get transitionDuration(): string {
-    return `${this._transitionDuration}ms`;
+    return `${this.#_transitionDuration}ms`;
   }
 
   set transitionDuration(duration: number) {
-    this._transitionDuration = duration;
+    this.#_transitionDuration = duration;
   }
 
   get activeIndex() {
@@ -327,7 +327,7 @@ class Slidytabs {
   };
 
   get value() {
-    return this._value;
+    return this.#_value;
   }
 
   get valueDuple() {
