@@ -171,16 +171,13 @@ class Slidytabs {
       : pressedIndex;
     // should consolidate this as it is exactly the same in
     // onpointermove
-    console.log(newValue);
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
-      console.log("asdf");
       return;
     }
     this.onValueChange?.(newValue);
     // keep getting events when pointer leaves tabs:
     this.list.setPointerCapture(e.pointerId);
     this.triggers[pressedIndex].click();
-    console.log("down");
   };
 
   private onpointerup = () => {
@@ -227,7 +224,6 @@ class Slidytabs {
   };
 
   set value(newValue: ValueType) {
-    console.log("setting value", newValue);
     this._value = newValue;
     if (this.valueDuple[0] > this.valueDuple[1]) {
       throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
@@ -249,7 +245,6 @@ class Slidytabs {
     const top = `${leftRect.top - parentRect.top}px`;
     const bottom = `${parentRect.bottom - leftRect.bottom}px`;
     const right = `${parentRect.right - rightRect.right}px`;
-    console.log(left, top, bottom, right);
     Object.assign(this.slidytab.style, { left, top, bottom, right });
   }
 
@@ -257,14 +252,10 @@ class Slidytabs {
     if (isEqual(value, this.value)) {
       return;
     }
-
     this.slidytab.style.transitionDuration =
       this.isFocused || (this.down !== null && !this.isMoving)
         ? this.transitionDuration
         : "0ms";
-
-    // this.slidytab.style.transitionDuration =
-    //   this.down === null || this.isMoving ? "0ms" : this.transitionDuration;
     this.value = value;
   };
 
@@ -344,7 +335,6 @@ class Slidytabs {
 
   private setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
-      console.log("obsever");
       this.slidytab.style.transitionDuration = "0ms";
       this.value = this.value;
     });
