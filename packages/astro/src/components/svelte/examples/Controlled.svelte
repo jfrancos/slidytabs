@@ -13,7 +13,7 @@
     >
       <Tabs.List>
         {#each { length: 11 }, i}
-          <Tabs.Trigger class="min-w-0" value={String(i)}>{i}</Tabs.Trigger>
+          <Tabs.Trigger class="min-w-0" value={i.toString()}>{i}</Tabs.Trigger>
         {/each}
       </Tabs.List>
     </Tabs.Root>
