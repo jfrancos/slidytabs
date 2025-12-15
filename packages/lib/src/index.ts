@@ -15,7 +15,7 @@ interface BaseOptions<T extends ValueType> {
   swipe?: boolean;
 }
 
-const defaultTransitionDuration = 200;
+const defaultTransitionDuration = 0.25 * 1000;
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 
 export const slidytabs =
