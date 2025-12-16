@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Tabs from "$lib/shadcn/tabs";
-  import { slidytabs } from "slidytabs";
+  import { slider } from "slidytabs";
   let value = $state(5);
   const onValueChange = (newValue: number) => (value = newValue);
 </script>
@@ -9,7 +9,7 @@
   {#each { length: 2 }}
     <Tabs.Root
       value={value.toString()}
-      {@attach slidytabs({ value, onValueChange })}
+      {@attach slider({ value, onValueChange })}
     >
       <Tabs.List>
         {#each { length: 11 }, i}

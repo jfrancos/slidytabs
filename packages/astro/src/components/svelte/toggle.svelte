@@ -2,11 +2,11 @@
   import * as Tabs from "$lib/shadcn/tabs";
   import { setFramework, type Framework } from "A/lib/store.js";
   import { react, svelte } from "../icons";
-  import { slidytabs } from "slidytabs";
+  import { slider } from "slidytabs";
 </script>
 
 <Tabs.Root
-  {@attach slidytabs()}
+  {@attach slider()}
   value="svelte"
   class="items-center 2xl:hidden"
   onValueChange={(value) => setFramework(value as Framework)}

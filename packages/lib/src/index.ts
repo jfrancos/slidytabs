@@ -2,81 +2,122 @@ import { twMerge } from "tailwind-merge";
 import { isEqual } from "radashi";
 import { categorizeClasses, safelistGeneralizedClasses } from "./util";
 
-type ValueType = number | [number, number];
-type SlidyOptions = BaseOptions<number>;
-type RangeOptions = BaseOptions<[number, number]>;
+const defaultTransitionDuration = 0.2 * 1000;
 
-export type RangeValue = [number, number];
+type NumberDuple = [number, number];
 
-interface BaseOptions<T extends ValueType> {
-  value?: T;
-  transitionDuration?: number;
-  onValueChange?: (value: T) => void;
-  swipe?: boolean;
+interface Update {
+  activeEdge: number;
+  index: number;
 }
 
-const defaultTransitionDuration = 0.2 * 1000;
+interface TabsliderOptions {
+  value?: NumberDuple;
+  swipe: boolean;
+  transitionDuration?: number;
+  onStateChange?: (index: number, instance: Slidytabs) => void;
+  onValueChange?: (update: Update, instance: Slidytabs) => void;
+}
+
 const instances = new WeakMap<HTMLElement, Slidytabs>();
+const getInstance = (el: HTMLElement) => {
+  let instance = instances.get(el);
+  if (instance === undefined) {
+    instance = new Slidytabs(el);
+    instances.set(el, instance);
+  }
+  return instance;
+};
 
-export const slidytabs =
-  (_options: SlidyOptions = {}) =>
-  (tabroot: HTMLElement | null) => {
-    if (tabroot === null) {
-      return;
-    }
-    let instance = instances.get(tabroot);
-    const options = {
+export const tabs = () => (root: HTMLElement | null) => {
+  return setupSliderWithOptions(root, {
+    swipe: false,
+    onStateChange: (index, instance: Slidytabs) => {
+      console.log("hi");
+      instance.updateValue([index, index]);
+    },
+  });
+};
+
+export const slider =
+  ({
+    value,
+    onValueChange,
+    transitionDuration,
+  }: {
+    value?: number;
+    onValueChange?: (value: number) => void;
+    transitionDuration?: number;
+  } = {}) =>
+  (root: HTMLElement | null) => {
+    return setupSliderWithOptions(root, {
+      value: value ? [value, value] : undefined,
       swipe: true,
-      ..._options,
-    } as BaseOptions<ValueType>;
-    if (!instance) {
-      instance = new Slidytabs(tabroot, options);
-      instances.set(tabroot, instance);
-    } else if (options.value != null) {
-      instance.updateValue(options.value);
-    }
-    return () => {
-      queueMicrotask(() => {
-        if (tabroot.isConnected) {
-          return;
-        }
-        instance.destroy();
-      });
-    };
+      onStateChange: (index, instance: Slidytabs) => {
+        console.log("slider update");
+        instance.updateValue([index, index]);
+        onValueChange?.(index);
+      },
+      onValueChange: ({ index }: Update, instance: Slidytabs) => {
+        instance.updateValue([index, index]);
+        onValueChange?.(index);
+      },
+      transitionDuration,
+    });
   };
 
-export const rangetabs =
-  (_options: RangeOptions = {}) =>
-  (tabroot: HTMLElement | null) => {
-    if (tabroot === null) {
-      return;
-    }
-    let instance = instances.get(tabroot);
-    const options = {
+export const rangeslider =
+  ({
+    value,
+    onValueChange,
+    transitionDuration,
+  }: {
+    value: NumberDuple;
+    onValueChange?: (value: NumberDuple) => void;
+    transitionDuration?: number;
+  }) =>
+  (root: HTMLElement | null) => {
+    return setupSliderWithOptions(root, {
+      value,
       swipe: true,
-      ..._options,
-    } as BaseOptions<ValueType>;
-    if (!instance) {
-      instance = new Slidytabs(tabroot, options);
-      instances.set(tabroot, instance);
-    } else if (options.value != null) {
-      instance.updateValue(options.value);
-    }
-    return () => {
-      queueMicrotask(() => {
-        if (tabroot.isConnected) {
-          return;
-        }
-        instance.destroy();
-      });
-    };
+      onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
+        // instance.updateValue([index, index]);
+        console.log("hit");
+        const newValue = instance.value.with(activeEdge, index) as NumberDuple;
+        console.log("rangeslider newval", newValue);
+        instance.updateValue(newValue);
+        onValueChange?.(newValue);
+      },
+      transitionDuration,
+    });
   };
+
+// export const rangeslider =
+//   ({ value, onValueChange, transitionDuration }: { value: NumberDuple }) =>
+//   (root: HTMLElement | null) => {
+//     return setupSliderWithOptions(root, {
+//       swipe: true,
+//     });
+//   };
+
+const setupSliderWithOptions = (
+  root: HTMLElement | null,
+  options: TabsliderOptions
+) => {
+  if (!root) {
+    return;
+  }
+  const tabslider = getInstance(root);
+  tabslider.setOptions(options);
+  return () => tabslider.destroyIfDisconnected();
+};
 
 class Slidytabs {
   #root;
+  #swipe!: boolean;
   #slidytab!: HTMLDivElement;
-  #_value: ValueType = 0;
-  #onValueChange?: (value: ValueType) => void;
+  #_value: [number, number] = [0, 0] as const;
+  #onValueChange?: (update: Update, instance: Slidytabs) => void;
   #resizeObserver;
   #dataStateObserver;
   #down: number | null;
@@ -94,11 +135,12 @@ class Slidytabs {
   #triggers!: HTMLButtonElement[];
   #trigger!: HTMLButtonElement;
   #isFocused = false;
+  #onStateChange?: (index: number, instance: Slidytabs) => void;
 
-  constructor(root: HTMLElement, options: BaseOptions<ValueType> = {}) {
+  // constructor(root: HTMLElement, options: Options = {}) {
+  constructor(root: HTMLElement) {
     this.#root = root;
-    this.transitionDuration =
-      options.transitionDuration || defaultTransitionDuration;
+    this.transitionDuration = defaultTransitionDuration;
     this.#extractFromDOM();
     this.#classes = categorizeClasses([...this.#trigger.classList]);
     safelistGeneralizedClasses(this.#trigger);
@@ -106,20 +148,18 @@ class Slidytabs {
     this.#onblur();
     this.#list.addEventListener("pointerdown", this.#onpointerdown);
     this.#list.addEventListener("pointerup", this.#onpointerup);
-    if (options.swipe) {
-      this.#list.addEventListener("pointermove", this.#onpointermove);
-    }
-    this.#onValueChange =
-      options.onValueChange ??
-      (options.value === undefined
-        ? (newValue) => (this.value = newValue)
-        : undefined);
+    this.#list.addEventListener("pointermove", this.#onpointermove);
+    // this.#onValueChange =
+    //   options.onValueChange ??
+    //   (options.value === undefined
+    //     ? (newValue) => (this.value = newValue)
+    //     : undefined);
     this.#resizeObserver = this.#setupResizeObserver();
-    this.#dataStateObserver = this.#setupDataStateObserver();
     this.#down = null;
     this.#setupFakeFocus();
     this.#isMoving = false;
-    this.value = options.value ?? this.activeIndex;
+    this.value =
+      this.activeIndex >= 0 ? [this.activeIndex, this.activeIndex] : [0, 0];
     const triggerStyles: Partial<CSSStyleDeclaration> = {
       zIndex: "10",
       touchAction: "none",
@@ -128,8 +168,30 @@ class Slidytabs {
     for (const trigger of this.#triggers) {
       Object.assign(trigger.style, triggerStyles);
     }
+
     this.#list.append(this.#slidytab);
+    this.#dataStateObserver = this.#setupDataStateObserver();
+    console.log(this.value, "const");
   }
+
+  setOptions = ({
+    value,
+    onValueChange,
+    onStateChange,
+    swipe,
+  }: {
+    value?: NumberDuple;
+    onValueChange?: (update: Update, instance: Slidytabs) => void;
+    onStateChange?: (index: number, instance: Slidytabs) => void;
+    swipe: boolean;
+  }) => {
+    console.log(value, "set");
+    this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
+    this.#onValueChange = onValueChange;
+    this.#onStateChange = onStateChange;
+    this.#swipe = swipe;
+    // this.#_value = value;
+  };
 
   #extractFromDOM = () => {
     this.#triggers = [...this.#root.querySelectorAll("button")];
@@ -149,35 +211,55 @@ class Slidytabs {
   };
 
   #onpointerdown = (e: PointerEvent) => {
+    console.log("here");
+    console.log(e);
     this.#extractFromDOM();
-    const trigger = (e.target as Element).closest("button");
+    // e.stopPropagation();
+    const { x, y, width, height } = this.#list.getBoundingClientRect();
+    const point = {
+      horizontal: [e.clientX, y + height / 2] as const,
+      vertical: [x + width / 2, e.clientY] as const,
+    }[this.#orientation];
+    console.log(point);
+    const trigger = document.elementFromPoint(...point)?.closest("button");
+    console.log(trigger);
+    // const trigger = (e.currentTarget as Element).closest("button");
     if (!trigger) {
+      console.log("hi");
       return;
     }
-    const pressedIndex = this.#triggers.indexOf(trigger);
+    console.log(this.value);
+    const index = this.#triggers.indexOf(trigger);
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
     this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     this.#slidytab.style.transitionDuration = this.transitionDuration;
-    const newValue = Array.isArray(this.value)
-      ? (this.value.with(this.#down, pressedIndex) as [number, number])
-      : pressedIndex;
+    const newValue = this.value.with(this.#down, index) as [number, number];
+    console.log(newValue);
+    // ? (this.value.with(this.#down, pressedIndex) as [number, number])
+    // : pressedIndex;
     if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
       return;
     }
-    this.#onValueChange?.(newValue);
+    this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    this.#triggers[pressedIndex].click();
+    this.#triggers[index].click();
   };
 
   #onpointerup = () => {
+    if (!this.#swipe) {
+      return;
+    }
     this.#slidytab.style.transitionDuration = this.transitionDuration;
     this.#down = null;
     this.#isMoving = false;
   };
 
   #onpointermove = (e: PointerEvent) => {
+    if (!this.#swipe) {
+      return;
+    }
     if (e.buttons === 0) {
       this.#onpointerup();
     }
@@ -193,34 +275,39 @@ class Slidytabs {
     if (!trigger) {
       return;
     }
-    const i = this.#triggers.indexOf(trigger);
-    if (i < 0) {
+    const index = this.#triggers.indexOf(trigger);
+    if (index < 0) {
       return;
     }
 
-    const newValue = Array.isArray(this.value)
-      ? (this.value.with(this.#down, i) as [number, number])
-      : i;
+    // const newValue = Array.isArray(this.value)
+    // const newValue = this.value.with(this.#down, i) as [number, number];
+    // : i;
 
-    if (Array.isArray(newValue) && newValue[0] > newValue[1]) {
-      return;
-    }
+    // if (newValue[0] > newValue[1]) {
+    //   console.log("sadfoi");
+    //   return;
+    // }
+    this.#onValueChange?.({ index, activeEdge: this.#down }, this);
+
     this.#isMoving = true;
     this.#slidytab.style.transitionDuration = "0ms";
     // sync shadcn state with slidytabs state
+    console.log(index, x);
     trigger.click();
     // focus trigger so keyboard events come from the correct trigger
     trigger.focus();
-    this.#onValueChange?.(newValue);
+    // this.#onValueChange?.(newValue);
   };
 
-  set value(newValue: ValueType) {
+  set value(newValue: [number, number]) {
+    console.log(newValue, "set neval");
     this.#_value = newValue;
-    if (this.valueDuple[0] > this.valueDuple[1]) {
-      throw `${this.valueDuple[0]} is larger than ${this.valueDuple[1]}`;
+    if (this.value[0] > this.value[1]) {
+      throw `${this.value[0]} is larger than ${this.value[1]}`;
     }
     for (let i = 0; i < this.#triggers.length; i++) {
-      if (i >= this.valueDuple[0] && i <= this.valueDuple[1]) {
+      if (i >= this.value[0] && i <= this.value[1]) {
         this.#triggers[i].className = twMerge(
           this.#classes.base,
           this.#classes.activeText
@@ -229,9 +316,9 @@ class Slidytabs {
         this.#triggers[i].className = twMerge(this.#classes.base);
       }
     }
-    const leftRect = this.#triggers[this.valueDuple[0]].getBoundingClientRect();
-    const rightRect =
-      this.#triggers[this.valueDuple[1]].getBoundingClientRect();
+    console.log(this.value, "qwer");
+    const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
+    const rightRect = this.#triggers[this.value[1]].getBoundingClientRect();
     const parentRect = this.#list.getBoundingClientRect();
     const left = `${leftRect.left - parentRect.left}px`;
     const top = `${leftRect.top - parentRect.top}px`;
@@ -240,10 +327,11 @@ class Slidytabs {
     Object.assign(this.#slidytab.style, { left, top, bottom, right });
   }
 
-  updateValue = (value: ValueType) => {
+  updateValue = (value: [number, number]) => {
     if (isEqual(value, this.value)) {
       return;
     }
+    console.log("updating");
     this.#slidytab.style.transitionDuration =
       this.#isFocused || (this.#down !== null && !this.#isMoving)
         ? this.transitionDuration
@@ -309,7 +397,7 @@ class Slidytabs {
       position: "absolute",
       height: "unset",
       outlineColor: "transparent",
-      inset: "0",
+      // inset: "0",
     };
     Object.assign(slidytab.style, slidytabStyles);
     this.#list.style.position = "relative";
@@ -321,21 +409,18 @@ class Slidytabs {
     return this.#_value;
   }
 
-  get valueDuple() {
-    return Array.isArray(this.value) ? this.value : [this.value, this.value];
-  }
-
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      this.value = this.value;
+      this.updateValue(this.value);
+      // this.value = this.value;
     });
     resizeObserver.observe(this.#list);
     return resizeObserver;
   };
 
   #getEndpoints = () => {
-    const [x0, x1] = this.valueDuple;
+    const [x0, x1] = this.value;
     return [
       this.#triggers[x0].offsetLeft,
       this.#triggers[x1].offsetLeft + this.#triggers[x1].offsetWidth,
@@ -343,11 +428,11 @@ class Slidytabs {
   };
 
   #setupDataStateObserver = () => {
-    const dataStateObserver = new MutationObserver(() => {
-      if (this.value !== this.activeIndex && !Array.isArray(this.value)) {
-        this.#onValueChange?.(this.activeIndex);
-      }
-    });
+    const callback = () => {
+      this.#onStateChange?.(this.activeIndex, this);
+    };
+    const dataStateObserver = new MutationObserver(callback);
+    // callback();
     dataStateObserver.observe(this.#list, {
       subtree: true,
       attributeFilter: ["data-state"],
@@ -355,7 +440,13 @@ class Slidytabs {
     return dataStateObserver;
   };
 
-  destroy() {
+  destroyIfDisconnected() {
+    // verify lifecycle stuff
+    console.log("destroy?", this);
+
+    if (this.#root.isConnected) {
+      return;
+    }
     this.#list.removeEventListener("pointerdown", this.#onpointerdown);
     this.#list.removeEventListener("pointermove", this.#onpointermove);
     this.#resizeObserver.disconnect();
@@ -365,6 +456,7 @@ class Slidytabs {
       trigger.removeEventListener("blur", this.#onblur);
       trigger.removeEventListener("keydown", this.#onfocus, true);
     }
+    instances.delete(this.#root);
   }
 }
 
