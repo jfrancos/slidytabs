@@ -206,7 +206,7 @@ class Slidytabs {
     this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    // this.triggers[index].click();
+    // this.#triggers[index].click();
   };
 
   #onpointerup = () => {
@@ -288,7 +288,8 @@ class Slidytabs {
   };
 
   #onblur = () => {
-    // this.#isFocused = false;
+    // otherwise slides are slow folling keyboard input
+    this.#isFocused = false;
     this.#slidytab.className = twMerge(
       this.#classes.base,
       this.#classes.activeIndicator
