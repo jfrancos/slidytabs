@@ -7,15 +7,15 @@ const defaultTransitionDuration = 0.2 * 1000;
 type NumberDuple = [number, number];
 
 interface Update {
-  activeEdge: number;
+  activeEdge: number | null;
   index: number;
+  trigger?: HTMLElement;
 }
 
 interface TabsliderOptions {
   value?: NumberDuple;
   swipe: boolean;
   transitionDuration?: number;
-  onStateChange?: (index: number, instance: Slidytabs) => void;
   onValueChange?: (update: Update, instance: Slidytabs) => void;
 }
 
@@ -32,8 +32,9 @@ const getInstance = (el: HTMLElement) => {
 export const tabs = () => (root: HTMLElement | null) => {
   return setupSliderWithOptions(root, {
     swipe: false,
-    onStateChange: (index, instance: Slidytabs) => {
+    onValueChange: ({ index }, instance: Slidytabs) => {
       instance.updateValue([index, index]);
+      // instance.updateTabsContent(index);
     },
   });
 };
@@ -52,29 +53,21 @@ export const slider =
     return setupSliderWithOptions(root, {
       value: value ? [value, value] : undefined,
       swipe: true,
-      onStateChange: onValueChange
-        ? (index, instance: Slidytabs) => {
-            instance.updateValue([index, index]);
-          }
-        : value
-        ? undefined
-        : (index, instance: Slidytabs) => {
-            instance.updateValue([index, index]);
-          },
       onValueChange: onValueChange
-        ? ({ index }: Update) => {
+        ? ({ index }: Update, instance) => {
+            instance.updateValue([index, index]);
             onValueChange(index);
+            // instance.updateTabsContent(index);
           }
         : value
         ? undefined
         : ({ index }: Update, instance: Slidytabs) => {
+            // instance.updateTabsContent(index);
             instance.updateValue([index, index]);
           },
       transitionDuration,
     });
   };
-
-// TODO frozen, react,
 
 export const rangeslider =
   ({
@@ -91,6 +84,10 @@ export const rangeslider =
       value,
       swipe: true,
       onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
+        if (activeEdge === null) {
+          // triggered from data-state observer
+          return;
+        }
         const newValue = instance.value.with(activeEdge, index) as NumberDuple;
         instance.updateValue(newValue);
         onValueChange?.(newValue);
@@ -133,7 +130,6 @@ class Slidytabs {
   #triggers!: HTMLButtonElement[];
   #trigger!: HTMLButtonElement;
   #isFocused = false;
-  #onStateChange?: (index: number, instance: Slidytabs) => void;
   #isMoving = false;
 
   constructor(root: HTMLElement) {
@@ -143,9 +139,9 @@ class Slidytabs {
     safelistGeneralizedClasses(this.#trigger);
     this.#slidytab = this.#setupSlidytab();
     this.#onblur();
-    this.#list.addEventListener("pointerdown", this.#onpointerdown);
+    this.#list.addEventListener("pointerdown", this.#onpointerdown, true);
     this.#list.addEventListener("pointerup", this.#onpointerup);
-    this.#list.addEventListener("pointermove", this.#onpointermove);
+    this.#list.addEventListener("pointermove", this.#onpointermove, true);
     this.#resizeObserver = this.#setupResizeObserver();
     this.#setupFakeFocus();
     const triggerStyles: Partial<CSSStyleDeclaration> = {
@@ -163,16 +159,13 @@ class Slidytabs {
   setOptions = ({
     value,
     onValueChange,
-    onStateChange,
     swipe,
   }: {
     value?: NumberDuple;
     onValueChange?: (update: Update, instance: Slidytabs) => void;
-    onStateChange?: (index: number, instance: Slidytabs) => void;
     swipe: boolean;
   }) => {
     this.#onValueChange = onValueChange;
-    this.#onStateChange = onStateChange;
     this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
     this.#swipe = swipe;
   };
@@ -196,7 +189,6 @@ class Slidytabs {
 
   #onpointerdown = (e: PointerEvent) => {
     this.#extractFromDOM();
-
     const { x, y, width, height } = this.#list.getBoundingClientRect();
     const point = {
       horizontal: [e.clientX, y + height / 2] as const,
@@ -214,7 +206,7 @@ class Slidytabs {
     this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    this.#triggers[index].click();
+    // this.triggers[index].click();
   };
 
   #onpointerup = () => {
@@ -242,9 +234,9 @@ class Slidytabs {
     }
     const index = this.#triggers.indexOf(trigger);
 
-    this.#onValueChange?.({ index, activeEdge: this.#down }, this);
+    this.#onValueChange?.({ index, activeEdge: this.#down, trigger }, this);
     // sync shadcn state with slidytabs state
-    trigger.click();
+    // trigger.click();
     trigger.focus();
   };
 
@@ -349,7 +341,7 @@ class Slidytabs {
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      this.updateValue(this.value);
+      this.value = this.value;
     });
     resizeObserver.observe(this.#list);
     return resizeObserver;
@@ -365,7 +357,14 @@ class Slidytabs {
 
   #setupDataStateObserver = () => {
     const dataStateObserver = new MutationObserver(() => {
-      this.#onStateChange?.(this.activeIndex, this);
+      this.#onValueChange?.(
+        {
+          index: this.activeIndex,
+          activeEdge: null,
+          trigger: this.#triggers[this.activeIndex],
+        },
+        this
+      );
     });
     dataStateObserver.observe(this.#list, {
       subtree: true,
