@@ -69,7 +69,7 @@ export const slider =
     });
   };
 
-export const rangeslider =
+export const range =
   ({
     value,
     onValueChange,
