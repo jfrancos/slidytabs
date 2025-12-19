@@ -50,7 +50,6 @@ export const extractVueRef = (source: string) => {
   if (!ast) {
     return;
   }
-
   let attachString;
   transform(ast, {
     nodeTransforms: [
