@@ -1,4 +1,6 @@
 ---
+import { Code } from "astro:components";
+import { github } from "../components/icons";
 import Toggle from "../components/svelte/Toggle.svelte";
 import Demo from "../components/Demo.astro";
 ---
@@ -12,26 +14,33 @@ import Demo from "../components/Demo.astro";
     <title>slidytabs</title>
   </head>
   <body class="flex flex-col h-screen bg-neutral-200 .gap-4 .sm:gap-0 .pt-6">
-    <div class="px-8 py-6 color-neutral-700 flex flex-col gap-1">
-      <div class="font-bold color-pink-700 tracking-wide text-2xl">
-        slidytabs
+    <div class="px-8 py-6 color-neutral-700 flex flex-col gap-2">
+      <div class="flex justify-between .h-9">
+        <div class="font-semibold color-pink-700 tracking-wide text-2xl">
+          slidytabs
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="hidden min-[28rem]:block">
+            <Toggle client:idle />
+          </div>
+          <div class:list={[github, "text-lg"]}></div>
+        </div>
       </div>
-      <div class="font-medium text-balance">
+      <div class="text-balance">
         a simple utility for animating shadcn&ensp;
-        <span
-          class="font-mono font-semibold p-1 -m-1 rounded-sm text-xs bg-white color-sky-700 text-nowrap"
-        >
-          {"<Tabs />"}
-        </span>
+        <Code
+          code="<Tabs />"
+          lang="jsx"
+          theme="github-light"
+          class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
+        />
       </div>
-      <!-- <div class="text-sm color-neutral-700">
-        multi-framework demo powered by <div
-          class="i-logos:astro align-middle inline-block"
-        >
-        </div> -->
+      <div class="min-[28rem]:hidden self-start py-0.5">
+        <Toggle client:idle />
+      </div>
     </div>
+    <!-- <Code code="npm i slidytabs" lang="bash" theme="github-light" /> -->
     <div class="flex flex-col grow gap-4">
-      <Toggle client:idle />
       <div
         class="flex gap-8 grow *:2xl:first:rounded-tr-xl *:2xl:last:rounded-tl-xl"
       >
@@ -44,7 +53,7 @@ import Demo from "../components/Demo.astro";
               href="https://www.shadcn-svelte.com/docs/components/tabs"
               >shadcn-svelte</a
             ><div class="flex flex-col gap-12">
-              <Demo lang="svelte" filename="Tabs" />
+              <Demo lang="svelte" filename="Tabs"> {}</Demo>
               <Demo lang="svelte" filename="VerticalTabs" />
               <Demo lang="svelte" filename="UncontrolledSlider" />
               <Demo lang="svelte" filename="ControlledSlider" />

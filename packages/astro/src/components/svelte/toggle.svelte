@@ -11,7 +11,7 @@
   class="items-center 2xl:hidden"
   onValueChange={(value) => setFramework(value as Framework)}
 >
-  <Tabs.List class="*:px-8 *:gap-3">
+  <Tabs.List class="*:px-6 *:gap-3 h-8 rounded-md">
     <Tabs.Trigger value="svelte"
       ><div class={svelte}></div>
       Svelte</Tabs.Trigger

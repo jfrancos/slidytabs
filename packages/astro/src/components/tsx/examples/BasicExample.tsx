@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/tabs";
 import { tabs } from "slidytabs";
 
 export default () => (
-  <Tabs defaultValue="password" ref={tabs()}>
+  <Tabs defaultValue="password" ref={tabs()} className="text-center">
     <TabsList>
       <TabsTrigger value="account">Account</TabsTrigger>
       <TabsTrigger value="password">Password</TabsTrigger>
