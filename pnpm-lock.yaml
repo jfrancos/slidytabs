@@ -261,6 +261,9 @@ importers:
       typescript-eslint:
         specifier: ^8.41.0
         version: 8.41.0(eslint@9.34.0(jiti@2.6.1))(typescript@5.9.3)
+      vue:
+        specifier: ^3.5.26
+        version: 3.5.26(typescript@5.9.3)
 
 packages:
 

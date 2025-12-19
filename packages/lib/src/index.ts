@@ -4,6 +4,19 @@ import { categorizeClasses, safelistGeneralizedClasses } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
 
+type RefTarget = Element | { $el: Element } | null;
+type RefCallback = (node: RefTarget, refs?: unknown) => void;
+const setupSliderWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
+  const root =
+    ref instanceof Element ? ref : ref?.$el instanceof Element ? ref.$el : null;
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+  const tabslider = getInstance(root);
+  tabslider.setOptions(options);
+  return () => tabslider.destroyIfDisconnected();
+};
+
 export type RangeValue = [start: number, end: number];
 
 interface Update {
@@ -29,14 +42,14 @@ const getInstance = (el: HTMLElement) => {
   return instance;
 };
 
-export const tabs = () => (root: HTMLElement | null) => {
+export const tabs = (): RefCallback => (root) => {
   return setupSliderWithOptions(root, {
     swipe: false,
     onValueChange: ({ index }, instance: Slidytabs) => {
       instance.updateValue([index, index]);
       // instance.updateTabsContent(index);
     },
-  });
+  }) as void;
 };
 
 export const slider =
@@ -48,8 +61,8 @@ export const slider =
     value?: number;
     onValueChange?: (value: number) => void;
     transitionDuration?: number;
-  } = {}) =>
-  (root: HTMLElement | null) => {
+  } = {}): RefCallback =>
+  (root) => {
     return setupSliderWithOptions(root, {
       value: value ? [value, value] : undefined,
       swipe: true,
@@ -95,18 +108,6 @@ export const range =
       transitionDuration,
     });
   };
-
-const setupSliderWithOptions = (
-  root: HTMLElement | null,
-  options: TabsliderOptions
-) => {
-  if (!root) {
-    return;
-  }
-  const tabslider = getInstance(root);
-  tabslider.setOptions(options);
-  return () => tabslider.destroyIfDisconnected();
-};
 
 class Slidytabs {
   #root;
