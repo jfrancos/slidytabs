@@ -4,8 +4,6 @@
     "css": "styles/global.css",
     "baseColor": "neutral"
   },
-  "rsc": false,
-  "tsx": true,
   "aliases": {
     "components": "$lib/shadcn",
     "utils": "A/lib/utils",

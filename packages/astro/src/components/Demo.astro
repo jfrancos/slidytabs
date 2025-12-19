@@ -2,12 +2,13 @@
 import Code from "./Code.astro";
 import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
+import VueShell from "./vue/Shell.vue";
 import { react, svelte } from "./icons";
 import { extractRef, extractAttachment } from "../lib/findHighlight.ts";
 
 interface Props {
   filename: string;
-  lang: "tsx" | "svelte";
+  lang: "tsx" | "svelte" | "vue";
 }
 
 const { filename, lang } = Astro.props;
@@ -18,9 +19,14 @@ const { default: raw } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
 
-const highlight = { tsx: extractRef, svelte: extractAttachment }[lang](raw);
+const highlight = {
+  tsx: extractRef,
+  svelte: extractAttachment,
+  vue: undefined,
+}[lang]?.(raw);
 const prefix = {
   svelte: `<!-- ${filename}.svelte -->`,
+  vue: `<!-- ${filename}.vue -->`,
   tsx: `// ${filename}.tsx`,
 }[lang];
 const logos = {
@@ -43,6 +49,7 @@ const code = `${prefix}\n${raw}`;
     </div>
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
+    {lang === "vue" && <VueShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
     have both simultaneously and hide the SSR once the client is visible -->
     <div class="[:has(*)~&]:hidden">
