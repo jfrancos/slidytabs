@@ -20,11 +20,18 @@ import Basic from "../components/vue/Basic.vue";
         <div class="font-semibold color-pink-700 tracking-wide text-2xl">
           slidytabs
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-8">
           <div class="hidden min-[28rem]:block">
             <Toggle client:idle />
           </div>
-          <div class:list={[github, "text-lg"]}></div>
+          <a
+            href="https://github.com/jfrancos/slidytabs"
+            class="hover:bg-neutral-300 p-2 -m-2 rounded-full transition-colors"
+            target="_blank"
+            rel="noreferer"
+          >
+            <div class:list={[github, ".text-lg"]}></div>
+          </a>
         </div>
       </div>
       <div class="text-balance">
