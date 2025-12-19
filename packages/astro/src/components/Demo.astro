@@ -34,7 +34,13 @@ const code = `${prefix}\n${raw}`;
   class="flex flex-col border-gray-100 border-4 rounded-lg max-w-[calc(100vw-4rem)] w-2xl relative"
 >
   <div class="flex justify-center h-32 items-center relative select-none">
-    <div class:list={[logos, "text-xl absolute top-4 right-4 z-10 min-[28rem]:opacity-100 opacity-50"]}></div>
+    <div
+      class:list={[
+        logos,
+        "text-xl absolute top-4 right-4 z-10 min-[28rem]:opacity-100 opacity-50",
+      ]}
+    >
+    </div>
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
