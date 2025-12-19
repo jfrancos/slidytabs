@@ -32,6 +32,9 @@ importers:
       '@unocss/rule-utils':
         specifier: ^66.5.10
         version: 66.5.10
+      '@vue/compiler-dom':
+        specifier: ^3.5.26
+        version: 3.5.26
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.26(typescript@5.9.3))

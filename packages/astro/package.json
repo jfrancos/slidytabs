@@ -17,6 +17,7 @@
     "@types/react-dom": "^19.2.3",
     "@unocss/preset-mini": "^66.5.10",
     "@unocss/rule-utils": "^66.5.10",
+    "@vue/compiler-dom": "^3.5.26",
     "@vueuse/core": "^14.1.0",
     "astro": "^5.16.6",
     "class-variance-authority": "^0.7.1",

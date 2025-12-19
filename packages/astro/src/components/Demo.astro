@@ -4,7 +4,11 @@ import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
 import VueShell from "./vue/Shell.vue";
 import { react, svelte } from "./icons";
-import { extractRef, extractAttachment } from "../lib/findHighlight.ts";
+import {
+  extractRef,
+  extractAttachment,
+  extractVueRef,
+} from "../lib/findHighlight.ts";
 
 interface Props {
   filename: string;
@@ -22,7 +26,7 @@ const { default: raw } = await import(
 const highlight = {
   tsx: extractRef,
   svelte: extractAttachment,
-  vue: undefined,
+  vue: extractVueRef,
 }[lang]?.(raw);
 const prefix = {
   svelte: `<!-- ${filename}.svelte -->`,
