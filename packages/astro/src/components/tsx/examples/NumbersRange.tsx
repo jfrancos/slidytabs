@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { rangeslider } from "slidytabs";
+import { rangeslider, type RangeValue } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 export default () => {
-  const [value, onValueChange] = useState<[number, number]>([4, 6]);
+  const [value, onValueChange] = useState<RangeValue>([4, 6]);
   return (
     <Tabs ref={rangeslider({ value, onValueChange })}>
       <TabsList>

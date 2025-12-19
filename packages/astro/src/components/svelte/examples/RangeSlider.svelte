@@ -1,8 +1,8 @@
 <script lang="ts">
   import * as Tabs from "$lib/shadcn/tabs";
-  import { rangeslider } from "slidytabs";
-  let value = $state<[number, number]>([4, 6]);
-  const onValueChange = (newValue: [number, number]) => (value = newValue);
+  import { rangeslider, type RangeValue } from "slidytabs";
+  let value = $state<RangeValue>([4, 6]);
+  const onValueChange = (newValue: RangeValue) => (value = newValue);
 </script>
 
 <Tabs.Root {@attach rangeslider({ value, onValueChange })}>

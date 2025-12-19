@@ -4,7 +4,7 @@ import { categorizeClasses, safelistGeneralizedClasses } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
 
-type NumberDuple = [number, number];
+export type RangeValue = [start: number, end: number];
 
 interface Update {
   activeEdge: number | null;
@@ -13,7 +13,7 @@ interface Update {
 }
 
 interface TabsliderOptions {
-  value?: NumberDuple;
+  value?: RangeValue;
   swipe: boolean;
   transitionDuration?: number;
   onValueChange?: (update: Update, instance: Slidytabs) => void;
@@ -75,8 +75,8 @@ export const rangeslider =
     onValueChange,
     transitionDuration,
   }: {
-    value: NumberDuple;
-    onValueChange?: (value: NumberDuple) => void;
+    value: RangeValue;
+    onValueChange?: (value: RangeValue) => void;
     transitionDuration?: number;
   }) =>
   (root: HTMLElement | null) => {
@@ -88,7 +88,7 @@ export const rangeslider =
           // triggered from data-state observer
           return;
         }
-        const newValue = instance.value.with(activeEdge, index) as NumberDuple;
+        const newValue = instance.value.with(activeEdge, index) as RangeValue;
         instance.updateValue(newValue);
         onValueChange?.(newValue);
       },
@@ -161,7 +161,7 @@ class Slidytabs {
     onValueChange,
     swipe,
   }: {
-    value?: NumberDuple;
+    value?: RangeValue;
     onValueChange?: (update: Update, instance: Slidytabs) => void;
     swipe: boolean;
   }) => {
@@ -240,7 +240,7 @@ class Slidytabs {
     trigger.focus();
   };
 
-  set value(newValue: NumberDuple) {
+  set value(newValue: RangeValue) {
     this.#_value = newValue;
     if (this.value[0] > this.value[1]) {
       return;
@@ -261,7 +261,7 @@ class Slidytabs {
     Object.assign(this.#slidytab.style, { left, top, bottom, right });
   }
 
-  updateValue = (value: NumberDuple) => {
+  updateValue = (value: RangeValue) => {
     if (isEqual(value, this.value)) {
       return;
     }
