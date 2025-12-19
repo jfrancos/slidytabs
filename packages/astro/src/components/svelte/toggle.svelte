@@ -8,7 +8,7 @@
 <Tabs.Root
   {@attach slider()}
   value="svelte"
-  class="items-center 2xl:hidden"
+  class="items-center"
   onValueChange={(value) => setFramework(value as Framework)}
 >
   <Tabs.List class="*:px-6 *:gap-3 h-8 rounded-md">
