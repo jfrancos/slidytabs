@@ -23,21 +23,24 @@ const { default: raw } = await import(
   `./${lang}/examples/${filename}.${lang}?raw`
 );
 
-const highlight = {
-  tsx: extractRef,
-  svelte: extractAttachment,
-  vue: extractVueRef,
-}[lang]?.(raw);
-const prefix = {
-  svelte: `<!-- ${filename}.svelte -->`,
-  vue: `<!-- ${filename}.vue -->`,
-  tsx: `// ${filename}.tsx`,
+const { highlight, prefix, logo } = {
+  tsx: {
+    highlight: extractRef,
+    prefix: `// ${filename}.tsx`,
+    logo: react,
+  },
+  svelte: {
+    highlight: extractAttachment,
+    prefix: `<!-- ${filename}.svelte -->`,
+    logo: svelte,
+  },
+  vue: {
+    highlight: extractVueRef,
+    prefix: `<!-- ${filename}.vue -->`,
+    logo: vue,
+  },
 }[lang];
-const logos = {
-  [react]: lang === "tsx",
-  [svelte]: lang === "svelte",
-  [vue]: lang === "vue",
-};
+
 const code = `${prefix}\n${raw}`;
 ---
 
@@ -47,7 +50,7 @@ const code = `${prefix}\n${raw}`;
   <div class="flex justify-center h-32 items-center relative select-none">
     <div
       class:list={[
-        logos,
+        logo,
         "text-xl absolute top-4 right-4 z-10 min-[28rem]:opacity-100 opacity-50",
       ]}
     >
@@ -61,5 +64,5 @@ const code = `${prefix}\n${raw}`;
       <Component />
     </div>
   </div>
-  <Code {highlight} {code} {lang} />
+  <Code highlight={highlight(raw)} {code} {lang} />
 </div>
