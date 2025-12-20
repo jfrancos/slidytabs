@@ -3,7 +3,7 @@ import Code from "./Code.astro";
 import SvelteShell from "./svelte/Shell.svelte";
 import TsxShell from "./tsx/Shell.tsx";
 import VueShell from "./vue/Shell.vue";
-import { react, svelte } from "./icons";
+import { react, svelte, vue } from "./icons";
 import {
   extractRef,
   extractAttachment,
@@ -36,6 +36,7 @@ const prefix = {
 const logos = {
   [react]: lang === "tsx",
   [svelte]: lang === "svelte",
+  [vue]: lang === "vue",
 };
 const code = `${prefix}\n${raw}`;
 ---
