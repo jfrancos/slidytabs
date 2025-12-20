@@ -51,7 +51,10 @@ import Demo from "../components/Demo.astro";
       <div
         class="flex gap-8 grow *:2xl:first:rounded-tr-xl *:2xl:last:rounded-tl-xl"
       >
-        <div id="svelte-demo" class="2xl:block bg-white flex-1 shadow-xl pb-6 hidden">
+        <div
+          id="svelte-demo"
+          class="2xl:block bg-white flex-1 shadow-xl pb-6 hidden"
+        >
           <div class="flex justify-center items-center flex-col gap-6 py-6">
             <a
               rel="noopener"
@@ -105,21 +108,10 @@ import Demo from "../components/Demo.astro";
 <script>
   import { $framework } from "A/lib/store";
 
-  $framework.subscribe((framework) => {
-    if (framework === "react") {
-      document.getElementById("svelte-demo")?.classList.add("hidden");
-      document.getElementById("vue-demo")?.classList.add("hidden");
-      document.getElementById("react-demo")?.classList.remove("hidden");
-    } else if (framework === "svelte") {
-      document.getElementById("react-demo")?.classList.add("hidden");
-      document.getElementById("svelte-demo")?.classList.remove("hidden");
-      document.getElementById("vue-demo")?.classList.add("hidden");
-    } else {
-      document.getElementById("react-demo")?.classList.add("hidden");
-      document.getElementById("svelte-demo")?.classList.add("hidden");
-      document.getElementById("vue-demo")?.classList.remove("hidden");
+  $framework.subscribe((newFramework) => {
+    for (const framework of ["react", "vue", "svelte"]) {
+      const list = document.getElementById(`${framework}-demo`)?.classList;
+      framework === newFramework ? list?.remove("hidden") : list?.add("hidden");
     }
   });
 </script>
-
-<!-- linear-gradient(to bottom, transparent, var(--sk-bg-1)), radial-gradient(circle at 40% 30%, #ebf3f9, #d6dee4) -->
