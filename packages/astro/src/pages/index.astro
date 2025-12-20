@@ -1,9 +1,8 @@
 ---
 import { Code } from "astro:components";
 import { github } from "../components/icons";
-import Toggle from "../components/svelte/Toggle.svelte";
+import FrameworkSelect from "../components/svelte/FrameworkSelect.svelte";
 import Demo from "../components/Demo.astro";
-// import Basic from "../components/vue/Basic.vue";
 ---
 
 <html lang="en" class="h-screen">
@@ -21,8 +20,8 @@ import Demo from "../components/Demo.astro";
           slidytabs
         </div>
         <div class="flex items-center gap-8">
-          <div class="hidden min-[28rem]:block">
-            <Toggle client:idle />
+          <div class="hidden min-[32rem]:block">
+            <FrameworkSelect client:idle />
           </div>
           <a
             href="https://github.com/jfrancos/slidytabs"
@@ -43,8 +42,8 @@ import Demo from "../components/Demo.astro";
           class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
         />
       </div>
-      <div class="min-[28rem]:hidden self-start py-0.5">
-        <Toggle client:idle />
+      <div class="min-[32rem]:hidden self-start py-0.5">
+        <FrameworkSelect client:idle />
       </div>
     </div>
     <!-- <Code code="npm i slidytabs" lang="bash" theme="github-light" /> -->
@@ -52,7 +51,7 @@ import Demo from "../components/Demo.astro";
       <div
         class="flex gap-8 grow *:2xl:first:rounded-tr-xl *:2xl:last:rounded-tl-xl"
       >
-        <div id="svelte-demo" class="2xl:block bg-white flex-1 shadow-xl pb-6">
+        <div id="svelte-demo" class="2xl:block bg-white flex-1 shadow-xl pb-6 hidden">
           <div class="flex justify-center items-center flex-col gap-6 py-6">
             <a
               rel="noopener"
@@ -61,7 +60,6 @@ import Demo from "../components/Demo.astro";
               href="https://www.shadcn-svelte.com/docs/components/tabs"
               >shadcn-svelte</a
             ><div class="flex flex-col gap-12">
-              <Demo lang="vue" filename="Tabs" />
               <Demo lang="svelte" filename="Tabs"> {}</Demo>
               <Demo lang="svelte" filename="VerticalTabs" />
               <Demo lang="svelte" filename="UncontrolledSlider" />
@@ -73,7 +71,20 @@ import Demo from "../components/Demo.astro";
             </div>
           </div>
         </div>
-        <div id="react-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
+        <div id="vue-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
+          <div class="flex justify-center items-center flex-col gap-6 py-6">
+            <a
+              rel="noopener"
+              target="_blank"
+              class="font-medium underline"
+              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+            ><div class="flex flex-col gap-12">
+              <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
+              <Demo lang="vue" filename="Tabs" />
+            </div>
+          </div>
+        </div>
+        <div id="react-demo" class="2xl:block bg-white flex-1 shadow-xl">
           <div class="flex justify-center items-center flex-col gap-6 py-6">
             <a
               rel="noopener"
@@ -97,10 +108,16 @@ import Demo from "../components/Demo.astro";
   $framework.subscribe((framework) => {
     if (framework === "react") {
       document.getElementById("svelte-demo")?.classList.add("hidden");
+      document.getElementById("vue-demo")?.classList.add("hidden");
       document.getElementById("react-demo")?.classList.remove("hidden");
-    } else {
+    } else if (framework === "svelte") {
       document.getElementById("react-demo")?.classList.add("hidden");
       document.getElementById("svelte-demo")?.classList.remove("hidden");
+      document.getElementById("vue-demo")?.classList.add("hidden");
+    } else {
+      document.getElementById("react-demo")?.classList.add("hidden");
+      document.getElementById("svelte-demo")?.classList.add("hidden");
+      document.getElementById("vue-demo")?.classList.remove("hidden");
     }
   });
 </script>
