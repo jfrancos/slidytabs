@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { range, type RangeValue } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@shadcn-react/tabs";
 
 export default () => {
   const [value, onValueChange] = useState<RangeValue>([4, 6]);

@@ -1,11 +1,6 @@
 ---
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "../components/astro/starwind/tabs";
-import { frameworks, type Framework } from "A/lib/store.js";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@shadcn-astro/tabs";
+import { frameworks, type Framework } from "../lib/store.js";
 import * as icons from "./icons";
 ---
 
@@ -24,7 +19,7 @@ import * as icons from "./icons";
 </Tabs>
 
 <script>
-  import { frameworkAtom, frameworks, setFramework } from "A/lib/store.js";
+  import { frameworkAtom, frameworks, setFramework } from "../lib/store.js";
   import { slider } from "slidytabs";
 
   const frameworkTabs = document.querySelectorAll(".tabs-root");

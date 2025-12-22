@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../shadcn/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shadcn-vue/tabs";
 import { tabs } from "slidytabs";
 </script>
 

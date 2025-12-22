@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@shadcn-react/tabs";
 import { tabs } from "slidytabs";
 
 export default () => (

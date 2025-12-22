@@ -107,7 +107,7 @@ import Demo from "../components/Demo.astro";
 </html>
 
 <script>
-  import { frameworkAtom } from "A/lib/store";
+  import { frameworkAtom } from "../lib/store";
 
   frameworkAtom.subscribe((newFramework) => {
     for (const framework of ["react", "vue", "svelte"]) {

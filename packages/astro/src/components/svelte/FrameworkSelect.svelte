@@ -1,5 +1,5 @@
-<script lang="ts">
-  import * as Tabs from "$lib/shadcn/tabs";
+<!-- <script lang="ts">
+  import * as Tabs from "@shadcn-svelte/tabs";
   import { frameworkAtom, frameworks, setFramework } from "A/lib/store.js";
   import { react, svelte, vue } from "../icons";
   import { slider } from "slidytabs";
@@ -31,4 +31,4 @@
       Svelte</Tabs.Trigger
     >
   </Tabs.List>
-</Tabs.Root>
+</Tabs.Root> -->

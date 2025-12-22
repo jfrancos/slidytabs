@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Tabs from "$lib/shadcn/tabs";
+  import * as Tabs from "@shadcn-svelte/tabs";
   import { tabs } from "slidytabs";
 </script>
 
