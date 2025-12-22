@@ -1,7 +1,11 @@
 import { atom } from "nanostores";
 
-export type Framework = "svelte" | "react" | "vue";
-export const $framework = atom<Framework>("react");
+export const frameworks = ["react", "vue", "svelte", "astro"];
+
+export type Framework = (typeof frameworks)[number];
+
+// export type Framework = "svelte" | "react" | "vue";
+export const frameworkAtom = atom<Framework>("react");
 export function setFramework(framework: Framework) {
-  $framework.set(framework);
+  frameworkAtom.set(framework);
 }

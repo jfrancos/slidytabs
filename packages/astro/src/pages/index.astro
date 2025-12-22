@@ -2,6 +2,7 @@
 import { Code } from "astro:components";
 import { github } from "../components/icons";
 import FrameworkSelect from "../components/svelte/FrameworkSelect.svelte";
+import SelectFramework from "../components/SelectFramework.astro";
 import Demo from "../components/Demo.astro";
 ---
 
@@ -20,8 +21,8 @@ import Demo from "../components/Demo.astro";
           slidytabs
         </div>
         <div class="flex items-center gap-8">
-          <div class="hidden min-[32rem]:block">
-            <FrameworkSelect client:idle />
+          <div class="hidden min-[38rem]:block">
+            <SelectFramework />
           </div>
           <a
             href="https://github.com/jfrancos/slidytabs"
@@ -42,8 +43,8 @@ import Demo from "../components/Demo.astro";
           class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
         />
       </div>
-      <div class="min-[32rem]:hidden self-start py-0.5">
-        <FrameworkSelect client:idle />
+      <div class="min-[38rem]:hidden self-start py-0.5">
+        <SelectFramework />
       </div>
     </div>
     <!-- <Code code="npm i slidytabs" lang="bash" theme="github-light" /> -->
@@ -106,12 +107,14 @@ import Demo from "../components/Demo.astro";
 </html>
 
 <script>
-  import { $framework } from "A/lib/store";
+  import { frameworkAtom } from "A/lib/store";
 
-  $framework.subscribe((newFramework) => {
+  frameworkAtom.subscribe((newFramework) => {
     for (const framework of ["react", "vue", "svelte"]) {
-      const list = document.getElementById(`${framework}-demo`)?.classList;
-      framework === newFramework ? list?.remove("hidden") : list?.add("hidden");
+      const classList = document.getElementById(`${framework}-demo`)?.classList;
+      framework === newFramework
+        ? classList?.remove("hidden")
+        : classList?.add("hidden");
     }
   });
 </script>

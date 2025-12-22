@@ -1,15 +1,21 @@
 <script lang="ts">
   import * as Tabs from "$lib/shadcn/tabs";
-  import { setFramework, type Framework } from "A/lib/store.js";
+  import { frameworkAtom, frameworks, setFramework } from "A/lib/store.js";
   import { react, svelte, vue } from "../icons";
   import { slider } from "slidytabs";
+  let value = $state("react");
+  frameworkAtom.subscribe((newFramework) => {
+    value = newFramework;
+  });
 </script>
 
 <Tabs.Root
-  {@attach slider()}
+  {@attach slider({
+    value: frameworks.indexOf(value),
+    onValueChange: (value) => setFramework(frameworks[value]),
+  })}
   value="react"
   class="items-center"
-  onValueChange={(value) => setFramework(value as Framework)}
 >
   <Tabs.List class="*:px-4 *:gap-2 h-8 rounded-md">
     <Tabs.Trigger value="react"

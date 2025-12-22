@@ -172,7 +172,9 @@ class Slidytabs {
   };
 
   #extractFromDOM = () => {
+    // console.log(this.#root);
     this.#triggers = [...this.#root.querySelectorAll("button")];
+    // console.log(this.#triggers);
     this.#trigger = this.#triggers[0];
     const list = this.#trigger.closest(
       "div[role=tablist]"
@@ -181,7 +183,8 @@ class Slidytabs {
       throw new Error("No list element");
     }
     this.#list = list;
-    const { orientation } = this.#root.dataset;
+    // const { orientation } = this.#root.dataset
+    const orientation = this.#root.dataset.orientation ?? "horizontal";
     if (orientation !== "horizontal" && orientation !== "vertical") {
       throw new Error("Invalid orientation");
     }
@@ -242,6 +245,7 @@ class Slidytabs {
   };
 
   set value(newValue: RangeValue) {
+    console.log(newValue);
     this.#_value = newValue;
     if (this.value[0] > this.value[1]) {
       return;
@@ -318,7 +322,9 @@ class Slidytabs {
       "button[data-state=active]"
     );
     if (!activeElement) {
-      return -1;
+      // TODO this is problematic
+      // return -1;
+      return 0;
     }
     return this.#triggers.indexOf(activeElement);
   }

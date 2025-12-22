@@ -1,0 +1,41 @@
+---
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "../components/astro/starwind/tabs";
+import { frameworks, type Framework } from "A/lib/store.js";
+import * as icons from "./icons";
+---
+
+<Tabs defaultValue="react" class="items-center tabs-root">
+  <TabsList class="*:px-4 *:gap-2 *:h-7 rounded-md text-sm">
+    {
+      frameworks.map((value: Framework) => (
+        <TabsTrigger {value}>
+          <div class={(icons as Record<Framework, string>)[value]} />
+          {value[0].toUpperCase() + value.slice(1)}
+        </TabsTrigger>
+      ))
+    }
+  </TabsList>
+  {frameworks.map((value) => <TabsContent {value} class="hidden" />)}
+</Tabs>
+
+<script>
+  import { frameworkAtom, frameworks, setFramework } from "A/lib/store.js";
+  import { slider } from "slidytabs";
+
+  const frameworkTabs = document.querySelectorAll(".tabs-root");
+  for (const frameworkTab of frameworkTabs) {
+    frameworkAtom.subscribe((value) => {
+      slider({
+        value: frameworks.indexOf(value),
+        onValueChange: (index) => {
+          setFramework(frameworks[index]);
+        },
+      })(frameworkTab);
+    });
+  }
+</script>
