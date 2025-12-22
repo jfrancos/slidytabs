@@ -5,7 +5,9 @@ import * as icons from "./icons";
 ---
 
 <Tabs defaultValue="react" class="items-center tabs-root">
-  <TabsList class="*:px-4 *:gap-2 *:h-7 rounded-md text-sm">
+  <TabsList
+    class="*:px-2 *:gap-1 min-[38rem]:*:px-4 min-[38rem]:*:gap-2 *:h-7 rounded-md text-sm"
+  >
     {
       frameworks.map((value: Framework) => (
         <TabsTrigger {value}>

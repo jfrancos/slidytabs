@@ -245,7 +245,7 @@ class Slidytabs {
   };
 
   set value(newValue: RangeValue) {
-    console.log(newValue);
+    // console.log(newValue);
     this.#_value = newValue;
     if (this.value[0] > this.value[1]) {
       return;
