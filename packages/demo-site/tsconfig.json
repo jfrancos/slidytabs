@@ -8,11 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "$lib/*": ["./src/lib/*"],
-      "@/*": ["./src/*"],
-      "@shadcn-svelte/*": ["./src/shadcns/svelte/*"],
-      "@shadcn-vue/*": ["./src/shadcns/vue/*"],
-      "@shadcn-astro/*": ["./src/shadcns/astro/*"],
-      "@shadcn-react/*": ["./src/shadcns/react/*"]
+      "@/*": ["./src/*"]
     }
   }
 }
