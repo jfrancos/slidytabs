@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/vue/tabs";
 import { tabs } from "slidytabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/vue/tabs";
 </script>
 
 <template>

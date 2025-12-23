@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tabs from "@/shadcn/svelte/tabs";
   import { slider } from "slidytabs";
+  import * as Tabs from "@/shadcn/svelte/tabs";
 </script>
 
 <Tabs.Root {@attach slider({ value: 5 })} class="text-center" value="5">

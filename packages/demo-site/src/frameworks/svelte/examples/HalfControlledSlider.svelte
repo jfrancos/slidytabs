@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tabs from "@/shadcn/svelte/tabs";
   import { slider } from "slidytabs";
+  import * as Tabs from "@/shadcn/svelte/tabs";
   let value = $state(5);
 </script>
 

@@ -1,5 +1,5 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/react/tabs";
 import { tabs } from "slidytabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/react/tabs";
 
 export default () => (
   <Tabs defaultValue="password" ref={tabs()} className="text-center">

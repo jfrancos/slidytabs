@@ -1,7 +1,7 @@
 ---
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/astro/tabs";
-import { frameworks, type Framework } from "../lib/store.js";
-import * as icons from "../lib/icons";
+import { frameworks, type Framework } from "@/lib/store.js";
+import * as icons from "@/lib/icons";
 ---
 
 <Tabs defaultValue="react" class="items-center tabs-root">
@@ -24,8 +24,8 @@ import * as icons from "../lib/icons";
 </Tabs>
 
 <script>
-  import { frameworkAtom, frameworks, setFramework } from "../lib/store.js";
   import { slider } from "slidytabs";
+  import { frameworkAtom, frameworks, setFramework } from "../lib/store.js";
 
   const frameworkTabs = document.querySelectorAll(".tabs-root");
   for (const frameworkTab of frameworkTabs) {

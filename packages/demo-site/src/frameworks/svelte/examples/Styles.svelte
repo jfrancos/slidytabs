@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as Tabs from "@/shadcn/svelte/tabs";
   import { tabs } from "slidytabs";
+  import * as Tabs from "@/shadcn/svelte/tabs";
   const activeRedBG = "data-[state=active]:bg-red";
 </script>
 
