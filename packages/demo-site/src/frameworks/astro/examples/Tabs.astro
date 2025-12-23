@@ -1,0 +1,20 @@
+---
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/astro/tabs";
+---
+
+<Tabs defaultValue="account" class="text-center" data-tabs-example>
+  <TabsList class="text-sm">
+    <TabsTrigger class="h-7 p-2" value="account">Account</TabsTrigger>
+    <TabsTrigger class="h-7 p-2" value="password">Password</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Account</TabsContent>
+  <TabsContent value="password">Password</TabsContent>
+</Tabs>
+
+<script>
+  import { tabs } from "slidytabs";
+  const tabsExamples = document.querySelectorAll("[data-tabs-example]");
+  for (const el of tabsExamples) {
+    tabs()(el);
+  }
+</script>

@@ -26,7 +26,6 @@ import * as icons from "@/lib/icons";
 <script>
   import { slider } from "slidytabs";
   import { frameworkAtom, frameworks, setFramework } from "../lib/store.js";
-
   const frameworkTabs = document.querySelectorAll(".tabs-root");
   for (const frameworkTab of frameworkTabs) {
     frameworkAtom.subscribe((value) => {

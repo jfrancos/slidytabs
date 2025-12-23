@@ -51,6 +51,33 @@ import Demo from "../components/Demo.astro";
       <div
         class="flex gap-8 grow *:2xl:first:rounded-tr-xl *:2xl:last:rounded-tl-xl"
       >
+        <div id="react-demo" class="2xl:block bg-white flex-1 shadow-xl">
+          <div class="flex justify-center items-center flex-col gap-6 py-6">
+            <a
+              rel="noopener"
+              target="_blank"
+              class="font-medium underline"
+              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+            ><div class="flex flex-col gap-12">
+              <!-- <Demo lang="react" filename="NumbersRange" /> -->
+              <Demo framework="react" filename="Tabs" />
+            </div>
+          </div>
+        </div>
+
+        <div id="vue-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
+          <div class="flex justify-center items-center flex-col gap-6 py-6">
+            <a
+              rel="noopener"
+              target="_blank"
+              class="font-medium underline"
+              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+            ><div class="flex flex-col gap-12">
+              <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
+              <Demo framework="vue" filename="Tabs" />
+            </div>
+          </div>
+        </div>
         <div
           id="svelte-demo"
           class="2xl:block bg-white flex-1 shadow-xl pb-6 hidden"
@@ -74,7 +101,7 @@ import Demo from "../components/Demo.astro";
             </div>
           </div>
         </div>
-        <div id="vue-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
+        <div id="astro-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
           <div class="flex justify-center items-center flex-col gap-6 py-6">
             <a
               rel="noopener"
@@ -83,20 +110,7 @@ import Demo from "../components/Demo.astro";
               href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
             ><div class="flex flex-col gap-12">
               <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
-              <Demo framework="vue" filename="Tabs" />
-            </div>
-          </div>
-        </div>
-        <div id="react-demo" class="2xl:block bg-white flex-1 shadow-xl">
-          <div class="flex justify-center items-center flex-col gap-6 py-6">
-            <a
-              rel="noopener"
-              target="_blank"
-              class="font-medium underline"
-              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-            ><div class="flex flex-col gap-12">
-              <!-- <Demo lang="react" filename="NumbersRange" /> -->
-              <Demo framework="react" filename="Tabs" />
+              <Demo framework="astro" filename="Tabs" />
             </div>
           </div>
         </div>
@@ -106,10 +120,10 @@ import Demo from "../components/Demo.astro";
 </html>
 
 <script>
-  import { frameworkAtom } from "../lib/store";
+  import { frameworkAtom, frameworks } from "../lib/store";
 
   frameworkAtom.subscribe((newFramework) => {
-    for (const framework of ["react", "vue", "svelte"]) {
+    for (const framework of frameworks) {
       const classList = document.getElementById(`${framework}-demo`)?.classList;
       framework === newFramework
         ? classList?.remove("hidden")
