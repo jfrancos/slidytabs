@@ -193,40 +193,29 @@ class Slidytabs {
 
   #onpointerdown = (e: PointerEvent) => {
     this.#extractFromDOM();
-    const { x, y, width, height } = this.#list.getBoundingClientRect();
-    const point = {
-      horizontal: [e.clientX, y + height / 2] as const,
-      vertical: [x + width / 2, e.clientY] as const,
-    }[this.#orientation];
-    const trigger = document.elementFromPoint(...point)?.closest("button");
-    if (!trigger) {
+    const { index } = this.#triggerFromEvent(e);
+    if (index === undefined) {
       return;
     }
-    const index = this.#triggers.indexOf(trigger);
-
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
     this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    // this.#triggers[index].click();
+    this.#triggers[index].click();
+    this.#triggers[index].blur();
   };
 
-  #onpointerup = () => {
+  #onpointerup = (e: PointerEvent) => {
+    const { trigger } = this.#triggerFromEvent(e);
     this.#down = null;
     this.#isMoving = false;
+    trigger?.click();
+    trigger?.focus();
   };
 
-  #onpointermove = (e: PointerEvent) => {
-    if (e.buttons === 0) {
-      this.#onpointerup();
-    }
-    if (!this.#swipe || this.#down === null) {
-      return;
-    }
-    this.#isMoving = true;
-
+  #triggerFromEvent = (e: PointerEvent) => {
     const { x, y, width, height } = this.#list.getBoundingClientRect();
     const point = {
       horizontal: [e.clientX, y + height / 2] as const,
@@ -234,18 +223,30 @@ class Slidytabs {
     }[this.#orientation];
     const trigger = document.elementFromPoint(...point)?.closest("button");
     if (!trigger) {
-      return;
+      return {};
     }
     const index = this.#triggers.indexOf(trigger);
+    return { index, trigger };
+  };
 
+  #onpointermove = (e: PointerEvent) => {
+    if (e.buttons === 0) {
+      this.#down = null;
+      this.#isMoving = false;
+    }
+    if (!this.#swipe || this.#down === null) {
+      return;
+    }
+    this.#isMoving = true;
+    const { trigger, index } = this.#triggerFromEvent(e);
+    if (!trigger) {
+      return;
+    }
     this.#onValueChange?.({ index, activeEdge: this.#down, trigger }, this);
-    // sync shadcn state with slidytabs state
-    // trigger.click();
-    trigger.focus();
+    trigger.click();
   };
 
   set value(newValue: RangeValue) {
-    // console.log(newValue);
     this.#_value = newValue;
     if (this.value[0] > this.value[1]) {
       return;
@@ -323,8 +324,8 @@ class Slidytabs {
     );
     if (!activeElement) {
       // TODO this is problematic
-      // return -1;
-      return 0;
+      return -1;
+      // return 0;
     }
     return this.#triggers.indexOf(activeElement);
   }
