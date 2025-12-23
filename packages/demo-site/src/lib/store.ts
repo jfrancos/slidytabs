@@ -1,6 +1,6 @@
 import { atom } from "nanostores";
 
-export const frameworks = ["react", "vue", "svelte", "astro"];
+export const frameworks = ["react", "vue", "svelte", "astro"] as const;
 
 export type Framework = (typeof frameworks)[number];
 

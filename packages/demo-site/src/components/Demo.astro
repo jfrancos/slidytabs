@@ -1,26 +1,28 @@
 ---
 import Code from "./Code.astro";
 import SvelteShell from "../frameworks/svelte/Shell.svelte";
-import TsxShell from "../frameworks/tsx/Shell.tsx";
+import TsxShell from "../frameworks/react/Shell.tsx";
 import VueShell from "../frameworks/vue/Shell.vue";
 import { react, svelte, vue } from "../lib/icons";
 import { extractTsx, extractSvelte, extractVue } from "../lib/findHighlight.ts";
+import type { Framework } from "$lib/store";
 
 interface Props {
   filename: string;
-  lang: "tsx" | "svelte" | "vue";
+  framework: Framework;
 }
 
-const { filename, lang } = Astro.props;
+const { filename, framework } = Astro.props;
+const lang = framework === "react" ? "tsx" : framework;
 const { default: Component } = await import(
-  `../frameworks/${lang}/examples/${filename}.${lang}`
+  `../frameworks/${framework}/examples/${filename}.${lang}`
 );
 const { default: raw } = await import(
-  `../frameworks/${lang}/examples/${filename}.${lang}?raw`
+  `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 );
 
 const { highlightFn, prefix, logo } = {
-  tsx: {
+  react: {
     highlightFn: extractTsx,
     prefix: `// ${filename}.tsx`,
     logo: react,
@@ -35,7 +37,12 @@ const { highlightFn, prefix, logo } = {
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
-}[lang];
+  astro: {
+    highlightFn: () => "",
+    prefix: "",
+    logo: "",
+  },
+}[framework];
 const highlight = highlightFn(raw);
 const code = `${prefix}\n${raw}`;
 ---
