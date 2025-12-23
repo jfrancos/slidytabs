@@ -21,6 +21,8 @@ const { default: raw } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 );
 
+console.log(raw.split("\n"));
+
 const { highlightFn, prefix, logo } = {
   react: {
     highlightFn: extractTsx,
@@ -45,7 +47,10 @@ const { highlightFn, prefix, logo } = {
   },
 }[framework];
 const highlight = highlightFn(raw);
-const code = `${prefix}\n${raw}`;
+const code =
+  framework === "astro"
+    ? raw.split("\n").toSpliced(1, 0, prefix).join("\n")
+    : `${prefix}\n${raw}`;
 ---
 
 <div
