@@ -10,7 +10,10 @@ import * as icons from "../lib/icons";
   >
     {
       frameworks.map((value: Framework) => (
-        <TabsTrigger {value}>
+        <TabsTrigger
+          {value}
+          data-state={value === "react" ? "active" : "inactive"}
+        >
           <div class={(icons as Record<Framework, string>)[value]} />
           {value[0].toUpperCase() + value.slice(1)}
         </TabsTrigger>

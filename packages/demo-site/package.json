@@ -5,9 +5,10 @@
   "scripts": {
     "install-shadcn:svelte": "tiged huntabyte/shadcn-svelte/docs/src/lib/registry/ui/tabs src/shadcns/svelte/tabs --force",
     "install-shadcn:vue": "tiged unovue/shadcn-vue/apps/v4/registry/new-york-v4/ui/tabs src/shadcns/vue/tabs --force",
-    "install-shadcn:astro": "tiged starwind-ui/starwind-ui/packages/core/src/components/tabs src/shadcns/astro/tabs --force",
+    "install-shadcn:astro": "tiged starwind-ui/starwind-ui/packages/core/src/components/tabs src/shadcns/astro/tabs --force && pnpm run fix-astro",
     "install-shadcn:react": "curl https://raw.githubusercontent.com/shadcn-ui/ui/main/apps/v4/registry/new-york-v4/ui/tabs.tsx > src/shadcns/react/tabs.tsx",
     "install-shadcns": "pnpm run install-shadcn:svelte && pnpm run install-shadcn:vue && pnpm run install-shadcn:astro && pnpm run install-shadcn:react",
+    "fix-astro": "perl -i -ne 'print unless /data-state=\"inactive\"/' src/shadcns/astro/tabs/TabsTrigger.astro",
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
