@@ -211,6 +211,7 @@ class Slidytabs {
     const { trigger } = this.#triggerFromEvent(e);
     this.#down = null;
     this.#isMoving = false;
+    // drag for `tab` is selecting erroneously
     trigger?.click();
     trigger?.focus();
   };

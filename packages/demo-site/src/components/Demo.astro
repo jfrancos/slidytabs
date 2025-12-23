@@ -21,8 +21,6 @@ const { default: raw } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 );
 
-console.log(raw.split("\n"));
-
 const { highlightFn, prefix, logo } = {
   react: {
     highlightFn: extractTsx,
@@ -41,7 +39,6 @@ const { highlightFn, prefix, logo } = {
   },
   astro: {
     highlightFn: () => "",
-    // can't comment first line of file
     prefix: `// ${filename}.astro`,
     logo: astro,
   },
