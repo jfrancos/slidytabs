@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from "astro/config";
 import UnoCSS from "unocss/astro";
 import svelte from "@astrojs/svelte";
