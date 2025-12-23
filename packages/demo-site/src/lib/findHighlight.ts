@@ -6,7 +6,7 @@ import { transform, NodeTypes } from "@vue/compiler-dom";
 import { walk } from "zimmerframe";
 import type { JSX } from "@babel/types";
 
-export const extractRef = (source: string) => {
+export const extractTsx = (source: string) => {
   const ast = parseTSX(source, {
     sourceType: "module",
     plugins: ["jsx", "typescript"],
@@ -28,7 +28,7 @@ export const extractRef = (source: string) => {
   return refString;
 };
 
-export const extractAttachment = (source: string) => {
+export const extractSvelte = (source: string) => {
   const ast = parseSvelte(source);
   let attachString;
   walk(ast.html, null, {
@@ -45,7 +45,7 @@ export const extractAttachment = (source: string) => {
   return attachString;
 };
 
-export const extractVueRef = (source: string) => {
+export const extractVue = (source: string) => {
   const ast = parseVue(source).descriptor.template?.ast;
   if (!ast) {
     return;

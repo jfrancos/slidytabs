@@ -4,11 +4,7 @@ import SvelteShell from "../frameworks/svelte/Shell.svelte";
 import TsxShell from "../frameworks/tsx/Shell.tsx";
 import VueShell from "../frameworks/vue/Shell.vue";
 import { react, svelte, vue } from "../lib/icons";
-import {
-  extractRef,
-  extractAttachment,
-  extractVueRef,
-} from "../lib/findHighlight.ts";
+import { extractTsx, extractSvelte, extractVue } from "../lib/findHighlight.ts";
 
 interface Props {
   filename: string;
@@ -23,24 +19,24 @@ const { default: raw } = await import(
   `../frameworks/${lang}/examples/${filename}.${lang}?raw`
 );
 
-const { highlight, prefix, logo } = {
+const { highlightFn, prefix, logo } = {
   tsx: {
-    highlight: extractRef,
+    highlightFn: extractTsx,
     prefix: `// ${filename}.tsx`,
     logo: react,
   },
   svelte: {
-    highlight: extractAttachment,
+    highlightFn: extractSvelte,
     prefix: `<!-- ${filename}.svelte -->`,
     logo: svelte,
   },
   vue: {
-    highlight: extractVueRef,
+    highlightFn: extractVue,
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
 }[lang];
-
+const highlight = highlightFn(raw);
 const code = `${prefix}\n${raw}`;
 ---
 
@@ -64,5 +60,5 @@ const code = `${prefix}\n${raw}`;
       <Component />
     </div>
   </div>
-  <Code highlight={highlight(raw)} {code} {lang} />
+  <Code {highlight} {code} {lang} />
 </div>
