@@ -39,7 +39,8 @@ const { highlightFn, prefix, logo } = {
   },
   astro: {
     highlightFn: () => "",
-    prefix: "",
+    // can't comment first line of file
+    prefix: `// ${filename}.astro`,
     logo: astro,
   },
 }[framework];
