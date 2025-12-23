@@ -1,6 +1,13 @@
 ---
 import { Code as AstroCode } from "astro:components";
 import { transformerMetaWordHighlight } from "@shikijs/transformers";
+import type { CodeLanguage } from "astro";
+
+interface Props {
+  code: string;
+  highlight?: string;
+  lang: CodeLanguage;
+}
 const { code, highlight, lang } = Astro.props;
 ---
 

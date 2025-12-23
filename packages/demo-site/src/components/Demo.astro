@@ -1,9 +1,9 @@
 ---
 import Code from "./Code.astro";
-import SvelteShell from "./svelte/Shell.svelte";
-import TsxShell from "./tsx/Shell.tsx";
-import VueShell from "./vue/Shell.vue";
-import { react, svelte, vue } from "./icons";
+import SvelteShell from "../frameworks/svelte/Shell.svelte";
+import TsxShell from "../frameworks/tsx/Shell.tsx";
+import VueShell from "../frameworks/vue/Shell.vue";
+import { react, svelte, vue } from "../lib/icons";
 import {
   extractRef,
   extractAttachment,
@@ -17,10 +17,10 @@ interface Props {
 
 const { filename, lang } = Astro.props;
 const { default: Component } = await import(
-  `./${lang}/examples/${filename}.${lang}`
+  `../frameworks/${lang}/examples/${filename}.${lang}`
 );
 const { default: raw } = await import(
-  `./${lang}/examples/${filename}.${lang}?raw`
+  `../frameworks/${lang}/examples/${filename}.${lang}?raw`
 );
 
 const { highlight, prefix, logo } = {
