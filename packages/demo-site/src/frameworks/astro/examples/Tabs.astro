@@ -13,8 +13,5 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/astro/tabs";
 
 <script>
   import { tabs } from "slidytabs";
-  const tabsExamples = document.querySelectorAll("[data-tabs-example]");
-  for (const el of tabsExamples) {
-    tabs()(el);
-  }
+  tabs()("[data-tabs-example]");
 </script>

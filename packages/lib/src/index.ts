@@ -4,17 +4,33 @@ import { categorizeClasses, safelistGeneralizedClasses } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
 
-type RefTarget = Element | { $el: Element } | null;
+type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
-const setupSliderWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
-  const root =
-    ref instanceof Element ? ref : ref?.$el instanceof Element ? ref.$el : null;
-  if (!(root instanceof HTMLElement)) {
-    return;
+const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
+  const elements =
+    typeof ref === "string"
+      ? document.querySelectorAll(ref)
+      : ref instanceof Element
+      ? [ref]
+      : ref?.$el instanceof Element
+      ? [ref.$el]
+      : [];
+
+  const instances: Slidytabs[] = [];
+  for (const el of elements) {
+    if (!(el instanceof HTMLElement)) {
+      continue;
+    }
+    const instance = getInstance(el);
+    instance.setOptions(options);
+    instances.push(instance);
   }
-  const tabslider = getInstance(root);
-  tabslider.setOptions(options);
-  return () => tabslider.destroyIfDisconnected();
+
+  return () => {
+    for (const instance of instances) {
+      instance.destroyIfDisconnected();
+    }
+  };
 };
 
 export type RangeValue = [start: number, end: number];
@@ -43,13 +59,13 @@ const getInstance = (el: HTMLElement) => {
 };
 
 export const tabs = (): RefCallback => (root) => {
-  return setupSliderWithOptions(root, {
+  return setupWithOptions(root, {
     swipe: false,
     onValueChange: ({ index }, instance: Slidytabs) => {
       instance.updateValue([index, index]);
       // instance.updateTabsContent(index);
     },
-  }) as void;
+  });
 };
 
 export const slider =
@@ -63,7 +79,7 @@ export const slider =
     transitionDuration?: number;
   } = {}): RefCallback =>
   (root) => {
-    return setupSliderWithOptions(root, {
+    return setupWithOptions(root, {
       value: value ? [value, value] : undefined,
       swipe: true,
       onValueChange: onValueChange
@@ -93,7 +109,7 @@ export const range =
     transitionDuration?: number;
   }) =>
   (root: HTMLElement | null) => {
-    return setupSliderWithOptions(root, {
+    return setupWithOptions(root, {
       value,
       swipe: true,
       onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
@@ -385,6 +401,7 @@ class Slidytabs {
 
   destroyIfDisconnected() {
     // verify lifecycle stuff
+    console.log("destroying");
     if (this.#root.isConnected) {
       return;
     }

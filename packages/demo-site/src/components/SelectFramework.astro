@@ -4,7 +4,7 @@ import { frameworks, type Framework } from "@/lib/store.js";
 import * as icons from "@/lib/icons";
 ---
 
-<Tabs defaultValue="react" class="items-center tabs-root">
+<Tabs defaultValue="react" class="items-center" data-framework-tabs>
   <TabsList
     class="*:px-2 *:gap-1 md:*:px-4 md:*:gap-2 *:h-7 rounded-md text-sm"
   >
@@ -26,15 +26,13 @@ import * as icons from "@/lib/icons";
 <script>
   import { slider } from "slidytabs";
   import { frameworkAtom, frameworks, setFramework } from "../lib/store.js";
-  const frameworkTabs = document.querySelectorAll(".tabs-root");
-  for (const frameworkTab of frameworkTabs) {
-    frameworkAtom.subscribe((value) => {
-      slider({
-        value: frameworks.indexOf(value),
-        onValueChange: (index) => {
-          setFramework(frameworks[index]);
-        },
-      })(frameworkTab);
-    });
-  }
+
+  frameworkAtom.subscribe((value) => {
+    slider({
+      value: frameworks.indexOf(value),
+      onValueChange: (index) => {
+        setFramework(frameworks[index]);
+      },
+    })("[data-framework-tabs]");
+  });
 </script>
