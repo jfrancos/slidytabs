@@ -10,8 +10,9 @@ const { code, highlight, lang } = Astro.props;
 const html = codeToHtml(code, {
   lang,
   theme: "github-light",
-  decorations: highlight?.map((item) => ({
-    ...item,
+  decorations: highlight?.map(({ start, end }) => ({
+    start,
+    end,
     properties: { class: "highlight" },
   })),
 });
