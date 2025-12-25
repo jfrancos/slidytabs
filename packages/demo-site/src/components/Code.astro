@@ -1,21 +1,24 @@
 ---
-import { Code as AstroCode } from "astro:components";
-import { transformerMetaWordHighlight } from "@shikijs/transformers";
-import type { CodeLanguage } from "astro";
+import { codeToHtml, type BundledLanguage } from "shiki";
 
 interface Props {
   code: string;
-  highlight?: string;
-  lang: CodeLanguage;
+  highlight: unknown;
+  lang: BundledLanguage;
 }
 const { code, highlight, lang } = Astro.props;
+
+const html = codeToHtml(code, {
+  lang,
+  theme: "github-light",
+  decorations: highlight.map((item) => ({
+    ...item,
+    properties: { class: "highlight" },
+  })),
+});
 ---
 
-<AstroCode
-  theme="github-light"
-  class="text-sm px-6 py-5 !bg-neutral-100"
-  transformers={[transformerMetaWordHighlight()]}
-  meta={`/${highlight}/`}
-  {code}
-  {lang}
+<div
+  set:html={html}
+  class="children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll)"
 />

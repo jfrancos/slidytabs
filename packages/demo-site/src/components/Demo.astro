@@ -4,7 +4,12 @@ import SvelteShell from "../frameworks/svelte/Shell.svelte";
 import TsxShell from "../frameworks/react/Shell.tsx";
 import VueShell from "../frameworks/vue/Shell.vue";
 import { react, svelte, vue, astro } from "../lib/icons";
-import { extractTsx, extractSvelte, extractVue } from "../lib/findHighlight.ts";
+import {
+  extractTsx,
+  extractSvelte,
+  extractVue,
+  extractAstro,
+} from "../lib/findHighlight.ts";
 import type { Framework } from "$lib/store";
 
 interface Props {
@@ -38,16 +43,20 @@ const { highlightFn, prefix, logo } = {
     logo: vue,
   },
   astro: {
-    highlightFn: () => "",
+    highlightFn: extractAstro,
     prefix: `// ${filename}.astro`,
     logo: astro,
   },
 }[framework];
-const highlight = highlightFn(raw);
 const code =
   framework === "astro"
-    ? raw.split("\n").toSpliced(1, 0, prefix).join("\n")
+    ? raw
+        .split("\n")
+        .filter((line: string) => !line.startsWith("// @ts-expect-error"))
+        .toSpliced(1, 0, prefix)
+        .join("\n")
     : `${prefix}\n${raw}`;
+const highlight = await highlightFn(code);
 ---
 
 <div
@@ -65,7 +74,7 @@ const code =
     {lang === "tsx" && <TsxShell {filename} client:idle />}
     {lang === "vue" && <VueShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
-    have both simultaneously and hide the SSR once the client is visible -->
+    have both simultaneously and hide the SSR once the client is visible: -->
     <div class="[:has(*)~&]:hidden">
       <Component />
     </div>

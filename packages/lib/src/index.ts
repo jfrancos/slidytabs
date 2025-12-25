@@ -16,6 +16,10 @@ const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
       ? [ref.$el]
       : [];
 
+  if (typeof ref === "string" && elements.length === 0) {
+    throw new Error(`Selector "${ref}" yielded no elements`);
+  }
+
   const instances: Slidytabs[] = [];
   for (const el of elements) {
     if (!(el instanceof HTMLElement)) {

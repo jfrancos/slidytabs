@@ -1,8 +1,9 @@
 ---
+// @ts-expect-error https://github.com/withastro/astro/issues/14683
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/astro/tabs";
 ---
 
-<Tabs defaultValue="account" class="text-center" data-tabs-example>
+<Tabs defaultValue="account" class="text-center" data-slidytabs-Tabs>
   <TabsList class="text-sm">
     <TabsTrigger class="h-7 p-2" value="account">Account</TabsTrigger>
     <TabsTrigger class="h-7 p-2" value="password">Password</TabsTrigger>
@@ -13,5 +14,5 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/astro/tabs";
 
 <script>
   import { tabs } from "slidytabs";
-  tabs()("[data-tabs-example]");
+  tabs()("[data-slidytabs-Tabs]");
 </script>
