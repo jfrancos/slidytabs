@@ -7,7 +7,6 @@ interface Props {
   lang: BundledLanguage;
 }
 const { code, highlight, lang } = Astro.props;
-console.log(highlight);
 const html = codeToHtml(code, {
   lang,
   theme: "github-light",
