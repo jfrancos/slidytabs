@@ -3,15 +3,15 @@ import { codeToHtml, type BundledLanguage } from "shiki";
 
 interface Props {
   code: string;
-  highlight: unknown;
+  highlight?: { start: number; end: number }[];
   lang: BundledLanguage;
 }
 const { code, highlight, lang } = Astro.props;
-
+console.log(highlight);
 const html = codeToHtml(code, {
   lang,
   theme: "github-light",
-  decorations: highlight.map((item) => ({
+  decorations: highlight?.map((item) => ({
     ...item,
     properties: { class: "highlight" },
   })),

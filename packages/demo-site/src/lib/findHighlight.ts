@@ -2,8 +2,9 @@ import { parse as parseTSX } from "@babel/parser";
 import { parse as parseSvelte } from "svelte/compiler";
 import { parse as parseVue } from "vue/compiler-sfc";
 import { parse as parseAstro } from "@astrojs/compiler";
-import { is } from "@astrojs/compiler/utils";
 import { transform, NodeTypes } from "@vue/compiler-dom";
+import { is } from "@astrojs/compiler/utils";
+import type { Node } from "@astrojs/compiler/types";
 import { walk } from "zimmerframe";
 import type { JSX } from "@babel/types";
 
@@ -69,23 +70,26 @@ export const extractVue = (source: string) => {
 
 export const extractAstro = async (source: string) => {
   const { ast } = await parseAstro(source);
-
   let locations;
-  walk(ast, null, {
+  walk(ast as Node, null, {
     _(node, { next }) {
       if (is.tag(node) && node.name === "Tabs") {
         const attr = node.attributes.find(({ name }) =>
           name.startsWith("data-slidytabs-")
         );
-        const dataString = attr?.name;
+        const name = attr?.name;
+        const start = attr?.position?.start;
+        if (name == null || start == null) {
+          return;
+        }
         locations = [
           {
-            start: attr.position.start.offset,
-            end: attr.position.start.offset + dataString.length,
+            start: start.offset,
+            end: start.offset + name.length,
           },
         ];
       }
-      if (is.tag(node) && node.name === "script") {
+      if (is.tag(node) && node.name === "script" && is.text(node.children[0])) {
         const script = node.children[0].value;
         const ast = parseTSX(script, {
           sourceType: "module",
@@ -93,13 +97,16 @@ export const extractAstro = async (source: string) => {
         });
         walk(ast, null, {
           _(node, { next }) {
-            if (node.type === "ExpressionStatement") {
-              const expression = script.slice(node.start, node.end);
+            if ((node.type as unknown) === "ExpressionStatement") {
+              const { start, end } = node;
+              if (!start || !end) {
+                return;
+              }
+              const expression = script.slice(start, end);
               const location = {
                 start: source.indexOf(expression),
                 end: source.indexOf(expression) + expression.length,
               };
-              console.log(location);
               locations.push(location);
             }
             next();
