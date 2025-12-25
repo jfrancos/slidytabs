@@ -1,16 +1,16 @@
 ---
 import Code from "./Code.astro";
-import SvelteShell from "../frameworks/svelte/Shell.svelte";
-import TsxShell from "../frameworks/react/Shell.tsx";
-import VueShell from "../frameworks/vue/Shell.vue";
-import { icons } from "../lib/utils";
+import SvelteShell from "@/frameworks/svelte/Shell.svelte";
+import TsxShell from "@/frameworks/react/Shell.tsx";
+import VueShell from "@/frameworks/vue/Shell.vue";
+import { icons } from "@/lib/utils";
 import {
   extractTsx,
   extractSvelte,
   extractVue,
   extractAstro,
-} from "../lib/findHighlight.ts";
-import type { Framework } from "$lib/store";
+} from "@/lib/findHighlight.ts";
+import type { Framework } from "@/lib/store";
 const { react, svelte, vue, astro } = icons;
 
 interface Props {
