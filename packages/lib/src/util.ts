@@ -3,25 +3,36 @@ declare global {
   var sheet: CSSStyleSheet;
 }
 
-export const categorizeClasses = (classList: string[]) => {
+export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
   const textClasses =
     /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
   const activeVariant = "data-[state=active]:";
   const focusVariant = "focus-visible:";
-  const active = classList
-    .filter((item) => item.includes(activeVariant))
-    .map((item) => item.replace(activeVariant, ""));
-  const focus = classList
-    .filter((item) => item.includes(focusVariant))
-    .map((item) => item.replace(focusVariant, ""));
-  const base = classList.filter(
-    (item) => !(item.includes(focusVariant) || item.includes(activeVariant))
-  );
-  const activeText = active.filter((item) => item.match(textClasses));
-  const activeIndicator = active.filter((item) => !item.match(textClasses));
-  const focusText = focus.filter((item) => item.match(textClasses));
-  const focusIndicator = focus.filter((item) => !item.match(textClasses));
-  return { activeText, activeIndicator, focusText, focusIndicator, base };
+  const triggerClasses = [];
+  for (const trigger of triggers) {
+    const classList = [...trigger.classList];
+    const active = classList
+      .filter((item) => item.includes(activeVariant))
+      .map((item) => item.replace(activeVariant, ""));
+    const focus = classList
+      .filter((item) => item.includes(focusVariant))
+      .map((item) => item.replace(focusVariant, ""));
+    const base = classList.filter(
+      (item) => !(item.includes(focusVariant) || item.includes(activeVariant))
+    );
+    const activeText = active.filter((item) => item.match(textClasses));
+    const activeIndicator = active.filter((item) => !item.match(textClasses));
+    const focusText = focus.filter((item) => item.match(textClasses));
+    const focusIndicator = focus.filter((item) => !item.match(textClasses));
+    triggerClasses.push({
+      activeText,
+      activeIndicator,
+      focusText,
+      focusIndicator,
+      base,
+    });
+  }
+  return triggerClasses;
 };
 
 const inserted = new Set<string>();
@@ -66,3 +77,9 @@ export const safelistGeneralizedClasses = (el: HTMLElement) => {
     } catch {}
   }
 };
+
+export const getCurrentTargetX = (e: PointerEvent) =>
+  e.clientY - (e.currentTarget as Element).getBoundingClientRect().left;
+
+export const getCurrentTargetY = (e: PointerEvent) =>
+  e.clientY - (e.currentTarget as Element).getBoundingClientRect().top;

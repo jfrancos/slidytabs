@@ -26,7 +26,7 @@ const { default: Component } = await import(
 const { default: raw } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 );
-
+// console.log(children);
 const { highlightFn, prefix, logo } = {
   react: {
     highlightFn: extractTsx,
@@ -60,25 +60,30 @@ const code =
 const highlight = await highlightFn(code);
 ---
 
-<div
-  class="flex flex-col border-gray-100 border-4 rounded-lg max-w-[calc(100vw-4rem)] w-2xl relative"
->
-  <div class="flex justify-center h-32 items-center relative select-none">
-    <div
-      class:list={[
-        logo,
-        "text-xl absolute top-4 right-4 z-10 md:opacity-100 opacity-50",
-      ]}
-    >
-    </div>
-    {lang === "svelte" && <SvelteShell {filename} client:idle />}
-    {lang === "tsx" && <TsxShell {filename} client:idle />}
-    {lang === "vue" && <VueShell {filename} client:idle />}
-    <!-- flash between SSR awaited component and client awaited component so we
-    have both simultaneously and hide the SSR once the client is visible: -->
-    <div class="[:has(*)~&]:hidden">
-      <Component />
-    </div>
+<div class="flex flex-col gap-4">
+  <div>
+    <slot />
   </div>
-  <Code {highlight} {code} {lang} />
+  <div
+    class="flex flex-col border-gray-100 border-4 rounded-lg relative"
+  >
+    <div class="flex justify-center h-32 items-center relative select-none">
+      <div
+        class:list={[
+          logo,
+          "text-xl absolute top-4 right-4 z-10 md:opacity-100 opacity-50",
+        ]}
+      >
+      </div>
+      {lang === "svelte" && <SvelteShell {filename} client:idle />}
+      {lang === "tsx" && <TsxShell {filename} client:idle />}
+      {lang === "vue" && <VueShell {filename} client:idle />}
+      <!-- flash between SSR awaited component and client awaited component so we
+  have both simultaneously and hide the SSR once the client is visible: -->
+      <div class="[:has(*)~&]:hidden">
+        <Component />
+      </div>
+    </div>
+    <Code {highlight} {code} {lang} />
+  </div>
 </div>

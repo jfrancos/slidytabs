@@ -1,6 +1,10 @@
 import { twMerge } from "tailwind-merge";
-import { isEqual } from "radashi";
-import { categorizeClasses, safelistGeneralizedClasses } from "./util";
+// import { isEqual } from "radashi";
+import {
+  categorizeClasses,
+  safelistGeneralizedClasses,
+  getCurrentTargetX,
+} from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
 
@@ -16,6 +20,7 @@ const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
       ? [ref.$el]
       : [];
 
+  // For adding in a <script>
   if (typeof ref === "string" && elements.length === 0) {
     throw new Error(`Selector "${ref}" yielded no elements`);
   }
@@ -45,13 +50,15 @@ interface Update {
   trigger?: HTMLElement;
 }
 
+// TODO none of these should be optional
 interface TabsliderOptions {
   value?: RangeValue;
   swipe: boolean;
   transitionDuration?: number;
-  onValueChange?: (update: Update, instance: Slidytabs) => void;
+  onIndexChange?: (update: Update, instance: Slidytabs) => void;
+  controlled?: boolean;
 }
-
+// how to get values?
 const instances = new WeakMap<HTMLElement, Slidytabs>();
 const getInstance = (el: HTMLElement) => {
   let instance = instances.get(el);
@@ -65,7 +72,7 @@ const getInstance = (el: HTMLElement) => {
 export const tabs = (): RefCallback => (root) => {
   return setupWithOptions(root, {
     swipe: false,
-    onValueChange: ({ index }, instance: Slidytabs) => {
+    onIndexChange: ({ index }, instance: Slidytabs) => {
       instance.updateValue([index, index]);
       // instance.updateTabsContent(index);
     },
@@ -75,27 +82,31 @@ export const tabs = (): RefCallback => (root) => {
 export const slider =
   ({
     value,
-    onValueChange,
+    onIndexChange,
     transitionDuration,
   }: {
     value?: number;
-    onValueChange?: (value: number) => void;
+    onIndexChange?: (value: number) => void;
     transitionDuration?: number;
   } = {}): RefCallback =>
   (root) => {
+    console.log("slider called");
     return setupWithOptions(root, {
-      value: value ? [value, value] : undefined,
+      controlled: value != null || onIndexChange != null,
+      value: value != null ? [value, value] : undefined,
       swipe: true,
-      onValueChange: onValueChange
-        ? ({ index }: Update, instance) => {
-            instance.updateValue([index, index]);
-            onValueChange(index);
+      onIndexChange: onIndexChange
+        ? // ? ({ index }: Update, instance) => {
+          ({ index }: Update) => {
+            // instance.updateValue([index, index]);
+            onIndexChange(index);
             // instance.updateTabsContent(index);
           }
-        : value
+        : value != null
         ? undefined
         : ({ index }: Update, instance: Slidytabs) => {
             // instance.updateTabsContent(index);
+
             instance.updateValue([index, index]);
           },
       transitionDuration,
@@ -105,25 +116,25 @@ export const slider =
 export const range =
   ({
     value,
-    onValueChange,
+    onIndexChange,
     transitionDuration,
   }: {
     value: RangeValue;
-    onValueChange?: (value: RangeValue) => void;
+    onIndexChange?: (value: RangeValue) => void;
     transitionDuration?: number;
   }) =>
   (root: HTMLElement | null) => {
     return setupWithOptions(root, {
       value,
       swipe: true,
-      onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
+      onIndexChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
         if (activeEdge === null) {
           // triggered from data-state observer
           return;
         }
         const newValue = instance.value.with(activeEdge, index) as RangeValue;
         instance.updateValue(newValue);
-        onValueChange?.(newValue);
+        onIndexChange?.(newValue);
       },
       transitionDuration,
     });
@@ -133,8 +144,9 @@ class Slidytabs {
   #root;
   #swipe!: boolean;
   #slidytab!: HTMLDivElement;
-  #_value!: [number, number];
-  #onValueChange?: (update: Update, instance: Slidytabs) => void;
+  // #_value!: [number, number];
+  value!: [number, number];
+  #onIndexChange?: (update: Update, instance: Slidytabs) => void;
   #resizeObserver;
   #dataStateObserver;
   #down: number | null = null;
@@ -144,7 +156,7 @@ class Slidytabs {
     focusText: string[];
     focusIndicator: string[];
     base: string[];
-  };
+  }[];
   #_transitionDuration = defaultTransitionDuration;
   #orientation!: "horizontal" | "vertical";
   #list!: HTMLDivElement;
@@ -152,11 +164,13 @@ class Slidytabs {
   #trigger!: HTMLButtonElement;
   #isFocused = false;
   #isMoving = false;
+  #controlled = false;
 
   constructor(root: HTMLElement) {
     this.#root = root;
     this.#extractFromDOM();
-    this.#classes = categorizeClasses([...this.#trigger.classList]);
+    // this.#classes = categorizeClasses([...this.#trigger.classList]);
+    this.#classes = categorizeClasses(this.#triggers);
     safelistGeneralizedClasses(this.#trigger);
     this.#slidytab = this.#setupSlidytab();
     this.#onblur();
@@ -167,6 +181,7 @@ class Slidytabs {
     this.#setupFakeFocus();
     const triggerStyles: Partial<CSSStyleDeclaration> = {
       zIndex: "10",
+      // backgroundColor: "transparent",
       touchAction: "none",
       outline: "unset",
     };
@@ -179,16 +194,14 @@ class Slidytabs {
 
   setOptions = ({
     value,
-    onValueChange,
+    onIndexChange,
     swipe,
-  }: {
-    value?: RangeValue;
-    onValueChange?: (update: Update, instance: Slidytabs) => void;
-    swipe: boolean;
-  }) => {
-    this.#onValueChange = onValueChange;
+    controlled,
+  }: TabsliderOptions) => {
+    this.#onIndexChange = onIndexChange;
     this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
     this.#swipe = swipe;
+    this.#controlled = controlled ?? false;
   };
 
   #extractFromDOM = () => {
@@ -212,28 +225,42 @@ class Slidytabs {
   };
 
   #onpointerdown = (e: PointerEvent) => {
+    // must be a better place for this if we really care
+    // mutation observer?
     this.#extractFromDOM();
     const { index } = this.#triggerFromEvent(e);
     if (index === undefined) {
       return;
     }
+
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
+    // TODO does this work for vertical
     this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
-    this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    this.#triggers[index].click();
-    this.#triggers[index].blur();
+    if (this.#controlled) {
+      e.preventDefault();
+      this.#onIndexChange?.({ index, activeEdge: this.#down }, this);
+    }
   };
 
-  #onpointerup = (e: PointerEvent) => {
-    const { trigger } = this.#triggerFromEvent(e);
+  #click = (trigger: HTMLElement) => {
+    // vue, react
+    trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    // svelte, astro
+    trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    // trigger.focus();
+  };
+
+  #onpointerup = () => {
+    // #onpointerup = (e: PointerEvent) => {
+    // const { trigger } = this.#triggerFromEvent(e);
     this.#down = null;
     this.#isMoving = false;
     // drag for `tab` is selecting erroneously
-    trigger?.click();
-    trigger?.focus();
+    // trigger?.click();
+    // trigger?.focus();
   };
 
   #triggerFromEvent = (e: PointerEvent) => {
@@ -251,6 +278,8 @@ class Slidytabs {
   };
 
   #onpointermove = (e: PointerEvent) => {
+    // e.preventDefault();
+
     if (e.buttons === 0) {
       this.#down = null;
       this.#isMoving = false;
@@ -259,23 +288,33 @@ class Slidytabs {
       return;
     }
     this.#isMoving = true;
-    const { trigger, index } = this.#triggerFromEvent(e);
+    const { trigger } = this.#triggerFromEvent(e);
     if (!trigger) {
       return;
     }
-    this.#onValueChange?.({ index, activeEdge: this.#down, trigger }, this);
-    trigger.click();
+    this.#click(trigger);
   };
 
-  set value(newValue: RangeValue) {
-    this.#_value = newValue;
-    if (this.value[0] > this.value[1]) {
+  updateValue = (value: RangeValue) => {
+    if (value[0] > value[1]) {
       return;
     }
+    // if (isEqual(value, this.value)) {
+    //   return;
+    // }
+    this.#slidytab.style.transitionDuration =
+      this.#isFocused || (this.#down !== null && !this.#isMoving)
+        ? this.transitionDuration
+        : "0ms";
+    this.value = value;
+    this.#updateUI();
+  };
+
+  #updateUI = () => {
     for (let i = 0; i < this.#triggers.length; i++) {
       this.#triggers[i].className = twMerge(
-        this.#classes.base,
-        i >= this.value[0] && i <= this.value[1] && this.#classes.activeText
+        this.#classes[i].base,
+        i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
       );
     }
     const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
@@ -286,17 +325,6 @@ class Slidytabs {
     const bottom = `${parentRect.bottom - leftRect.bottom}px`;
     const right = `${parentRect.right - rightRect.right}px`;
     Object.assign(this.#slidytab.style, { left, top, bottom, right });
-  }
-
-  updateValue = (value: RangeValue) => {
-    if (isEqual(value, this.value)) {
-      return;
-    }
-    this.#slidytab.style.transitionDuration =
-      this.#isFocused || (this.#down !== null && !this.#isMoving)
-        ? this.transitionDuration
-        : "0ms";
-    this.value = value;
   };
 
   #onfocus = ({ currentTarget }: Event) => {
@@ -308,18 +336,19 @@ class Slidytabs {
     }
     this.#isFocused = true;
     this.#slidytab.className = twMerge(
-      this.#classes.base,
-      this.#classes.activeIndicator,
-      this.#classes.focusIndicator
+      this.#classes[this.value[0]].base,
+      this.#classes[this.value[0]].activeIndicator,
+      this.#classes[this.value[0]].focusIndicator
     );
   };
 
   #onblur = () => {
     // otherwise slides are slow folling keyboard input
     this.#isFocused = false;
+    console.log(this.value);
     this.#slidytab.className = twMerge(
-      this.#classes.base,
-      this.#classes.activeIndicator
+      this.#classes[this.value?.[0] ?? 0].base,
+      this.#classes[this.value?.[0] ?? 0].activeIndicator
     );
   };
 
@@ -358,20 +387,22 @@ class Slidytabs {
       position: "absolute",
       height: "unset",
       outlineColor: "transparent",
+      // zIndex: "10"
     };
     Object.assign(slidytab.style, slidytabStyles);
     this.#list.style.position = "relative";
     return slidytab;
   };
 
-  get value() {
-    return this.#_value;
-  }
+  // get value() {
+  //   return this.#_value;
+  // }
 
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      this.value = this.value;
+      this.updateValue(this.value);
+      // this.value = this.value;
     });
     resizeObserver.observe(this.#list);
     return resizeObserver;
@@ -387,7 +418,7 @@ class Slidytabs {
 
   #setupDataStateObserver = () => {
     const dataStateObserver = new MutationObserver(() => {
-      this.#onValueChange?.(
+      this.#onIndexChange?.(
         {
           index: this.activeIndex,
           activeEdge: null,
@@ -409,6 +440,7 @@ class Slidytabs {
     if (this.#root.isConnected) {
       return;
     }
+    console.log("really destroying");
     this.#list.removeEventListener("pointerdown", this.#onpointerdown);
     this.#list.removeEventListener("pointermove", this.#onpointermove);
     this.#resizeObserver.disconnect();
@@ -422,11 +454,14 @@ class Slidytabs {
   }
 }
 
-const getCurrentTargetX = (e: PointerEvent) =>
-  e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
-
 if (typeof document !== "undefined" && !globalThis.sheet) {
   const sheet = new CSSStyleSheet();
   globalThis.sheet = sheet;
   document.adoptedStyleSheets.push(sheet);
 }
+
+// https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/bits/tabs/tabs.svelte.ts
+// https://github.com/radix-ui/primitives/blob/main/packages/react/tabs/src/tabs.tsx
+// https://github.com/unovue/reka-ui/blob/v2/packages/core/src/Tabs/TabsTrigger.vue
+// https://github.com/starwind-ui/starwind-ui/blob/main/packages/core/src/components/tabs/Tabs.astro
+// https://github.com/kobaltedev/kobalte/blob/main/packages/core/src/tabs/tabs-trigger.tsx

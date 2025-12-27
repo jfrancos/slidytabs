@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import CustomCode from "../components/Code.astro";
 import { icons } from "@/lib/utils";
 import SelectFramework from "@/components/SelectFramework.astro";
 import Demo from "@/components/Demo.astro";
@@ -14,10 +15,10 @@ const { github } = icons;
     <meta name="generator" content={Astro.generator} />
     <title>slidytabs</title>
   </head>
-  <body class="flex flex-col h-screen bg-neutral-200 .gap-4 .sm:gap-0 .pt-6">
-    <div class="px-8 py-6 color-neutral-700 flex flex-col gap-2">
+  <body class="flex flex-col h-screen bg-white">
+    <div class="px-8 py-6 bg-neutral-200 color-neutral-700 flex flex-col gap-2">
       <div class="flex justify-between .h-9">
-        <div class="font-semibold color-pink-700 tracking-wide text-2xl">
+        <div class="font-semibold color-pink-700 .tracking-wide text-3xl">
           slidytabs
         </div>
         <div class="flex items-center gap-8 h-9">
@@ -35,7 +36,9 @@ const { github } = icons;
         </div>
       </div>
       <div class="text-balance">
-        a simple utility for animating shadcn&ensp;
+        A DOM-level utility for animating <span class="font-semibold"
+          >shadcn</span
+        >&ensp;
         <Code
           code="<Tabs />"
           lang="jsx"
@@ -48,76 +51,109 @@ const { github } = icons;
       </div>
     </div>
     <!-- <Code code="npm i slidytabs" lang="bash" theme="github-light" /> -->
-    <div class="flex flex-col grow gap-4">
-      <div
-        class="flex gap-8 grow *:2xl:first:rounded-tr-xl *:2xl:last:rounded-tl-xl"
-      >
-        <div id="react-demo" class="2xl:block bg-white flex-1 shadow-xl">
-          <div class="flex justify-center items-center flex-col gap-6 py-6">
-            <a
-              rel="noopener"
-              target="_blank"
-              class="font-medium underline"
-              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-            ><div class="flex flex-col gap-12">
-              <!-- <Demo lang="react" filename="NumbersRange" /> -->
-              <Demo framework="react" filename="Tabs" />
-            </div>
-          </div>
-        </div>
-
-        <div id="vue-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
-          <div class="flex justify-center items-center flex-col gap-6 py-6">
-            <a
-              rel="noopener"
-              target="_blank"
-              class="font-medium underline"
-              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-            ><div class="flex flex-col gap-12">
-              <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
-              <Demo framework="vue" filename="Tabs" />
-            </div>
-          </div>
-        </div>
-        <div
-          id="svelte-demo"
-          class="2xl:block bg-white flex-1 shadow-xl pb-6 hidden"
+    <div class="flex flex-col .gap-4 bg-white py-2 mx-auto w-full max-w-4xl px-16">
+      <div class="flex flex-col gap-2 w-full">
+        <h1 class="text-2xl font-bold">Install</h1>
+        <!-- TODO not children: -->
+        <CustomCode
+          code="npm i slidytabs\n# or pnpm etc"
+          lang="bash"
+          class="children:rounded"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold">Make tabs slide</h1>
+        <!-- TODO not children: -->
+        <CustomCode
+          code='import { tabs } from "slidtytabs"\n\n// tabs(options?: { index?: number; onIndexChange?: (index: number) => void })'
+          lang="ts"
+          class="children:rounded"
+        />
+      </div>
+      <!-- <div class="flex gap-8 .grow bg-white"> -->
+      <div id="react-demo" class="bg-white .flex-1 w-full">
+        <!-- <div class="flex justify-center items-center flex-col gap-6 py-6">
+          <a
+            rel="noopener"
+            target="_blank"
+            class="font-medium underline"
+            href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+          ><div class="flex flex-col gap-12"> -->
+        <!-- <Demo lang="react" filename="NumbersRange" /> -->
+        <Demo framework="react" filename="Tabs"
+          ><div>
+            Use shadcn Tabs as usual, and pass <Code
+              code="tabs()"
+              lang="ts"
+              theme="github-light"
+              class="text-sm text-nowrap inline-flex p-1 -my-1 mx-1 rounded-sm !bg-neutral-100"
+            /> to the root ref.
+          </div></Demo
         >
-          <div class="flex justify-center items-center flex-col gap-6 py-6">
-            <a
-              rel="noopener"
-              target="_blank"
-              class="font-medium underline"
-              href="https://www.shadcn-svelte.com/docs/components/tabs"
-              >shadcn-svelte</a
-            ><div class="flex flex-col gap-12">
-              <Demo framework="svelte" filename="Tabs"> {}</Demo>
-              <Demo framework="svelte" filename="VerticalTabs" />
-              <Demo framework="svelte" filename="UncontrolledSlider" />
-              <Demo framework="svelte" filename="ControlledSlider" />
-              <Demo framework="svelte" filename="HalfControlledSlider" />
-              <Demo framework="svelte" filename="FrozenControlledSlider" />
-              <Demo framework="svelte" filename="RangeSlider" />
-              <!-- <Demo lang="svelte" filename="Styles" /> -->
-            </div>
-          </div>
-        </div>
-        <div id="astro-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
-          <div class="flex justify-center items-center flex-col gap-6 py-6">
-            <a
-              rel="noopener"
-              target="_blank"
-              class="font-medium underline"
-              href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-            ><div class="flex flex-col gap-12">
-              <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
-              <Demo framework="astro" filename="Tabs" />
-            </div>
-          </div>
-        </div>
+        <Demo framework="react" filename="ShadControlled">
+          Whereas you can control it with values via <a
+            class="inline-flex underline"
+            href="https://www.radix-ui.com/primitives/docs/components/tabs#api-reference"
+            >radix props</a
+          >
+        </Demo>
+        <Demo framework="react" filename="SlidytabsControlled">
+          You can now alternatively control with indices via slidytabs
+        </Demo>
       </div>
     </div>
   </body>
+
+  <div id="vue-demo" class="2xl:block bg-white flex-1 hidden">
+    <div class="flex justify-center items-center flex-col gap-6 py-6">
+      <a
+        rel="noopener"
+        target="_blank"
+        class="font-medium underline"
+        href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+      ><div class="flex flex-col gap-12">
+        <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
+        <Demo framework="vue" filename="Tabs" />
+      </div>
+    </div>
+  </div>
+  <div id="svelte-demo" class="2xl:block bg-white flex-1 pb-6 hidden">
+    <div class="flex justify-center items-center flex-col gap-6 py-6">
+      <a
+        rel="noopener"
+        target="_blank"
+        class="font-medium underline"
+        href="https://www.shadcn-svelte.com/docs/components/tabs"
+        >shadcn-svelte</a
+      ><div class="flex flex-col gap-12">
+        <Demo framework="svelte" filename="Tabs">
+          Some text. There's a sentence here probably.</Demo
+        >
+        <Demo framework="svelte" filename="VerticalTabs"
+          >This text is probably okay too</Demo
+        >
+        <Demo framework="svelte" filename="UncontrolledSlider" />
+        <Demo framework="svelte" filename="ControlledSlider" />
+        <Demo framework="svelte" filename="HalfControlledSlider" />
+        <Demo framework="svelte" filename="FrozenControlledSlider" />
+        <Demo framework="svelte" filename="RangeSlider" />
+        <!-- <Demo lang="svelte" filename="Styles" /> -->
+      </div>
+    </div>
+  </div>
+  <div id="astro-demo" class="2xl:block bg-white flex-1 shadow-xl hidden">
+    <div class="flex justify-center items-center flex-col gap-6 py-6">
+      <a
+        rel="noopener"
+        target="_blank"
+        class="font-medium underline"
+        href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
+      ><div class="flex flex-col gap-12">
+        <!-- <Demo lang="tsx" filename="NumbersRange" /> -->
+        <Demo framework="astro" filename="Tabs" />
+      </div>
+    </div>
+  </div>
 </html>
 
 <script>
@@ -132,3 +168,11 @@ const { github } = icons;
     }
   });
 </script>
+
+<!-- next up: 
+onChange({value, index}) => ...
+sticky to side
+fix swipe bug -->
+
+<!-- individual trigger classes
+focus for unreachable tabs -->
