@@ -1,5 +1,4 @@
 import { twMerge } from "tailwind-merge";
-// import { isEqual } from "radashi";
 import {
   categorizeClasses,
   safelistGeneralizedClasses,
@@ -13,14 +12,14 @@ type RefCallback = (node: RefTarget, refs?: unknown) => void;
 const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
   const elements =
     typeof ref === "string"
-      ? document.querySelectorAll(ref)
+      ? // For adding in a <script>
+        document.querySelectorAll(ref)
       : ref instanceof Element
       ? [ref]
       : ref?.$el instanceof Element
       ? [ref.$el]
       : [];
 
-  // For adding in a <script>
   if (typeof ref === "string" && elements.length === 0) {
     throw new Error(`Selector "${ref}" yielded no elements`);
   }

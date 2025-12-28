@@ -5,19 +5,22 @@ const options = ["Correct", "Horse", "Battery", "Stapler"];
 
 export default () => {
   const [index, setIndex] = useState(0);
+  const onIndexChange = (newIndex: number) =>
+    newIndex !== 2 && setIndex(newIndex);
 
   return (
     <Tabs
       defaultValue={options[index]}
-      ref={slider({
-        value: index,
-        onIndexChange: (newIndex) => newIndex !== 2 && setIndex(newIndex),
-      })}
+      ref={slider({ value: index, onIndexChange })}
       className="text-center"
     >
       <TabsList>
-        {options.map((value) => (
-          <TabsTrigger key={value} value={value}>
+        {options.map((value, i) => (
+          <TabsTrigger
+            key={value}
+            value={value}
+            {...(i === 2 && { className: "text-red" })}
+          >
             {value}
           </TabsTrigger>
         ))}

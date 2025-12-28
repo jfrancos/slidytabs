@@ -1,5 +1,3 @@
 packages:
   - packages/lib
-  - packages/demo-svelte
-  - packages/demo-react
-  - packages/astro
+  - packages/demo-site

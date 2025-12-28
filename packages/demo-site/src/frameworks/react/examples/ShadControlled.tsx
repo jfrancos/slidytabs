@@ -15,7 +15,7 @@ export default () => {
       <TabsList>
         <TabsTrigger value="correct">Correct</TabsTrigger>
         <TabsTrigger value="horse">Horse</TabsTrigger>
-        <TabsTrigger className="text-red-800" value="battery">
+        <TabsTrigger className="text-red" value="battery">
           Battery
         </TabsTrigger>
         <TabsTrigger value="staple">Staple</TabsTrigger>

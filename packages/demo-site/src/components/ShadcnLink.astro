@@ -1,0 +1,31 @@
+---
+import type { Framework } from "@/lib/store";
+
+interface Props {
+  framework: Framework;
+}
+
+const { framework } = Astro.props;
+
+const link = {
+  react: {
+    href: "https://ui.shadcn.com/docs/components/tabs",
+    title: "shadcn",
+  },
+  vue: {
+    href: "https://www.shadcn-vue.com/docs/components/tabs",
+    title: "shadcn-vue",
+  },
+  svelte: {
+    href: "https://www.shadcn-svelte.com/docs/components/tabs",
+    title: "shadcn-svelte",
+  },
+  astro: {
+    href: "https://starwind.dev/docs/components/tabs",
+    title: "starwind",
+  },
+}[framework];
+---
+
+<a rel="noopener" target="_blank" class="font-medium underline" href={link.href}
+></a>
