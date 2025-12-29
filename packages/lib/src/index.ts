@@ -235,7 +235,7 @@ class Slidytabs {
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
     if (this.#controlled) {
-      e.preventDefault();
+      // e.preventDefault();
       this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     }
   };
@@ -313,11 +313,11 @@ class Slidytabs {
     this.value = value;
     this.#updateUI();
   };
-
   #updateUI = () => {
     for (let i = 0; i < this.#triggers.length; i++) {
       this.#triggers[i].dataset.state =
         i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+      // This should go somewhere else:
       this.#triggers[i].className = twMerge(this.#classes[i].base);
       // this.#triggers[i].className = twMerge(
       //   this.#classes[i].base,
