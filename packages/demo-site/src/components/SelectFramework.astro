@@ -30,7 +30,7 @@ import { icons } from "@/lib/utils";
   frameworkAtom.subscribe((value) => {
     slider({
       value: frameworks.indexOf(value),
-      onIndexChange: (index) => {
+      onValueChange: (index) => {
         setFramework(frameworks[index]);
       },
     })("[data-framework-tabs]");

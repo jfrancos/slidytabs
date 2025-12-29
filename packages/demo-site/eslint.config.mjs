@@ -5,6 +5,8 @@ import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
+  tseslint.configs.strict,
+  pluginReact.configs.flat["jsx-runtime"],
   {
     ignores: ["src/sample-code/**"],
   },
@@ -12,8 +14,12 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     plugins: { js },
     extends: ["js/recommended"],
-    languageOptions: { globals: globals.browser },
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
   },
-  tseslint.configs.recommended,
-  pluginReact.configs.flat["jsx-runtime"],
 ]);

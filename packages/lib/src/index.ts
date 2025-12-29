@@ -6,13 +6,14 @@ import {
 } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
+// const defaultTransitionDuration = 1000;
 
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
 const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
   const elements =
     typeof ref === "string"
-      ? // For adding in a <script>
+      ? // For adding in a <script> e.g. starwind
         document.querySelectorAll(ref)
       : ref instanceof Element
       ? [ref]
@@ -53,9 +54,8 @@ interface Update {
 interface TabsliderOptions {
   value?: RangeValue;
   swipe: boolean;
-  transitionDuration?: number;
-  onIndexChange?: (update: Update, instance: Slidytabs) => void;
-  controlled?: boolean;
+  onValueChange?: (update: Update, instance: Slidytabs) => void;
+  controlled: boolean;
 }
 // how to get values?
 const instances = new WeakMap<HTMLElement, Slidytabs>();
@@ -68,74 +68,69 @@ const getInstance = (el: HTMLElement) => {
   return instance;
 };
 
-export const tabs = (): RefCallback => (root) => {
-  return setupWithOptions(root, {
-    swipe: false,
-    onIndexChange: ({ index }, instance: Slidytabs) => {
-      instance.updateValue([index, index]);
-      // instance.updateTabsContent(index);
-    },
-  });
-};
+interface SliderOptions {
+  value?: number;
+  onValueChange?: (value: number) => void;
+}
+
+export const tabs =
+  ({ value, onValueChange }: SliderOptions = {}): RefCallback =>
+  (root) => {
+    const controlled = value != null || onValueChange != null;
+    return setupWithOptions(root, {
+      controlled,
+      swipe: false,
+      value: value != null ? [value, value] : undefined,
+      onValueChange: ({ index }, instance) => {
+        if (controlled) {
+          onValueChange?.(index);
+        } else {
+          instance.updateValue([index, index]);
+        }
+      },
+    });
+  };
 
 export const slider =
-  ({
-    value,
-    onIndexChange,
-    transitionDuration,
-  }: {
-    value?: number;
-    onIndexChange?: (value: number) => void;
-    transitionDuration?: number;
-  } = {}): RefCallback =>
+  ({ value, onValueChange }: SliderOptions = {}): RefCallback =>
   (root) => {
-    console.log("slider called");
+    const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
-      controlled: value != null || onIndexChange != null,
-      value: value != null ? [value, value] : undefined,
+      controlled,
       swipe: true,
-      onIndexChange: onIndexChange
-        ? // ? ({ index }: Update, instance) => {
-          ({ index }: Update) => {
-            // instance.updateValue([index, index]);
-            onIndexChange(index);
-            // instance.updateTabsContent(index);
-          }
-        : value != null
-        ? undefined
-        : ({ index }: Update, instance: Slidytabs) => {
-            // instance.updateTabsContent(index);
-
-            instance.updateValue([index, index]);
-          },
-      transitionDuration,
+      value: value != null ? [value, value] : undefined,
+      onValueChange: ({ index }, instance) => {
+        if (controlled) {
+          onValueChange?.(index);
+        } else {
+          instance.updateValue([index, index]);
+        }
+      },
     });
   };
 
 export const range =
   ({
     value,
-    onIndexChange,
-    transitionDuration,
+    onValueChange,
   }: {
     value: RangeValue;
-    onIndexChange?: (value: RangeValue) => void;
-    transitionDuration?: number;
+    onValueChange?: (value: RangeValue) => void;
   }) =>
   (root: HTMLElement | null) => {
     return setupWithOptions(root, {
-      value,
+      controlled: true,
       swipe: true,
-      onIndexChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
+      value,
+      onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
         if (activeEdge === null) {
           // triggered from data-state observer
           return;
         }
         const newValue = instance.value.with(activeEdge, index) as RangeValue;
-        instance.updateValue(newValue);
-        onIndexChange?.(newValue);
+        // instance.updateValue(newValue);
+        onValueChange?.(newValue);
       },
-      transitionDuration,
     });
   };
 
@@ -145,12 +140,12 @@ class Slidytabs {
   #slidytab!: HTMLDivElement;
   // #_value!: [number, number];
   value!: [number, number];
-  #onIndexChange?: (update: Update, instance: Slidytabs) => void;
+  #onValueChange?: (update: Update, instance: Slidytabs) => void;
   #resizeObserver;
   #dataStateObserver;
   #down: number | null = null;
   #classes!: {
-    activeText: string[];
+    // activeText: string[];
     activeIndicator: string[];
     focusText: string[];
     focusIndicator: string[];
@@ -189,15 +184,16 @@ class Slidytabs {
     }
     this.#list.append(this.#slidytab);
     this.#dataStateObserver = this.#setupDataStateObserver();
+    console.log(this.#classes);
   }
 
   setOptions = ({
     value,
-    onIndexChange,
+    onValueChange,
     swipe,
     controlled,
   }: TabsliderOptions) => {
-    this.#onIndexChange = onIndexChange;
+    this.#onValueChange = onValueChange;
     this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
     this.#swipe = swipe;
     this.#controlled = controlled ?? false;
@@ -240,7 +236,7 @@ class Slidytabs {
     this.#list.setPointerCapture(e.pointerId);
     if (this.#controlled) {
       e.preventDefault();
-      this.#onIndexChange?.({ index, activeEdge: this.#down }, this);
+      this.#onValueChange?.({ index, activeEdge: this.#down }, this);
     }
   };
 
@@ -298,6 +294,7 @@ class Slidytabs {
     if (value[0] > value[1]) {
       return;
     }
+
     // if (isEqual(value, this.value)) {
     //   return;
     // }
@@ -305,16 +302,27 @@ class Slidytabs {
       this.#isFocused || (this.#down !== null && !this.#isMoving)
         ? this.transitionDuration
         : "0ms";
+    if (
+      this.value &&
+      value[0] === this.value[0] &&
+      value[1] === this.value[1]
+    ) {
+      return;
+    }
+    console.log(value);
     this.value = value;
     this.#updateUI();
   };
 
   #updateUI = () => {
     for (let i = 0; i < this.#triggers.length; i++) {
-      this.#triggers[i].className = twMerge(
-        this.#classes[i].base,
-        i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
-      );
+      this.#triggers[i].dataset.state =
+        i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+      this.#triggers[i].className = twMerge(this.#classes[i].base);
+      // this.#triggers[i].className = twMerge(
+      //   this.#classes[i].base,
+      //   i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
+      // );
     }
     const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
     const rightRect = this.#triggers[this.value[1]].getBoundingClientRect();
@@ -417,7 +425,7 @@ class Slidytabs {
 
   #setupDataStateObserver = () => {
     const dataStateObserver = new MutationObserver(() => {
-      this.#onIndexChange?.(
+      this.#onValueChange?.(
         {
           index: this.activeIndex,
           activeEdge: null,

@@ -4,28 +4,37 @@ declare global {
 }
 
 export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
+  console.log("hasdf");
   const textClasses =
-    /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
+    /(^|:)(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppercase|lowercase|capitalize)\b/;
   const activeVariant = "data-[state=active]:";
   const focusVariant = "focus-visible:";
   const triggerClasses = [];
   for (const trigger of triggers) {
     const classList = [...trigger.classList];
-    const active = classList
-      .filter((item) => item.includes(activeVariant))
+    const activeIndicator = classList
+      .filter(
+        (item) => item.includes(activeVariant) //&& !item.match(textClasses)
+      )
       .map((item) => item.replace(activeVariant, ""));
+
+    console.log(activeIndicator);
     const focus = classList
       .filter((item) => item.includes(focusVariant))
       .map((item) => item.replace(focusVariant, ""));
     const base = classList.filter(
-      (item) => !(item.includes(focusVariant) || item.includes(activeVariant))
+      (item) =>
+        !item.includes(focusVariant) &&
+        (!item.includes(activeVariant) || item.match(textClasses))
     );
-    const activeText = active.filter((item) => item.match(textClasses));
-    const activeIndicator = active.filter((item) => !item.match(textClasses));
+    console.log(base);
+    // const activeText = active.filter((item) => item.match(textClasses));
+    // const activeIndicator = active.filter((item) => !item.match(textClasses));
+    // const activeIndicator = active.filter((item) => !item.match(textClasses));
     const focusText = focus.filter((item) => item.match(textClasses));
     const focusIndicator = focus.filter((item) => !item.match(textClasses));
     triggerClasses.push({
-      activeText,
+      // activeText,
       activeIndicator,
       focusText,
       focusIndicator,
@@ -34,6 +43,39 @@ export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
   }
   return triggerClasses;
 };
+// export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
+//   // we need to revamp this
+//   // such that textclasses stay in place as-is
+//   const textClasses =
+//     /^(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppcase|lowercase|capitalize)/;
+//   const activeVariant = "data-[state=active]:";
+//   const focusVariant = "focus-visible:";
+//   const triggerClasses = [];
+//   for (const trigger of triggers) {
+//     const classList = [...trigger.classList];
+//     const active = classList
+//       .filter((item) => item.includes(activeVariant))
+//       .map((item) => item.replace(activeVariant, ""));
+//     const focus = classList
+//       .filter((item) => item.includes(focusVariant))
+//       .map((item) => item.replace(focusVariant, ""));
+//     const base = classList.filter(
+//       (item) => !(item.includes(focusVariant) || item.includes(activeVariant))
+//     );
+//     const activeText = active.filter((item) => item.match(textClasses));
+//     const activeIndicator = active.filter((item) => !item.match(textClasses));
+//     const focusText = focus.filter((item) => item.match(textClasses));
+//     const focusIndicator = focus.filter((item) => !item.match(textClasses));
+//     triggerClasses.push({
+//       activeText,
+//       activeIndicator,
+//       focusText,
+//       focusIndicator,
+//       base,
+//     });
+//   }
+//   return triggerClasses;
+// };
 
 const inserted = new Set<string>();
 

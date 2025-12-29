@@ -5,7 +5,7 @@
 </script>
 
 <Tabs.Root
-  {@attach slider({ onIndexChange: (newValue) => (value = newValue) })}
+  {@attach slider({ onValueChange: (newValue) => (value = newValue) })}
   class="text-center"
   value="5"
 >

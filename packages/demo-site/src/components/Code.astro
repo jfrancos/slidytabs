@@ -23,3 +23,20 @@ const html = codeToHtml(code, {
   set:html={html}
   class=`children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll) ${className}`
 />
+
+<style is:global>
+  .shiki {
+    counter-reset: step;
+    counter-increment: step 0;
+  }
+
+  .shiki .line::before {
+    content: counter(step);
+    counter-increment: step;
+    width: 1rem;
+    margin-right: 1.5rem;
+    display: inline-block;
+    text-align: right;
+    color: rgba(115, 138, 148, 0.4);
+  }
+</style>
