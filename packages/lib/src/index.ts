@@ -6,8 +6,8 @@ import {
   clamp,
 } from "./util";
 
-const defaultTransitionDuration = 0.2 * 1000;
-// const defaultTransitionDuration = 1500;
+// const defaultTransitionDuration = 0.2 * 1000;
+const defaultTransitionDuration = 1500;
 
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
@@ -364,8 +364,8 @@ class Slidytabs {
 
   #setupFakeFocus = () => {
     for (const trigger of this.#triggers) {
-      // trigger.addEventListener("focus", this.#onfocus);
-      // trigger.addEventListener("blur", this.#onblur);
+      trigger.addEventListener("focus", this.#onfocus);
+      trigger.addEventListener("blur", this.#onblur);
       // trigger.addEventListener("keydown", this.#onfocus, true);
     }
   };
