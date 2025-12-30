@@ -2,7 +2,7 @@ import { useState } from "react";
 import { slider } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/react/tabs";
 const triggerClasses =
-  "min-w-0 ring-inset rounded-lg data-[state=active]:(bg-gray-300 rounded-none h-full !shadow-none)  data-[state=inactive]:text-neutral-500";
+  "min-w-0 ring-inset rounded-lg h-full !shadow-none data-[state=active]:(bg-gray-300 rounded-none) data-[state=inactive]:text-neutral-500";
 
 export default () => {
   const [value, onValueChange] = useState(5);
