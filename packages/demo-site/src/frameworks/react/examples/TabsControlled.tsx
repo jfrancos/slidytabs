@@ -8,14 +8,13 @@ export default () => {
   const onValueChange = (newIndex: number) => {
     newIndex !== 2 && setIndex(newIndex);
   };
-
   return (
     <Tabs
       defaultValue={options[index]}
       ref={tabs({ value: index, onValueChange })}
       className="text-center"
     >
-      <TabsList className=" [&_:nth-child(3)]:text-red *:data-[state=inactive]:text-neutral-500">
+      <TabsList className="[&_:nth-child(3)]:text-red *:data-[state=inactive]:text-neutral-500">
         {options.map((value) => (
           <TabsTrigger key={value} value={value}>
             {value}
