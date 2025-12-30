@@ -5,8 +5,8 @@ import {
   getCurrentTargetX,
 } from "./util";
 
-const defaultTransitionDuration = 0.2 * 1000;
-// const defaultTransitionDuration = 1000;
+// const defaultTransitionDuration = 0.2 * 1000;
+const defaultTransitionDuration = 1500;
 
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
@@ -138,24 +138,22 @@ class Slidytabs {
   #root;
   #swipe!: boolean;
   #slidytab!: HTMLDivElement;
-  // #_value!: [number, number];
   value!: [number, number];
   #onValueChange?: (update: Update, instance: Slidytabs) => void;
   #resizeObserver;
   #dataStateObserver;
   #down: number | null = null;
   #classes!: {
-    // activeText: string[];
     activeIndicator: string[];
-    focusText: string[];
-    focusIndicator: string[];
+    // focusText: string[];
+    // focusIndicator: string[];
     base: string[];
   }[];
   #_transitionDuration = defaultTransitionDuration;
   #orientation!: "horizontal" | "vertical";
   #list!: HTMLDivElement;
   #triggers!: HTMLButtonElement[];
-  #trigger!: HTMLButtonElement;
+  // #trigger!: HTMLButtonElement;
   #isFocused = false;
   #isMoving = false;
   #controlled = false;
@@ -163,11 +161,13 @@ class Slidytabs {
   constructor(root: HTMLElement) {
     this.#root = root;
     this.#extractFromDOM();
-    // this.#classes = categorizeClasses([...this.#trigger.classList]);
     this.#classes = categorizeClasses(this.#triggers);
-    safelistGeneralizedClasses(this.#trigger);
+    for (const trigger of this.#triggers) {
+      safelistGeneralizedClasses(trigger);
+    }
     this.#slidytab = this.#setupSlidytab();
     this.#onblur();
+    // this.#list.addEventListener("click", this.#onpointerdown);
     this.#list.addEventListener("pointerdown", this.#onpointerdown, true);
     this.#list.addEventListener("pointerup", this.#onpointerup);
     this.#list.addEventListener("pointermove", this.#onpointermove, true);
@@ -182,9 +182,12 @@ class Slidytabs {
     for (const trigger of this.#triggers) {
       Object.assign(trigger.style, triggerStyles);
     }
+    for (let i = 0; i < this.#triggers.length; i++) {
+      this.#triggers[i].className = twMerge(this.#classes[i].base);
+    }
     this.#list.append(this.#slidytab);
     this.#dataStateObserver = this.#setupDataStateObserver();
-    console.log(this.#classes);
+    // console.log(this.#classes);
   }
 
   setOptions = ({
@@ -203,8 +206,11 @@ class Slidytabs {
     // console.log(this.#root);
     this.#triggers = [...this.#root.querySelectorAll("button")];
     // console.log(this.#triggers);
-    this.#trigger = this.#triggers[0];
-    const list = this.#trigger.closest(
+    // this.#trigger = this.#triggers[0];
+    // const list = this.#trigger.closest(
+    //   "div[role=tablist]"
+    // ) as HTMLDivElement | null;
+    const list = this.#root.querySelector(
       "div[role=tablist]"
     ) as HTMLDivElement | null;
     if (!list) {
@@ -220,10 +226,11 @@ class Slidytabs {
   };
 
   #onpointerdown = (e: PointerEvent) => {
+    console.log("down");
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
-    const { index } = this.#triggerFromEvent(e);
+    const { index, trigger } = this.#triggerFromEvent(e);
     if (index === undefined) {
       return;
     }
@@ -235,8 +242,11 @@ class Slidytabs {
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
     if (this.#controlled) {
-      // e.preventDefault();
-      this.#onValueChange?.({ index, activeEdge: this.#down }, this);
+      //   // e.stopImmediatePropagation();
+      //   // e.preventDefault();
+      //   // this.#click(trigger);
+      // this.#onValueChange?.({ index, activeEdge: this.#down }, this);
+      //   // this.#updateUI();
     }
   };
 
@@ -295,13 +305,12 @@ class Slidytabs {
       return;
     }
 
-    // if (isEqual(value, this.value)) {
-    //   return;
-    // }
     this.#slidytab.style.transitionDuration =
       this.#isFocused || (this.#down !== null && !this.#isMoving)
         ? this.transitionDuration
         : "0ms";
+    // this.#updateIndicatorUI();
+    // console.log(value);
     if (
       this.value &&
       value[0] === this.value[0] &&
@@ -309,20 +318,19 @@ class Slidytabs {
     ) {
       return;
     }
-    console.log(value);
     this.value = value;
-    this.#updateUI();
+
+    this.#updateIndicatorUI();
+    // requestAnimationFrame(() => {
+    setTimeout(() => {
+      this.#updateTriggersUI();
+      // this.#updateUI();
+    }, 25);
   };
-  #updateUI = () => {
-    for (let i = 0; i < this.#triggers.length; i++) {
-      this.#triggers[i].dataset.state =
-        i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
-      // This should go somewhere else:
-      this.#triggers[i].className = twMerge(this.#classes[i].base);
-      // this.#triggers[i].className = twMerge(
-      //   this.#classes[i].base,
-      //   i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
-      // );
+
+  #updateIndicatorUI = () => {
+    if (!this.value) {
+      return;
     }
     const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
     const rightRect = this.#triggers[this.value[1]].getBoundingClientRect();
@@ -334,25 +342,82 @@ class Slidytabs {
     Object.assign(this.#slidytab.style, { left, top, bottom, right });
   };
 
-  #onfocus = ({ currentTarget }: Event) => {
+  #updateTriggersUI = () => {
+    for (let i = 0; i < this.#triggers.length; i++) {
+      const targetState =
+        i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+      if (this.#triggers[i].dataset.state !== targetState) {
+        console.log(`setting ${i} to ${targetState}`);
+        this.#triggers[i].dataset.state = targetState;
+      }
+
+      // This should go somewhere else:
+      // this.#triggers[i].className = twMerge(this.#classes[i].base);
+    }
+  };
+
+  // #updateUI = () => {
+  //   for (let i = 0; i < this.#triggers.length; i++) {
+  //     const targetState =
+  //       i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+  //     if (this.#triggers[i].dataset.state !== targetState) {
+  //       this.#triggers[i].dataset.state = targetState;
+  //     }
+
+  //     // this.#triggers[i].dataset.state =
+  //     //   i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+
+  //     // This should go somewhere else:
+  //     this.#triggers[i].className = twMerge(this.#classes[i].base);
+  //     // this.#triggers[i].className = twMerge(
+  //     //   this.#classes[i].base,
+  //     //   i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
+  //     // );
+  //   }
+  // };
+
+  #onfocus = ({ currentTarget }: FocusEvent) => {
+    // const { index } = this.#triggerFromEvent(e);
+    // console.log(index);
+    // console.log("hi");
     if (
       !(currentTarget instanceof Element) ||
       !currentTarget.matches(":focus-visible")
     ) {
       return;
     }
+    const index = this.#triggers.indexOf(currentTarget as HTMLButtonElement);
+    // determines speed
     this.#isFocused = true;
-    this.#slidytab.className = twMerge(
-      this.#classes[this.value[0]].base,
-      this.#classes[this.value[0]].activeIndicator,
-      this.#classes[this.value[0]].focusIndicator
-    );
+    // console.log(index, "got focused");
+    // this.#indicateFocus(index);
   };
+
+  // #indicateFocus = (index: number) => {
+  //   if (!this.#isFocused) {
+  //     console.log("not focused");
+  //     return;
+  //   }
+  //   if (this.value[0] > index || this.value[1] < index) {
+  //     console.log("focus on trigger");
+  //     this.#triggers[index].classList = twMerge(
+  //       this.#classes[index].base,
+  //       this.#classes[index].focusIndicator
+  //     );
+  //   } else {
+  //     console.log("focus on indicator");
+  //     this.#slidytab.className = twMerge(
+  //       this.#classes[this.value[0]].base,
+  //       this.#classes[this.value[0]].activeIndicator,
+  //       this.#classes[this.value[0]].focusIndicator
+  //     );
+  //   }
+  // };
 
   #onblur = () => {
     // otherwise slides are slow folling keyboard input
     this.#isFocused = false;
-    console.log(this.value);
+    // console.log(this.value);
     this.#slidytab.className = twMerge(
       this.#classes[this.value?.[0] ?? 0].base,
       this.#classes[this.value?.[0] ?? 0].activeIndicator
@@ -363,7 +428,7 @@ class Slidytabs {
     for (const trigger of this.#triggers) {
       trigger.addEventListener("focus", this.#onfocus);
       trigger.addEventListener("blur", this.#onblur);
-      trigger.addEventListener("keydown", this.#onfocus, true);
+      // trigger.addEventListener("keydown", this.#onfocus, true);
     }
   };
 
@@ -379,11 +444,18 @@ class Slidytabs {
     const activeElement = this.#root.querySelector<HTMLButtonElement>(
       "button[data-state=active]"
     );
+    // console.log("active", activeElement);
     if (!activeElement) {
       // TODO this is problematic
       return -1;
       // return 0;
     }
+    // console.log(this.#triggers.indexOf(activeElement), "qweff");
+    console.log("---");
+    for (const trigger of this.#triggers) {
+      console.log(trigger.dataset.state);
+    }
+    console.log("---");
     return this.#triggers.indexOf(activeElement);
   }
 
@@ -424,18 +496,76 @@ class Slidytabs {
   };
 
   #setupDataStateObserver = () => {
-    const dataStateObserver = new MutationObserver(() => {
-      this.#onValueChange?.(
-        {
-          index: this.activeIndex,
-          activeEdge: null,
-          trigger: this.#triggers[this.activeIndex],
-        },
-        this
-      );
+    const dataStateObserver = new MutationObserver((observations) => {
+      console.log("mutating");
+      //   this.#onValueChange?.({ index, activeEdge: this.#down }, this);
+      // setTimeout(() => {
+      // console.log("new state observed", this.activeIndex);
+      // });
+      // });
+      console.log(observations);
+      // setTimeout(() => {
+      for (const observation of observations) {
+        console.log(
+          observation.target.textContent,
+          observation.target.dataset.state
+        );
+        if (observation.target.dataset.state === "active") {
+          this.#onValueChange?.(
+            {
+              index: this.#triggers.indexOf(observation.target),
+              activeEdge: null,
+              // trigger: this.#triggers[this.activeIndex],
+              trigger: observation.target,
+            },
+            this
+          );
+          requestAnimationFrame(() => {
+            this.#updateTriggersUI();
+          });
+        }
+      }
+      // }, 10);
+
+      const trigger = observations[observations.length - 1].target;
+      // if (this.#controlled) {
+      // this.#onValueChange?.(
+      //   {
+      //     index: this.activeIndex,
+      //     activeEdge: null,
+      //     // trigger: this.#triggers[this.activeIndex],
+      //     trigger,
+      //   },
+      //   this
+      // );
+      // } else {
+      // if (!this.#controlled) {
+      // this.#updateTriggersUI();
+      // }
+      // }
+      // this.#updateIndicatorUI();
+      // }, 50);
+      // });
+      // console.log(observations);
+      // console.log("new state observed", this.activeIndex);
+      // this.#updateIndicatorUI();
+      // requestAnimationFrame(() => {
+      //   requestAnimationFrame(() => {
+      //     requestAnimationFrame(() => {
+      //       this.#updateIndicatorUI();
+      //       this.#updateTriggersUI();
+      //       //   this.#updateUI();
+      //     });
+      //   });
+      // });
+      // setTimeout(() => {
+      // this.#updateUI();
+      // }, 100);
+      // this.#indicateFocus(this.activeIndex);
     });
     dataStateObserver.observe(this.#list, {
       subtree: true,
+      attributes: true,
       attributeFilter: ["data-state"],
     });
     return dataStateObserver;

@@ -4,11 +4,11 @@ declare global {
 }
 
 export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
-  console.log("hasdf");
+  // console.log("hasdf");
   const textClasses =
     /(^|:)(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppercase|lowercase|capitalize)\b/;
   const activeVariant = "data-[state=active]:";
-  const focusVariant = "focus-visible:";
+  // const focusVariant = "focus-visible:";
   const triggerClasses = [];
   for (const trigger of triggers) {
     const classList = [...trigger.classList];
@@ -18,26 +18,26 @@ export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
       )
       .map((item) => item.replace(activeVariant, ""));
 
-    console.log(activeIndicator);
-    const focus = classList
-      .filter((item) => item.includes(focusVariant))
-      .map((item) => item.replace(focusVariant, ""));
+    // console.log(activeIndicator);
+    // const focus = classList
+    //   .filter((item) => item.includes(focusVariant))
+    //   .map((item) => item.replace(focusVariant, ""));
     const base = classList.filter(
       (item) =>
-        !item.includes(focusVariant) &&
-        (!item.includes(activeVariant) || item.match(textClasses))
+        // !item.includes(focusVariant) &&
+        !item.includes(activeVariant) || item.match(textClasses)
     );
-    console.log(base);
+    // console.log(base);
     // const activeText = active.filter((item) => item.match(textClasses));
     // const activeIndicator = active.filter((item) => !item.match(textClasses));
     // const activeIndicator = active.filter((item) => !item.match(textClasses));
-    const focusText = focus.filter((item) => item.match(textClasses));
-    const focusIndicator = focus.filter((item) => !item.match(textClasses));
+    // const focusText = focus.filter((item) => item.match(textClasses));
+    // const focusIndicator = focus.filter((item) => !item.match(textClasses));
     triggerClasses.push({
       // activeText,
       activeIndicator,
-      focusText,
-      focusIndicator,
+      // focusText,
+      // focusIndicator,
       base,
     });
   }

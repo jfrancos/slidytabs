@@ -5,8 +5,10 @@ const options = ["Correct", "Horse", "Battery", "Stapler"];
 
 export default () => {
   const [index, setIndex] = useState(0);
-  const onValueChange = (newIndex: number) =>
+  const onValueChange = (newIndex: number) => {
+    console.log("ni", newIndex);
     newIndex !== 2 && setIndex(newIndex);
+  };
 
   return (
     <Tabs
