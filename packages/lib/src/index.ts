@@ -5,8 +5,8 @@ import {
   getCurrentTargetX,
 } from "./util";
 
-// const defaultTransitionDuration = 0.2 * 1000;
-const defaultTransitionDuration = 1500;
+const defaultTransitionDuration = 0.2 * 1000;
+// const defaultTransitionDuration = 1500;
 
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
@@ -145,15 +145,12 @@ class Slidytabs {
   #down: number | null = null;
   #classes!: {
     activeIndicator: string[];
-    // focusText: string[];
-    // focusIndicator: string[];
     base: string[];
   }[];
   #_transitionDuration = defaultTransitionDuration;
   #orientation!: "horizontal" | "vertical";
   #list!: HTMLDivElement;
   #triggers!: HTMLButtonElement[];
-  // #trigger!: HTMLButtonElement;
   #isFocused = false;
   #isMoving = false;
   #controlled = false;
@@ -187,7 +184,6 @@ class Slidytabs {
     }
     this.#list.append(this.#slidytab);
     this.#dataStateObserver = this.#setupDataStateObserver();
-    // console.log(this.#classes);
   }
 
   setOptions = ({
@@ -203,13 +199,7 @@ class Slidytabs {
   };
 
   #extractFromDOM = () => {
-    // console.log(this.#root);
     this.#triggers = [...this.#root.querySelectorAll("button")];
-    // console.log(this.#triggers);
-    // this.#trigger = this.#triggers[0];
-    // const list = this.#trigger.closest(
-    //   "div[role=tablist]"
-    // ) as HTMLDivElement | null;
     const list = this.#root.querySelector(
       "div[role=tablist]"
     ) as HTMLDivElement | null;
@@ -226,7 +216,7 @@ class Slidytabs {
   };
 
   #onpointerdown = (e: PointerEvent) => {
-    console.log("down");
+    // console.log("down");
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
@@ -241,13 +231,6 @@ class Slidytabs {
     this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
-    if (this.#controlled) {
-      //   // e.stopImmediatePropagation();
-      //   // e.preventDefault();
-      //   // this.#click(trigger);
-      // this.#onValueChange?.({ index, activeEdge: this.#down }, this);
-      //   // this.#updateUI();
-    }
   };
 
   #click = (trigger: HTMLElement) => {
@@ -309,8 +292,6 @@ class Slidytabs {
       this.#isFocused || (this.#down !== null && !this.#isMoving)
         ? this.transitionDuration
         : "0ms";
-    // this.#updateIndicatorUI();
-    // console.log(value);
     if (
       this.value &&
       value[0] === this.value[0] &&
@@ -321,11 +302,7 @@ class Slidytabs {
     this.value = value;
 
     this.#updateIndicatorUI();
-    // requestAnimationFrame(() => {
     this.#updateTriggersUI();
-    setTimeout(() => {
-      // this.#updateUI();
-    }, 25);
   };
 
   #updateIndicatorUI = () => {
@@ -347,7 +324,6 @@ class Slidytabs {
       const targetState =
         i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
       if (this.#triggers[i].dataset.state !== targetState) {
-        console.log(`setting ${i} to ${targetState}`);
         this.#triggers[i].dataset.state = targetState;
       }
 
@@ -356,30 +332,8 @@ class Slidytabs {
     }
   };
 
-  // #updateUI = () => {
-  //   for (let i = 0; i < this.#triggers.length; i++) {
-  //     const targetState =
-  //       i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
-  //     if (this.#triggers[i].dataset.state !== targetState) {
-  //       this.#triggers[i].dataset.state = targetState;
-  //     }
-
-  //     // this.#triggers[i].dataset.state =
-  //     //   i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
-
-  //     // This should go somewhere else:
-  //     this.#triggers[i].className = twMerge(this.#classes[i].base);
-  //     // this.#triggers[i].className = twMerge(
-  //     //   this.#classes[i].base,
-  //     //   i >= this.value[0] && i <= this.value[1] && this.#classes[i].activeText
-  //     // );
-  //   }
-  // };
-
   #onfocus = ({ currentTarget }: FocusEvent) => {
     // const { index } = this.#triggerFromEvent(e);
-    // console.log(index);
-    // console.log("hi");
     if (
       !(currentTarget instanceof Element) ||
       !currentTarget.matches(":focus-visible")
@@ -389,35 +343,11 @@ class Slidytabs {
     const index = this.#triggers.indexOf(currentTarget as HTMLButtonElement);
     // determines speed
     this.#isFocused = true;
-    // console.log(index, "got focused");
-    // this.#indicateFocus(index);
   };
-
-  // #indicateFocus = (index: number) => {
-  //   if (!this.#isFocused) {
-  //     console.log("not focused");
-  //     return;
-  //   }
-  //   if (this.value[0] > index || this.value[1] < index) {
-  //     console.log("focus on trigger");
-  //     this.#triggers[index].classList = twMerge(
-  //       this.#classes[index].base,
-  //       this.#classes[index].focusIndicator
-  //     );
-  //   } else {
-  //     console.log("focus on indicator");
-  //     this.#slidytab.className = twMerge(
-  //       this.#classes[this.value[0]].base,
-  //       this.#classes[this.value[0]].activeIndicator,
-  //       this.#classes[this.value[0]].focusIndicator
-  //     );
-  //   }
-  // };
 
   #onblur = () => {
     // otherwise slides are slow folling keyboard input
     this.#isFocused = false;
-    // console.log(this.value);
     this.#slidytab.className = twMerge(
       this.#classes[this.value?.[0] ?? 0].base,
       this.#classes[this.value?.[0] ?? 0].activeIndicator
@@ -444,18 +374,9 @@ class Slidytabs {
     const activeElement = this.#root.querySelector<HTMLButtonElement>(
       "button[data-state=active]"
     );
-    // console.log("active", activeElement);
     if (!activeElement) {
-      // TODO this is problematic
       return -1;
-      // return 0;
     }
-    // console.log(this.#triggers.indexOf(activeElement), "qweff");
-    console.log("---");
-    for (const trigger of this.#triggers) {
-      console.log(trigger.dataset.state);
-    }
-    console.log("---");
     return this.#triggers.indexOf(activeElement);
   }
 
@@ -472,10 +393,6 @@ class Slidytabs {
     this.#list.style.position = "relative";
     return slidytab;
   };
-
-  // get value() {
-  //   return this.#_value;
-  // }
 
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
@@ -496,76 +413,30 @@ class Slidytabs {
   };
 
   #setupDataStateObserver = () => {
-    const dataStateObserver = new MutationObserver((observations) => {
-      console.log("mutating");
-      //   this.#onValueChange?.({ index, activeEdge: this.#down }, this);
-      // setTimeout(() => {
-      // console.log("new state observed", this.activeIndex);
-      // });
-      // });
-      console.log(observations);
-      requestAnimationFrame(() => {
-        for (const observation of observations) {
-          console.log(
-            observation.target.textContent,
-            observation.target.dataset.state
-          );
-          if (observation.target.dataset.state === "active") {
-            this.#onValueChange?.(
-              {
-                index: this.#triggers.indexOf(observation.target),
-                activeEdge: null,
-                // trigger: this.#triggers[this.activeIndex],
-                trigger: observation.target,
-              },
-              this
-            );
-            // requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              this.#updateTriggersUI();
-              // });
-            });
+    const dataStateObserver = new MutationObserver(
+      (mutationList: MutationRecord[]) => {
+        requestAnimationFrame(() => {
+          for (const observation of mutationList) {
+            if (
+              observation.target instanceof HTMLButtonElement &&
+              observation.target.dataset.state === "active"
+            ) {
+              this.#onValueChange?.(
+                {
+                  index: this.#triggers.indexOf(observation.target),
+                  activeEdge: null,
+                  trigger: observation.target,
+                },
+                this
+              );
+              requestAnimationFrame(() => {
+                this.#updateTriggersUI();
+              });
+            }
           }
-        }
-      });
-      // }, 10);
-
-      const trigger = observations[observations.length - 1].target;
-      // if (this.#controlled) {
-      // this.#onValueChange?.(
-      //   {
-      //     index: this.activeIndex,
-      //     activeEdge: null,
-      //     // trigger: this.#triggers[this.activeIndex],
-      //     trigger,
-      //   },
-      //   this
-      // );
-      // } else {
-      // if (!this.#controlled) {
-      // this.#updateTriggersUI();
-      // }
-      // }
-      // this.#updateIndicatorUI();
-      // }, 50);
-      // });
-      // console.log(observations);
-      // console.log("new state observed", this.activeIndex);
-      // this.#updateIndicatorUI();
-      // requestAnimationFrame(() => {
-      //   requestAnimationFrame(() => {
-      //     requestAnimationFrame(() => {
-      //       this.#updateIndicatorUI();
-      //       this.#updateTriggersUI();
-      //       //   this.#updateUI();
-      //     });
-      //   });
-      // });
-      // setTimeout(() => {
-      // this.#updateUI();
-      // }, 100);
-      // this.#indicateFocus(this.activeIndex);
-    });
+        });
+      }
+    );
     dataStateObserver.observe(this.#list, {
       subtree: true,
       attributes: true,
@@ -588,7 +459,7 @@ class Slidytabs {
     for (const trigger of this.#triggers) {
       trigger.removeEventListener("focus", this.#onfocus);
       trigger.removeEventListener("blur", this.#onblur);
-      trigger.removeEventListener("keydown", this.#onfocus, true);
+      // trigger.removeEventListener("keydown", this.#onfocus, true);
     }
     instances.delete(this.#root);
   }
