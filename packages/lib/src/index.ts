@@ -322,8 +322,8 @@ class Slidytabs {
 
     this.#updateIndicatorUI();
     // requestAnimationFrame(() => {
+    this.#updateTriggersUI();
     setTimeout(() => {
-      this.#updateTriggersUI();
       // this.#updateUI();
     }, 25);
   };
@@ -504,27 +504,30 @@ class Slidytabs {
       // });
       // });
       console.log(observations);
-      // setTimeout(() => {
-      for (const observation of observations) {
-        console.log(
-          observation.target.textContent,
-          observation.target.dataset.state
-        );
-        if (observation.target.dataset.state === "active") {
-          this.#onValueChange?.(
-            {
-              index: this.#triggers.indexOf(observation.target),
-              activeEdge: null,
-              // trigger: this.#triggers[this.activeIndex],
-              trigger: observation.target,
-            },
-            this
+      requestAnimationFrame(() => {
+        for (const observation of observations) {
+          console.log(
+            observation.target.textContent,
+            observation.target.dataset.state
           );
-          requestAnimationFrame(() => {
-            this.#updateTriggersUI();
-          });
+          if (observation.target.dataset.state === "active") {
+            this.#onValueChange?.(
+              {
+                index: this.#triggers.indexOf(observation.target),
+                activeEdge: null,
+                // trigger: this.#triggers[this.activeIndex],
+                trigger: observation.target,
+              },
+              this
+            );
+            // requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              this.#updateTriggersUI();
+              // });
+            });
+          }
         }
-      }
+      });
       // }, 10);
 
       const trigger = observations[observations.length - 1].target;
