@@ -57,13 +57,23 @@ const { github } = icons;
       <div class="flex flex-col gap-3">
         <h1 class="text-2xl font-bold">Install</h1>
         <!-- TODO not children: -->
-        <CustomCode code={sampleInstall} lang="bash" class="children:rounded" />
+        <CustomCode
+          lineNumbers={false}
+          code={sampleInstall}
+          lang="bash"
+          class="children:rounded"
+        />
       </div>
 
       <div class="flex flex-col gap-3">
         <h1 class="text-2xl font-bold">API</h1>
         <!-- TODO not children: -->
-        <CustomCode code={sampleImports} lang="ts" class="children:rounded" />
+        <CustomCode
+          lineNumbers={false}
+          code={sampleImports}
+          lang="ts"
+          class="children:rounded"
+        />
       </div>
 
       <div class="flex flex-col gap-3">

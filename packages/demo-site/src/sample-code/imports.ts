@@ -8,13 +8,13 @@ declare function tabs(options?: {
   onValueChange?: (value: number) => void;
 });
 
-// Looks like tabs, feels like a slider
+// Make tabs a slider
 declare function slider(options?: {
   value?: number;
   onValueChange?: (value: number) => void;
 });
 
-// Looks like tabs, feels like a range slider
+// Make tabs a range slider
 declare function range(options?: {
   value?: [number, number];
   onValueChange?: (value: [number, number]) => void;

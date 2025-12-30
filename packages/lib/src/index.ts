@@ -6,8 +6,8 @@ import {
   clamp,
 } from "./util";
 
-// const defaultTransitionDuration = 0.2 * 1000;
-const defaultTransitionDuration = 1500;
+const defaultTransitionDuration = 0.2 * 1000;
+// const defaultTransitionDuration = 1500;
 
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
@@ -360,6 +360,7 @@ class Slidytabs {
       this.#classes[this.value?.[0] ?? 0].base,
       this.#classes[this.value?.[0] ?? 0].activeIndicator
     );
+    console.log(this.#classes[this.value?.[0] ?? 0].activeIndicator);
   };
 
   #setupFakeFocus = () => {

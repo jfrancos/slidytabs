@@ -6,8 +6,15 @@ interface Props {
   highlight?: { start: number; end: number }[];
   lang: BundledLanguage;
   class?: string;
+  lineNumbers?: boolean;
 }
-const { code, highlight, lang, class: className } = Astro.props;
+const {
+  code,
+  highlight,
+  lang,
+  class: className,
+  lineNumbers = true,
+} = Astro.props;
 const html = codeToHtml(code, {
   lang,
   theme: "github-light",
@@ -21,7 +28,11 @@ const html = codeToHtml(code, {
 
 <div
   set:html={html}
-  class=`children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll) ${className}`
+  class:list={[
+    "children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll)",
+    className,
+    lineNumbers && "line-numbers",
+  ]}
 />
 
 <style is:global>
@@ -29,7 +40,9 @@ const html = codeToHtml(code, {
     counter-reset: step;
     counter-increment: step 0;
   }
-
+  :not(.line-numbers) > .shiki .line::before {
+    display: none;
+  }
   .shiki .line::before {
     content: counter(step);
     counter-increment: step;
