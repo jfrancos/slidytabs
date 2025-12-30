@@ -3,6 +3,7 @@ import {
   categorizeClasses,
   safelistGeneralizedClasses,
   getCurrentTargetX,
+  clamp,
 } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
@@ -153,6 +154,7 @@ class Slidytabs {
   #triggers!: HTMLButtonElement[];
   #isFocused = false;
   #isMoving = false;
+  #slideToken = false;
   #controlled = false;
 
   constructor(root: HTMLElement) {
@@ -216,7 +218,8 @@ class Slidytabs {
   };
 
   #onpointerdown = (e: PointerEvent) => {
-    // console.log("down");
+    this.#slideToken = true;
+    console.log("down");
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
@@ -238,10 +241,10 @@ class Slidytabs {
     trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     // svelte, astro
     trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    // trigger.focus();
   };
 
   #onpointerup = () => {
+    console.log("up");
     // #onpointerup = (e: PointerEvent) => {
     // const { trigger } = this.#triggerFromEvent(e);
     this.#down = null;
@@ -254,10 +257,11 @@ class Slidytabs {
   #triggerFromEvent = (e: PointerEvent) => {
     const { x, y, width, height } = this.#list.getBoundingClientRect();
     const point = {
-      horizontal: [e.clientX, y + height / 2] as const,
-      vertical: [x + width / 2, e.clientY] as const,
+      horizontal: [clamp(e.clientX, x + 5, x + width), y + height / 2] as const,
+      vertical: [x + width / 2, clamp(e.clientY, y, y + height)] as const,
     }[this.#orientation];
     const trigger = document.elementFromPoint(...point)?.closest("button");
+    // console.log(trigger?.textContent);
     if (!trigger) {
       return {};
     }
@@ -266,8 +270,6 @@ class Slidytabs {
   };
 
   #onpointermove = (e: PointerEvent) => {
-    // e.preventDefault();
-
     if (e.buttons === 0) {
       this.#down = null;
       this.#isMoving = false;
@@ -280,18 +282,24 @@ class Slidytabs {
     if (!trigger) {
       return;
     }
-    this.#click(trigger);
+    trigger.focus();
+    this.#onValueChange?.(
+      {
+        index: this.#triggers.indexOf(trigger),
+        activeEdge: null,
+        trigger: trigger,
+      },
+      this
+    );
+    // preventscroll?
   };
 
   updateValue = (value: RangeValue) => {
     if (value[0] > value[1]) {
       return;
     }
-
     this.#slidytab.style.transitionDuration =
-      this.#isFocused || (this.#down !== null && !this.#isMoving)
-        ? this.transitionDuration
-        : "0ms";
+      this.#slideToken || this.#isFocused ? this.transitionDuration : "0ms";
     if (
       this.value &&
       value[0] === this.value[0] &&
@@ -300,7 +308,7 @@ class Slidytabs {
       return;
     }
     this.value = value;
-
+    this.#slideToken = false;
     this.#updateIndicatorUI();
     this.#updateTriggersUI();
   };
@@ -356,8 +364,8 @@ class Slidytabs {
 
   #setupFakeFocus = () => {
     for (const trigger of this.#triggers) {
-      trigger.addEventListener("focus", this.#onfocus);
-      trigger.addEventListener("blur", this.#onblur);
+      // trigger.addEventListener("focus", this.#onfocus);
+      // trigger.addEventListener("blur", this.#onblur);
       // trigger.addEventListener("keydown", this.#onfocus, true);
     }
   };
