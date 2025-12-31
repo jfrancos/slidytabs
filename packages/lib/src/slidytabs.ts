@@ -3,7 +3,6 @@ import {
   categorizeClasses,
   safelistGeneralizedClasses,
   getCurrentTargetX,
-  clamp,
 } from "./util";
 
 const defaultTransitionDuration = 0.2 * 1000;
