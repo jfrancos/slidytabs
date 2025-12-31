@@ -408,7 +408,7 @@ class Slidytabs {
   #setupDataStateObserver = () => {
     const dataStateObserver = new MutationObserver(
       (mutationList: MutationRecord[]) => {
-        requestAnimationFrame(() => {
+        // requestAnimationFrame(() => {
           for (const observation of mutationList) {
             if (
               observation.target instanceof HTMLButtonElement &&
@@ -433,7 +433,7 @@ class Slidytabs {
               });
             }
           }
-        });
+        // });
       }
     );
     dataStateObserver.observe(this.#list, {
