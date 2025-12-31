@@ -8,7 +8,7 @@ declare function tabs(options?: {
   onValueChange?: (value: number) => void;
 });
 
-// Make tabs a slider
+// Make tabs a slider (same as above + swipe)
 declare function slider(options?: {
   value?: number;
   onValueChange?: (value: number) => void;

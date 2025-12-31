@@ -124,12 +124,20 @@ export const range =
       swipe: true,
       value,
       onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
-        if (activeEdge === null) {
+        // console.log(index, activeEdge);
+        const edge = instance.down;
+        if (edge === null) {
+          // if (activeEdge === null) {
+          console.log("active edge null");
           // triggered from data-state observer
           return;
         }
-        const newValue = instance.value.with(activeEdge, index) as RangeValue;
+        console.log("active edge", edge);
+        const newValue = instance.value.with(edge, index) as RangeValue;
+        // const newValue = instance.value.with(activeEdge, index) as RangeValue;
         // instance.updateValue(newValue);
+        console.log(value);
+        console.log(newValue);
         onValueChange?.(newValue);
       },
     });
@@ -143,7 +151,7 @@ class Slidytabs {
   #onValueChange?: (update: Update, instance: Slidytabs) => void;
   #resizeObserver;
   #dataStateObserver;
-  #down: number | null = null;
+  down: number | null = null;
   #classes!: {
     activeIndicator: string[];
     base: string[];
@@ -218,7 +226,7 @@ class Slidytabs {
 
   #onpointerdown = (e: PointerEvent) => {
     this.#slideToken = true;
-    console.log("down");
+    // console.log("down");
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
@@ -228,22 +236,18 @@ class Slidytabs {
     }
 
     const tabListX = getCurrentTargetX(e);
+    // console.log({ tabListX });
     const [x0, x1] = this.#getEndpoints();
+    // console.log(x0, x1);
     // TODO does this work for vertical
-    this.#down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
+    this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
+    // console.log(this.#down);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
   };
 
-  // #click = (trigger: HTMLElement) => {
-  //   // vue, react
-  //   trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-  //   // svelte, astro
-  //   trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  // };
-
   #onpointerup = () => {
-    this.#down = null;
+    this.down = null;
     this.#isMoving = false;
   };
 
@@ -264,10 +268,10 @@ class Slidytabs {
 
   #onpointermove = (e: PointerEvent) => {
     if (e.buttons === 0) {
-      this.#down = null;
+      this.down = null;
       this.#isMoving = false;
     }
-    if (!this.#swipe || this.#down === null) {
+    if (!this.#swipe || this.down === null) {
       return;
     }
     this.#isMoving = true;
@@ -295,8 +299,8 @@ class Slidytabs {
     const isFocused = this.#list.contains(document.activeElement);
 
     this.#slidytab.style.transitionDuration =
-      (this.#down !== null && this.#slideToken) ||
-      (this.#down === null && isFocused)
+      (this.down !== null && this.#slideToken) ||
+      (this.down === null && isFocused)
         ? this.transitionDuration
         : "0ms";
     if (
@@ -309,7 +313,7 @@ class Slidytabs {
     this.value = value;
     this.#slideToken = false;
     this.#updateIndicatorUI();
-    console.log(this.#isFocused);
+    // console.log(this.#isFocused);
     this.#updateTriggersUI();
   };
 
@@ -332,6 +336,8 @@ class Slidytabs {
   };
 
   #updateTriggersUI = () => {
+    this.#dataStateObserver?.disconnect();
+
     for (let i = 0; i < this.#triggers.length; i++) {
       const targetState =
         i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
@@ -342,6 +348,11 @@ class Slidytabs {
       // This should go somewhere else:
       // this.#triggers[i].className = twMerge(this.#classes[i].base);
     }
+    this.#dataStateObserver.observe(this.#list, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-state"],
+    });
   };
 
   get transitionDuration(): string {
@@ -404,6 +415,7 @@ class Slidytabs {
               observation.target.dataset.state === "active"
             ) {
               const index = this.#triggers.indexOf(observation.target);
+              console.log(index);
               this.#slidytab.className = twMerge(
                 this.#classes[this.value?.[index] ?? 0].base,
                 this.#classes[this.value?.[index] ?? 0].activeIndicator
@@ -411,7 +423,7 @@ class Slidytabs {
               this.#onValueChange?.(
                 {
                   index,
-                  activeEdge: null,
+                  activeEdge: this.down,
                   trigger: observation.target,
                 },
                 this
@@ -434,7 +446,7 @@ class Slidytabs {
 
   destroyIfDisconnected() {
     // verify lifecycle stuff
-    console.log("destroying");
+    // console.log("destroying");
     if (this.#root.isConnected) {
       return;
     }

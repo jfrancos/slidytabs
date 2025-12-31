@@ -124,7 +124,7 @@ export const safelistGeneralizedClasses = (el: HTMLElement) => {
 };
 
 export const getCurrentTargetX = (e: PointerEvent) =>
-  e.clientY - (e.currentTarget as Element).getBoundingClientRect().left;
+  e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
 
 export const getCurrentTargetY = (e: PointerEvent) =>
   e.clientY - (e.currentTarget as Element).getBoundingClientRect().top;
