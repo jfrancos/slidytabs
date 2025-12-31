@@ -77,7 +77,7 @@ const code =
 const highlight = await highlightFn(code);
 ---
 
-<div class="flex flex-col gap-4">
+{raw ? <div class="flex flex-col gap-4">
   <div>
     <slot />
   </div>
@@ -101,4 +101,9 @@ const highlight = await highlightFn(code);
     </div>
     <Code {highlight} {code} {lang} />
   </div>
-</div>
+</div> : null
+
+
+}
+
+

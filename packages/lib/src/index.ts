@@ -2,7 +2,7 @@ import {
   Slidytabs,
   Update,
   RangeValue,
-  TabsliderOptions,
+  SlidytabOptions,
   instances,
 } from "./slidytabs";
 
@@ -11,7 +11,7 @@ export type { RangeValue };
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
 
-const setupWithOptions = (ref: RefTarget, options: TabsliderOptions) => {
+const setupWithOptions = (ref: RefTarget, options: SlidytabOptions) => {
   const elements =
     typeof ref === "string"
       ? // For adding in a <script> e.g. starwind
@@ -54,17 +54,28 @@ const getInstance = (el: HTMLElement) => {
   return instance;
 };
 
+interface TabOptions {
+  value?: number;
+  onValueChange?: (value: number) => void;
+}
 interface SliderOptions {
   value?: number;
   onValueChange?: (value: number) => void;
   sticky?: [number?, number?];
 }
+interface RangeOptions {
+  value: [number, number];
+  onValueChange?: (value: [number, number]) => void;
+  sticky?: [number?, number?];
+  push?: boolean;
+}
 
 export const tabs =
-  ({ value, onValueChange }: SliderOptions = {}): RefCallback =>
+  ({ value, onValueChange }: TabOptions = {}): RefCallback =>
   (root) => {
     const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
+      push: false,
       swipe: false,
       value: value != null ? [value, value] : undefined,
       onValueChange: ({ index }, instance) => {
@@ -82,6 +93,7 @@ export const slider =
   (root) => {
     const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
+      push: true,
       swipe: true,
       value:
         value != null ? [sticky[0] ?? value, sticky[1] ?? value] : undefined,
@@ -96,15 +108,10 @@ export const slider =
   };
 
 export const range =
-  ({
-    value,
-    onValueChange,
-  }: {
-    value: RangeValue;
-    onValueChange?: (value: RangeValue) => void;
-  }) =>
+  ({ value, onValueChange, push = true }: RangeOptions) =>
   (root: HTMLElement | null) => {
     return setupWithOptions(root, {
+      push,
       swipe: true,
       value,
       onValueChange: ({ index, activeEdge, value }: Update, instance) => {

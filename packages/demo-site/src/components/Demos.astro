@@ -1,0 +1,11 @@
+---
+import { frameworks } from "@/lib/store";
+import Demo from "./Demo.astro";
+
+interface Props {
+  filename: string;
+}
+const { filename } = Astro.props;
+---
+
+{frameworks.map((framework) => <Demo {framework} {filename} />)}

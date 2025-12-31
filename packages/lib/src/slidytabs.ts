@@ -10,10 +10,11 @@ const defaultTransitionDuration = 0.2 * 1000;
 
 export const instances = new WeakMap<HTMLElement, Slidytabs>();
 export type RangeValue = [start: number, end: number];
-export interface TabsliderOptions {
+export interface SlidytabOptions {
   value?: RangeValue;
   swipe: boolean;
   onValueChange?: (update: Update, instance: Slidytabs) => void;
+  push: boolean;
 }
 export interface Update {
   activeEdge: number | null;
@@ -23,6 +24,7 @@ export interface Update {
 }
 
 export class Slidytabs {
+  #push = false;
   #root;
   #swipe!: boolean;
   #slidytab!: HTMLDivElement;
@@ -68,10 +70,11 @@ export class Slidytabs {
     this.#dataStateObserver = this.#setupDataStateObserver();
   }
 
-  setOptions = ({ value, onValueChange, swipe }: TabsliderOptions) => {
+  setOptions = ({ value, onValueChange, swipe, push }: SlidytabOptions) => {
     this.#onValueChange = onValueChange;
     this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
     this.#swipe = swipe;
+    this.#push = push;
   };
 
   #extractFromDOM = () => {
@@ -96,7 +99,7 @@ export class Slidytabs {
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
-    const { index, trigger } = this.#triggerFromEvent(e);
+    const { index } = this.#triggerFromEvent(e);
     if (index === undefined) {
       return;
     }
@@ -105,7 +108,6 @@ export class Slidytabs {
     const [x0, x1] = this.#getEndpoints();
     // TODO does this work for vertical
     this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
-    console.log(this.down);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
   };
@@ -150,8 +152,9 @@ export class Slidytabs {
     if (
       !this.#swipe ||
       this.down === null ||
-      (this.down === 0 && index > this.value[1]) ||
-      (this.down === 1 && index < this.value[0])
+      (((this.down === 0 && index > this.value[1]) ||
+        (this.down === 1 && index < this.value[0])) &&
+        !this.#push)
     ) {
       return;
     }
@@ -160,31 +163,34 @@ export class Slidytabs {
 
   updateValue = (value: RangeValue) => {
     if (
-      value[0] > value[1] ||
-      (this.value && value[0] === this.value[0] && value[1] === this.value[1])
+      this.value &&
+      value[0] === this.value[0] &&
+      value[1] === this.value[1]
     ) {
       return;
     }
 
+    if (value[0] > value[1] && !this.#push) {
+      return;
+    }
+    let adjustedValue = value;
+    if (value[0] > value[1] && this.#push && this.down !== null) {
+      adjustedValue = value.with(
+        (this.down + 1) % 2,
+        value[this.down]
+      ) as RangeValue;
+    }
     const isFocused = this.#list.contains(document.activeElement);
     this.#slidytab.style.transitionDuration =
       (this.down !== null && this.#slideToken) ||
       (this.down === null && isFocused)
         ? this.transitionDuration
         : "0ms";
-    this.value = value;
+    this.value = adjustedValue;
     this.#slideToken = false;
     this.#updateIndicatorUI();
     // console.log(this.#isFocused);
     this.#updateTriggersUI();
-  };
-
-  #click = (trigger: HTMLElement) => {
-    // vue, react
-    trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-    // svelte, astro
-    trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-    // trigger.focus();
   };
 
   #updateIndicatorUI = () => {
