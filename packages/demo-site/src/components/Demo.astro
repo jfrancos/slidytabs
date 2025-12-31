@@ -11,6 +11,12 @@ import {
   extractAstro,
 } from "@/lib/findHighlight.ts";
 import type { Framework } from "@/lib/store";
+
+// import fs from "node:fs/promises";
+// import path from "node:path";
+// import test from "../frameworks/react/examples/DoubleSliders.tsx?raw";
+// console.log(test);
+
 const { react, svelte, vue, astro } = icons;
 
 interface Props {
@@ -23,10 +29,21 @@ const lang = framework === "react" ? "tsx" : framework;
 const { default: Component } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}`
 );
+
+// const raw = await fs.readFile(
+//   path.resolve(
+//     new URL(".", import.meta.url).pathname,
+//     `../frameworks/${framework}/examples/${filename}.${lang}`
+//   ),
+//   "utf8"
+// );
+
+// TODO ?raw files are preprocessed by unocss transformers
+// ^fs.readFile causes SSR flash and doesn't work in build
 const { default: raw } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 );
-// console.log(children);
+
 const { highlightFn, prefix, logo } = {
   react: {
     highlightFn: extractTsx,
@@ -64,9 +81,7 @@ const highlight = await highlightFn(code);
   <div>
     <slot />
   </div>
-  <div
-    class="flex flex-col border-gray-100 border-4 rounded-lg relative"
-  >
+  <div class="flex flex-col border-gray-100 border-4 rounded-lg relative">
     <div class="flex justify-center h-32 items-center relative select-none">
       <div
         class:list={[

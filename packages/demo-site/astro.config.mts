@@ -6,5 +6,5 @@ import vue from "@astrojs/vue";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [svelte(), react(), UnoCSS(), vue()],
+  integrations: [svelte(), react(), vue(), UnoCSS()],
 });
