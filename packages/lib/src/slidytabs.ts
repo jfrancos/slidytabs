@@ -189,7 +189,6 @@ export class Slidytabs {
     this.value = adjustedValue;
     this.#slideToken = false;
     this.#updateIndicatorUI();
-    // console.log(this.#isFocused);
     this.#updateTriggersUI();
   };
 
