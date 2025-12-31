@@ -190,17 +190,11 @@ const { github } = icons;
       const docs = [
         ...document.querySelectorAll(`[data-docs-${framework}]`),
       ] as HTMLElement[];
-      console.log(docs);
       for (const doc of docs) {
         framework === newFramework
           ? doc.classList?.remove("hidden")
           : doc.classList?.add("hidden");
       }
-      // const classList =
-      //   // )?.classList;
-      //   framework === newFramework
-      //     ? classList?.remove("hidden")
-      //     : classList?.add("hidden");
     }
   });
 </script>
