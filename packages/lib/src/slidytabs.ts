@@ -20,6 +20,7 @@ export interface Update {
   activeEdge: number | null;
   index: number;
   trigger?: HTMLElement;
+  value: RangeValue;
 }
 
 export class Slidytabs {
@@ -260,6 +261,7 @@ export class Slidytabs {
                 index,
                 activeEdge: this.down,
                 trigger: observation.target,
+                value: this.value,
               },
               this
             );

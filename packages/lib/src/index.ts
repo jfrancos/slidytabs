@@ -102,21 +102,14 @@ export const range =
     onValueChange?: (value: RangeValue) => void;
   }) =>
   (root: HTMLElement | null) => {
-    const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
       swipe: true,
       value,
-      onValueChange: ({ index, activeEdge }: Update, instance: Slidytabs) => {
-        const edge = activeEdge;
-        if (edge === null) {
-          // if (activeEdge === null) {
-          console.log("active edge null");
-          // triggered from data-state observer
+      onValueChange: ({ index, activeEdge, value }: Update, instance) => {
+        if (activeEdge === null) {
           return;
         }
-        console.log("active edge", edge);
-        const newValue = instance.value.with(edge, index) as RangeValue;
-        // const newValue = instance.value.with(activeEdge, index) as RangeValue;
+        const newValue = value.with(activeEdge, index) as RangeValue;
         onValueChange?.(newValue);
       },
     });

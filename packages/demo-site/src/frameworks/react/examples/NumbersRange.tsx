@@ -8,7 +8,11 @@ export default () => {
     <Tabs ref={range({ value, onValueChange })}>
       <TabsList>
         {Array.from({ length: 12 }, (_, i) => (
-          <TabsTrigger key={i} value={String(i)} className="min-w-0 px-2 data-[state=inactive]:text-neutral-500">
+          <TabsTrigger
+            key={i}
+            value={String(i)}
+            className="min-w-0 px-2 data-[state=inactive]:text-neutral-500"
+          >
             {i}
           </TabsTrigger>
         ))}
