@@ -106,24 +106,39 @@ export class Slidytabs {
     const [x0, x1] = this.#getEndpoints();
     // TODO does this work for vertical
     this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
+    console.log(this.down);
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
   };
 
   #onpointerup = () => {
+    console.log("up");
     this.down = null;
   };
 
   #triggerFromEvent = (e: PointerEvent) => {
     const { x, y, width, height } = this.#list.getBoundingClientRect();
     const point = {
-      horizontal: [clamp(e.clientX, x + 5, x + width), y + height / 2] as const,
-      vertical: [x + width / 2, clamp(e.clientY, y, y + height)] as const,
+      horizontal: [e.clientX, y + height / 2] as const,
+      vertical: [x + width / 2, e.clientY] as const,
     }[this.#orientation];
-    const trigger = document.elementFromPoint(...point)?.closest("button");
-    if (!trigger) {
-      return {};
+    const button = document.elementFromPoint(...point)?.closest("button");
+    if (button) {
+      const index = this.#triggers.indexOf(button);
+      return { index, trigger: button };
     }
+    // clamp in case events aren't firing as quickly as the user is moving
+    const trigger = {
+      horizontal:
+        e.clientX > x + width / 2
+          ? this.#triggers[this.#triggers.length - 1]
+          : this.#triggers[0],
+      vertical:
+        e.clientY > y + height / 2
+          ? this.#triggers[this.#triggers.length - 1]
+          : this.#triggers[0],
+    }[this.#orientation];
+
     const index = this.#triggers.indexOf(trigger);
     return { index, trigger };
   };
@@ -132,11 +147,16 @@ export class Slidytabs {
     if (e.buttons === 0) {
       this.down = null;
     }
-    if (!this.#swipe || this.down === null) {
+    const { trigger, index } = this.#triggerFromEvent(e);
+    if (
+      !this.#swipe ||
+      this.down === null ||
+      (this.down === 0 && index > this.value[1]) ||
+      (this.down === 1 && index < this.value[0])
+    ) {
       return;
     }
-    const { trigger } = this.#triggerFromEvent(e);
-    trigger?.focus();
+    trigger.focus();
   };
 
   updateValue = (value: RangeValue) => {
@@ -160,6 +180,14 @@ export class Slidytabs {
     this.#updateTriggersUI();
   };
 
+  #click = (trigger: HTMLElement) => {
+    // vue, react
+    trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+    // svelte, astro
+    trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    // trigger.focus();
+  };
+
   #updateIndicatorUI = () => {
     if (!this.value) {
       return;
@@ -181,10 +209,15 @@ export class Slidytabs {
   #updateTriggersUI = () => {
     this.#dataStateObserver?.disconnect();
     for (let i = 0; i < this.#triggers.length; i++) {
-      const targetState =
-        i >= this.value[0] && i <= this.value[1] ? "active" : "inactive";
+      const inRange = i >= this.value[0] && i <= this.value[1];
+      const targetState = inRange ? "active" : "inactive";
+
       if (this.#triggers[i].dataset.state !== targetState) {
         this.#triggers[i].dataset.state = targetState;
+      }
+      if (inRange) {
+        this.#triggers[i].click();
+        // this.#triggers[i].focus();
       }
     }
     this.#dataStateObserver.observe(this.#list, {
