@@ -76,30 +76,39 @@ const { github } = icons;
         />
       </div>
 
-      <div class="flex flex-col gap-3">
-        <h1 class="text-2xl font-bold">Make tabs slide</h1>
-        <div id="react-demo" class="w-full flex flex-col gap-6">
-          <Demo framework="react" filename="Tabs"
-            ><div>
-              Use shadcn Tabs as usual, and pass <Code
-                code="tabs()"
-                lang="ts"
-                theme="github-light"
-                class="text-sm text-nowrap inline-flex p-1 -my-1 mx-1 rounded-sm !bg-neutral-100"
-              /> to the root ref.
-            </div></Demo
-          >
-          <Demo framework="react" filename="ShadControlled">
-            For more control, use <a
-              class="inline-flex underline"
-              href="https://www.radix-ui.com/primitives/docs/components/tabs#api-reference"
-              >radix props</a
-            > as usual.
-          </Demo>
-          <Demo framework="react" filename="TabsControlled">
-            Alternatively, control with indices via slidytabs
-          </Demo>
-          <Demo framework="react" filename="DoubleSliders" />
+      <div class="flex flex-col gap-6" data-docs-react>
+        <div>
+          <h1 class="text-2xl font-bold">Make tabs slide</h1>
+          <div class="w-full flex flex-col gap-6">
+            <Demo framework="react" filename="Tabs"
+              ><div>
+                Use shadcn Tabs as usual, and pass <Code
+                  code="tabs()"
+                  lang="ts"
+                  theme="github-light"
+                  class="text-sm text-nowrap inline-flex p-1 -my-1 mx-1 rounded-sm !bg-neutral-100"
+                /> to the root ref.
+              </div></Demo
+            >
+            <Demo framework="react" filename="ShadControlled">
+              For more control, use <a
+                class="inline-flex underline"
+                href="https://www.radix-ui.com/primitives/docs/components/tabs#api-reference"
+                >radix props</a
+              > as usual.
+            </Demo>
+            <Demo framework="react" filename="TabsControlled">
+              Alternatively, control with indices via slidytabs
+            </Demo>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold">Make tabs a slider</h1>
+          <div class="w-full flex flex-col gap-6">
+            <Demo framework="react" filename="DoubleSliders"
+              >Use slider instead of tabs to make it act like a slider</Demo
+            >
+          </div>
         </div>
       </div>
 
@@ -162,10 +171,20 @@ const { github } = icons;
 
   frameworkAtom.subscribe((newFramework) => {
     for (const framework of frameworks) {
-      const classList = document.getElementById(`${framework}-demo`)?.classList;
-      framework === newFramework
-        ? classList?.remove("hidden")
-        : classList?.add("hidden");
+      const docs = [
+        ...document.querySelectorAll(`[data-docs-${framework}]`),
+      ] as HTMLElement[];
+      console.log(docs);
+      for (const doc of docs) {
+        framework === newFramework
+          ? doc.classList?.remove("hidden")
+          : doc.classList?.add("hidden");
+      }
+      // const classList =
+      //   // )?.classList;
+      //   framework === newFramework
+      //     ? classList?.remove("hidden")
+      //     : classList?.add("hidden");
     }
   });
 </script>

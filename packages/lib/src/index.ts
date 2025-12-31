@@ -165,13 +165,12 @@ class Slidytabs {
       safelistGeneralizedClasses(trigger);
     }
     this.#slidytab = this.#setupSlidytab();
-    this.#onblur();
+    // this.#onblur();
     // this.#list.addEventListener("click", this.#onpointerdown);
     this.#list.addEventListener("pointerdown", this.#onpointerdown, true);
     this.#list.addEventListener("pointerup", this.#onpointerup);
     this.#list.addEventListener("pointermove", this.#onpointermove, true);
     this.#resizeObserver = this.#setupResizeObserver();
-    this.#setupFakeFocus();
     const triggerStyles: Partial<CSSStyleDeclaration> = {
       zIndex: "10",
       // backgroundColor: "transparent",
@@ -236,22 +235,16 @@ class Slidytabs {
     this.#list.setPointerCapture(e.pointerId);
   };
 
-  #click = (trigger: HTMLElement) => {
-    // vue, react
-    trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-    // svelte, astro
-    trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  };
+  // #click = (trigger: HTMLElement) => {
+  //   // vue, react
+  //   trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+  //   // svelte, astro
+  //   trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  // };
 
   #onpointerup = () => {
-    console.log("up");
-    // #onpointerup = (e: PointerEvent) => {
-    // const { trigger } = this.#triggerFromEvent(e);
     this.#down = null;
     this.#isMoving = false;
-    // drag for `tab` is selecting erroneously
-    // trigger?.click();
-    // trigger?.focus();
   };
 
   #triggerFromEvent = (e: PointerEvent) => {
@@ -298,8 +291,14 @@ class Slidytabs {
     if (value[0] > value[1]) {
       return;
     }
+
+    const isFocused = this.#list.contains(document.activeElement);
+
     this.#slidytab.style.transitionDuration =
-      this.#slideToken || this.#isFocused ? this.transitionDuration : "0ms";
+      (this.#down !== null && this.#slideToken) ||
+      (this.#down === null && isFocused)
+        ? this.transitionDuration
+        : "0ms";
     if (
       this.value &&
       value[0] === this.value[0] &&
@@ -310,6 +309,7 @@ class Slidytabs {
     this.value = value;
     this.#slideToken = false;
     this.#updateIndicatorUI();
+    console.log(this.#isFocused);
     this.#updateTriggersUI();
   };
 
@@ -317,6 +317,10 @@ class Slidytabs {
     if (!this.value) {
       return;
     }
+    this.#slidytab.className = twMerge(
+      this.#classes[this.value?.[0] ?? 0].base,
+      this.#classes[this.value?.[0] ?? 0].activeIndicator
+    );
     const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
     const rightRect = this.#triggers[this.value[1]].getBoundingClientRect();
     const parentRect = this.#list.getBoundingClientRect();
@@ -337,37 +341,6 @@ class Slidytabs {
 
       // This should go somewhere else:
       // this.#triggers[i].className = twMerge(this.#classes[i].base);
-    }
-  };
-
-  #onfocus = ({ currentTarget }: FocusEvent) => {
-    // const { index } = this.#triggerFromEvent(e);
-    if (
-      !(currentTarget instanceof Element) ||
-      !currentTarget.matches(":focus-visible")
-    ) {
-      return;
-    }
-    const index = this.#triggers.indexOf(currentTarget as HTMLButtonElement);
-    // determines speed
-    this.#isFocused = true;
-  };
-
-  #onblur = () => {
-    // otherwise slides are slow folling keyboard input
-    this.#isFocused = false;
-    this.#slidytab.className = twMerge(
-      this.#classes[this.value?.[0] ?? 0].base,
-      this.#classes[this.value?.[0] ?? 0].activeIndicator
-    );
-    console.log(this.#classes[this.value?.[0] ?? 0].activeIndicator);
-  };
-
-  #setupFakeFocus = () => {
-    for (const trigger of this.#triggers) {
-      trigger.addEventListener("focus", this.#onfocus);
-      trigger.addEventListener("blur", this.#onblur);
-      // trigger.addEventListener("keydown", this.#onfocus, true);
     }
   };
 
@@ -430,9 +403,14 @@ class Slidytabs {
               observation.target instanceof HTMLButtonElement &&
               observation.target.dataset.state === "active"
             ) {
+              const index = this.#triggers.indexOf(observation.target);
+              this.#slidytab.className = twMerge(
+                this.#classes[this.value?.[index] ?? 0].base,
+                this.#classes[this.value?.[index] ?? 0].activeIndicator
+              );
               this.#onValueChange?.(
                 {
-                  index: this.#triggers.indexOf(observation.target),
+                  index,
                   activeEdge: null,
                   trigger: observation.target,
                 },
@@ -465,11 +443,6 @@ class Slidytabs {
     this.#list.removeEventListener("pointermove", this.#onpointermove);
     this.#resizeObserver.disconnect();
     this.#dataStateObserver?.disconnect();
-    for (const trigger of this.#triggers) {
-      trigger.removeEventListener("focus", this.#onfocus);
-      trigger.removeEventListener("blur", this.#onblur);
-      // trigger.removeEventListener("keydown", this.#onfocus, true);
-    }
     instances.delete(this.#root);
   }
 }
@@ -485,3 +458,7 @@ if (typeof document !== "undefined" && !globalThis.sheet) {
 // https://github.com/unovue/reka-ui/blob/v2/packages/core/src/Tabs/TabsTrigger.vue
 // https://github.com/starwind-ui/starwind-ui/blob/main/packages/core/src/components/tabs/Tabs.astro
 // https://github.com/kobaltedev/kobalte/blob/main/packages/core/src/tabs/tabs-trigger.tsx
+
+// Parity notes:
+// (shadcn-react, with or without slidytabs)
+// focus ring on keyboard input works in chrome but not firefox/safari
