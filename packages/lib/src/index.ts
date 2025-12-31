@@ -78,7 +78,7 @@ export const tabs =
   };
 
 export const slider =
-  ({ value, onValueChange, sticky = [0] }: SliderOptions = {}): RefCallback =>
+  ({ value, onValueChange, sticky = [] }: SliderOptions = {}): RefCallback =>
   (root) => {
     const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
