@@ -1,24 +1,14 @@
 import { tabs, slider, range } from "slidytabs";
 
-// Values are tab indices.
+// single tab index
+tabs({ value?, onValueChange? });
 
-// Make tabs slide
-declare function tabs(options?: {
-  value?: number;
-  onValueChange?: (value: number) => void;
-});
+// single tab index, draggable
+// `sticky` fixes one side of the slider visually
+// e.g. sticky: [0] or sticky: [, 5]
+slider({ value?, onValueChange?, sticky? });
 
-// Make tabs a slider (same as above + swipe)
-declare function slider(options?: {
-  value?: number;
-  onValueChange?: (value: number) => void;
-});
+// [start, end] indices
+range({ value, onValueChange? });
 
-// Make tabs a range slider
-declare function range(options?: {
-  value?: [number, number];
-  onValueChange?: (value: [number, number]) => void;
-});
-
-// All of these return a function, automatically called by your framework:
-// (target: Element) => void
+// These all return a function, called with the root element by the framework
