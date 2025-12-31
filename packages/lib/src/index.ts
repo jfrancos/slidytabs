@@ -57,6 +57,7 @@ const getInstance = (el: HTMLElement) => {
 interface SliderOptions {
   value?: number;
   onValueChange?: (value: number) => void;
+  sticky?: [number?, number?];
 }
 
 export const tabs =
@@ -77,17 +78,18 @@ export const tabs =
   };
 
 export const slider =
-  ({ value, onValueChange }: SliderOptions = {}): RefCallback =>
+  ({ value, onValueChange, sticky = [0] }: SliderOptions = {}): RefCallback =>
   (root) => {
     const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
       swipe: true,
-      value: value != null ? [value, value] : undefined,
+      value:
+        value != null ? [sticky[0] ?? value, sticky[1] ?? value] : undefined,
       onValueChange: ({ index }, instance) => {
         if (controlled) {
           onValueChange?.(index);
         } else {
-          instance.updateValue([index, index]);
+          instance.updateValue([sticky[0] ?? index, sticky[1] ?? index]);
         }
       },
     });
