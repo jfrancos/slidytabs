@@ -14,7 +14,7 @@ export default () => {
       ref={tabs({ value: index, onValueChange })}
       className="text-center"
     >
-      <TabsList className="[&>:nth-child(3)]:!text-red *:data-[state=inactive]:text-neutral-500">
+      <TabsList className="[&>:nth-child(3)]:!text-red">
         {options.map((value) => (
           <TabsTrigger key={value} value={value}>
             {value}

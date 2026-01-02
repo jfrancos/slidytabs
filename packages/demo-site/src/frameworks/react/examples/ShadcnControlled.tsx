@@ -12,7 +12,7 @@ export default () => {
       ref={tabs()}
       className="text-center"
     >
-      <TabsList className="[&>:nth-child(3)]:!text-red *:data-[state=inactive]:text-neutral-500">
+      <TabsList className="[&>:nth-child(3)]:!text-red">
         <TabsTrigger value="correct">Correct</TabsTrigger>
         <TabsTrigger value="horse">Horse</TabsTrigger>
         <TabsTrigger value="battery">Battery</TabsTrigger>

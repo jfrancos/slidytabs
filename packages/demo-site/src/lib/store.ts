@@ -1,7 +1,7 @@
 import { persistentAtom } from "@nanostores/persistent";
 
 const defaultFramework = "react";
-export const frameworks = ["react", "vue", "svelte", "astro"] as const;
+export const frameworks = ["react", "vue", "svelte"] as const;
 export type Framework = (typeof frameworks)[number];
 export const frameworkAtom = persistentAtom<Framework>(
   "framework",

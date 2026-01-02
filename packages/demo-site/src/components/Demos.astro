@@ -1,11 +1,34 @@
 ---
 import { frameworks } from "@/lib/store";
 import Demo from "./Demo.astro";
+import SelectFramework from "./SelectFramework.svelte";
 
 interface Props {
   filename: string;
 }
 const { filename } = Astro.props;
+const examples = import.meta.glob(
+  "../frameworks/*/examples/*.{tsx,react,svelte,vue,solid,astro}"
+);
+
+const exists = (framework: string) =>
+  Object.keys(examples).some((path) =>
+    path.endsWith(
+      `/frameworks/${framework}/examples/${filename}.${framework === "react" ? "tsx" : framework}`
+    )
+  );
 ---
 
-{frameworks.map((framework) => <Demo {framework} {filename} />)}
+<div class="flex flex-col gap-3">
+  <!-- <div class="inline-flex items-baseline"> -->
+  <div>
+    <slot />
+  </div>
+  <!-- </div> -->
+  <SelectFramework {filename} client:load />
+  {
+    frameworks
+      .filter(exists)
+      .map((framework) => <Demo {framework} {filename} />)
+  }
+</div>

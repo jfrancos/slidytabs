@@ -4,11 +4,12 @@ import {
   presetWind4,
   presetIcons,
   transformerVariantGroup,
+  presetTypography,
 } from "unocss";
 
 export default defineConfig({
   transformers: [transformerVariantGroup()],
-  presets: [presetWind4(), presetIcons(), presetShadcn()],
+  presets: [presetWind4(), presetIcons(), presetShadcn(), presetTypography()],
   safelist: ["highlight", "line"],
   shortcuts: {
     highlight: "bg-neutral-300 rounded-sm p-1 -m-1",

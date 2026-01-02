@@ -113,7 +113,6 @@ export class Slidytabs {
   };
 
   #onpointerup = () => {
-    console.log("up");
     this.down = null;
   };
 

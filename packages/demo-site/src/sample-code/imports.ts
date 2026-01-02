@@ -9,6 +9,7 @@ tabs({ value?, onValueChange? });
 slider({ value?, onValueChange?, sticky? });
 
 // [start, end] indices
-range({ value, onValueChange? });
+// `push` lets one endpoint push the other
+range({ value, onValueChange?, push? });
 
-// These all return a function, called with the root element by the framework
+// These all return a function, called with the root element by your framework

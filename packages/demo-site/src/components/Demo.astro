@@ -8,7 +8,7 @@ import {
   extractTsx,
   extractSvelte,
   extractVue,
-  extractAstro,
+  // extractAstro,
 } from "@/lib/findHighlight.ts";
 import type { Framework } from "@/lib/store";
 
@@ -17,7 +17,8 @@ import type { Framework } from "@/lib/store";
 // import test from "../frameworks/react/examples/DoubleSliders.tsx?raw";
 // console.log(test);
 
-const { react, svelte, vue, astro } = icons;
+const { react, svelte, vue } = icons;
+// const { react, svelte, vue, astro } = icons;
 
 interface Props {
   filename: string;
@@ -60,50 +61,44 @@ const { highlightFn, prefix, logo } = {
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
-  astro: {
-    highlightFn: extractAstro,
-    prefix: `// ${filename}.astro`,
-    logo: astro,
-  },
+  // astro: {
+  //   highlightFn: extractAstro,
+  //   prefix: `// ${filename}.astro`,
+  //   logo: astro,
+  // },
 }[framework];
-const code =
-  framework === "astro"
-    ? raw
-        .split("\n")
-        .filter((line: string) => !line.startsWith("// @ts-expect-error"))
-        .toSpliced(1, 0, prefix)
-        .join("\n")
-    : `${prefix}\n${raw}`;
+const code = `${prefix}\n${raw}`;
+// const code =
+//   framework === "astro"
+//     ? raw
+//         .split("\n")
+//         .filter((line: string) => !line.startsWith("// @ts-expect-error"))
+//         .toSpliced(1, 0, prefix)
+//         .join("\n")
+//     : `${prefix}\n${raw}`;
 const highlight = await highlightFn(code);
 ---
 
-{raw ? <div class="flex flex-col gap-4">
-  <div>
-    <slot />
-  </div>
-  <div class="flex flex-col border-gray-100 border-4 rounded-lg relative">
-    <div class="flex justify-center h-32 items-center relative select-none">
-      <div
-        class:list={[
-          logo,
-          "text-xl absolute top-4 right-4 z-10 md:opacity-100 opacity-50",
-        ]}
-      >
-      </div>
-      {lang === "svelte" && <SvelteShell {filename} client:idle />}
-      {lang === "tsx" && <TsxShell {filename} client:idle />}
-      {lang === "vue" && <VueShell {filename} client:idle />}
-      <!-- flash between SSR awaited component and client awaited component so we
-  have both simultaneously and hide the SSR once the client is visible: -->
-      <div class="[:has(*)~&]:hidden">
-        <Component />
-      </div>
+<div
+  class="flex flex-col border-gray-100 border-4 rounded-lg relative"
+  data-docs={`${filename}:${framework}`}
+>
+  <div class="flex justify-center h-32 items-center relative select-none">
+    <div
+      class:list={[
+        logo,
+        "text-xl absolute top-4 right-4 z-10 md:opacity-100 opacity-50",
+      ]}
+    >
     </div>
-    <Code {highlight} {code} {lang} />
+    {lang === "svelte" && <SvelteShell {filename} client:idle />}
+    {lang === "tsx" && <TsxShell {filename} client:idle />}
+    {lang === "vue" && <VueShell {filename} client:idle />}
+    <!-- flash between SSR awaited component and client awaited component so we
+  have both simultaneously and hide the SSR once the client is visible: -->
+    <div class="[:has(*)~&]:hidden">
+      <Component />
+    </div>
   </div>
-</div> : null
-
-
-}
-
-
+  <Code {highlight} {code} {lang} />
+</div>
