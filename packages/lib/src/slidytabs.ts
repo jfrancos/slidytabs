@@ -72,9 +72,20 @@ export class Slidytabs {
 
   setOptions = ({ value, onValueChange, swipe, push }: SlidytabOptions) => {
     this.#onValueChange = onValueChange;
-    this.updateValue(value ?? [this.activeIndex, this.activeIndex]);
     this.#swipe = swipe;
     this.#push = push;
+    if (!value) {
+      onValueChange?.(
+        {
+          index: this.activeIndex,
+          activeEdge: null,
+          value: [this.activeIndex, this.activeIndex],
+        },
+        this
+      );
+    } else {
+      this.updateValue(value);
+    }
   };
 
   #extractFromDOM = () => {
@@ -173,6 +184,7 @@ export class Slidytabs {
       return;
     }
     let adjustedValue = value;
+    console.log("hi", value);
     if (value[0] > value[1] && this.#push && this.down !== null) {
       adjustedValue = value.with(
         (this.down + 1) % 2,
@@ -210,23 +222,25 @@ export class Slidytabs {
   };
 
   #updateTriggersUI = () => {
-    this.#dataStateObserver?.disconnect();
-    for (let i = 0; i < this.#triggers.length; i++) {
-      const inRange = i >= this.value[0] && i <= this.value[1];
-      const targetState = inRange ? "active" : "inactive";
+    requestAnimationFrame(() => {
+      this.#dataStateObserver?.disconnect();
+      for (let i = 0; i < this.#triggers.length; i++) {
+        const inRange = i >= this.value[0] && i <= this.value[1];
+        const targetState = inRange ? "active" : "inactive";
 
-      if (this.#triggers[i].dataset.state !== targetState) {
-        this.#triggers[i].dataset.state = targetState;
+        if (this.#triggers[i].dataset.state !== targetState) {
+          this.#triggers[i].dataset.state = targetState;
+        }
+        if (inRange) {
+          this.#triggers[i].click();
+          // this.#triggers[i].focus();
+        }
       }
-      if (inRange) {
-        this.#triggers[i].click();
-        // this.#triggers[i].focus();
-      }
-    }
-    this.#dataStateObserver.observe(this.#list, {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["data-state"],
+      this.#dataStateObserver.observe(this.#list, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["data-state"],
+      });
     });
   };
 
@@ -264,7 +278,7 @@ export class Slidytabs {
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      this.updateValue(this.value);
+      //   this.updateValue(this.value);
       // this.value = this.value;
     });
     resizeObserver.observe(this.#list);
@@ -301,9 +315,7 @@ export class Slidytabs {
               },
               this
             );
-            requestAnimationFrame(() => {
-              this.#updateTriggersUI();
-            });
+            this.#updateTriggersUI();
           }
         }
       }

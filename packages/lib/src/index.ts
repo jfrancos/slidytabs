@@ -61,12 +61,11 @@ interface TabOptions {
 interface SliderOptions {
   value?: number;
   onValueChange?: (value: number) => void;
-  sticky?: [number?, number?];
+  sticky?: number;
 }
 interface RangeOptions {
   value: [number, number];
   onValueChange?: (value: [number, number]) => void;
-  sticky?: [number?, number?];
   push?: boolean;
 }
 
@@ -89,26 +88,27 @@ export const tabs =
   };
 
 export const slider =
-  ({ value, onValueChange, sticky = [] }: SliderOptions = {}): RefCallback =>
+  ({ value, onValueChange, sticky }: SliderOptions = {}): RefCallback =>
   (root) => {
     const controlled = value != null || onValueChange != null;
+    const stickyValue = (value: number) =>
+      [sticky ?? value, value].toSorted((a, b) => a - b) as RangeValue;
     return setupWithOptions(root, {
       push: true,
       swipe: true,
-      value:
-        value != null ? [sticky[0] ?? value, sticky[1] ?? value] : undefined,
+      value: value != null ? stickyValue(value) : undefined,
       onValueChange: ({ index }, instance) => {
         if (controlled) {
           onValueChange?.(index);
         } else {
-          instance.updateValue([sticky[0] ?? index, sticky[1] ?? index]);
+          instance.updateValue(stickyValue(index));
         }
       },
     });
   };
 
 export const range =
-  ({ value, onValueChange, push = true }: RangeOptions) =>
+  ({ value, onValueChange, push = false }: RangeOptions) =>
   (root: HTMLElement | null) => {
     return setupWithOptions(root, {
       push,
