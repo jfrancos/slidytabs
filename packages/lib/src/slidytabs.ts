@@ -86,6 +86,7 @@ export class Slidytabs {
     } else {
       this.updateValue(value);
     }
+    // this.#updateTriggersUI();
   };
 
   #extractFromDOM = () => {
@@ -184,7 +185,6 @@ export class Slidytabs {
       return;
     }
     let adjustedValue = value;
-    console.log("hi", value);
     if (value[0] > value[1] && this.#push && this.down !== null) {
       adjustedValue = value.with(
         (this.down + 1) % 2,
@@ -199,8 +199,8 @@ export class Slidytabs {
         : "0ms";
     this.value = adjustedValue;
     this.#slideToken = false;
-    this.#updateIndicatorUI();
     this.#updateTriggersUI();
+    this.#updateIndicatorUI();
   };
 
   #updateIndicatorUI = () => {
@@ -221,26 +221,27 @@ export class Slidytabs {
     Object.assign(this.#slidytab.style, { left, top, bottom, right });
   };
 
-  #updateTriggersUI = () => {
-    requestAnimationFrame(() => {
-      this.#dataStateObserver?.disconnect();
-      for (let i = 0; i < this.#triggers.length; i++) {
-        const inRange = i >= this.value[0] && i <= this.value[1];
-        const targetState = inRange ? "active" : "inactive";
-
-        if (this.#triggers[i].dataset.state !== targetState) {
-          this.#triggers[i].dataset.state = targetState;
-        }
-        if (inRange) {
-          this.#triggers[i].click();
-          // this.#triggers[i].focus();
-        }
+  #updateTriggersUI = async () => {
+    this.#list.tabIndex = -1;
+    await new Promise(requestAnimationFrame);
+    this.#dataStateObserver.disconnect();
+    for (let i = 0; i < this.#triggers.length; i++) {
+      const inRange = i >= this.value[0] && i <= this.value[1];
+      const targetState = inRange ? "active" : "inactive";
+      const trigger = this.#triggers[i];
+      // if (trigger.dataset.state !== targetState) {
+      // }
+      trigger.dataset.state = targetState;
+      if (inRange) {
+        //   trigger.click();
+        trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
       }
-      this.#dataStateObserver.observe(this.#list, {
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["data-state"],
-      });
+    }
+    await new Promise(requestAnimationFrame);
+    this.#dataStateObserver.observe(this.#list, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-state"],
     });
   };
 
@@ -278,7 +279,7 @@ export class Slidytabs {
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      //   this.updateValue(this.value);
+      this.updateValue(this.value);
       // this.value = this.value;
     });
     resizeObserver.observe(this.#list);
@@ -337,3 +338,16 @@ export class Slidytabs {
     instances.delete(this.#root);
   }
 }
+
+// if (typeof window !== "undefined" && typeof document !== "undefined") {
+//   document.addEventListener("focusin", (e) => {
+//     const el = e.target;
+//     console.log("FOCUS →", el.tagName, el.getAttribute("role"), el.tabIndex);
+//   });
+// }
+
+// const orig = HTMLElement.prototype.focus;
+// HTMLElement.prototype.focus = function () {
+//   console.trace("focus() called on", this);
+//   return orig.apply(this);
+// };
