@@ -4,6 +4,7 @@ import {
   safelistGeneralizedClasses,
   getCurrentTargetX,
 } from "./util";
+import tabs from "../../demo-site/src/shadcn/astro/tabs";
 
 const defaultTransitionDuration = 0.2 * 1000;
 // const defaultTransitionDuration = 1500;
@@ -86,7 +87,6 @@ export class Slidytabs {
     } else {
       this.updateValue(value);
     }
-    // this.#updateTriggersUI();
   };
 
   #extractFromDOM = () => {
@@ -111,11 +111,10 @@ export class Slidytabs {
     // must be a better place for this if we really care
     // mutation observer?
     this.#extractFromDOM();
-    const { index } = this.#triggerFromEvent(e);
+    const { index, trigger } = this.#triggerFromEvent(e);
     if (index === undefined) {
       return;
     }
-
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
     // TODO does this work for vertical
@@ -191,12 +190,8 @@ export class Slidytabs {
         value[this.down]
       ) as RangeValue;
     }
-    const isFocused = this.#list.contains(document.activeElement);
     this.#slidytab.style.transitionDuration =
-      (this.down !== null && this.#slideToken) ||
-      (this.down === null && isFocused)
-        ? this.transitionDuration
-        : "0ms";
+      this.down !== null && this.#slideToken ? this.transitionDuration : "0ms";
     this.value = adjustedValue;
     this.#slideToken = false;
     this.#updateTriggersUI();
@@ -225,15 +220,32 @@ export class Slidytabs {
     this.#list.tabIndex = -1;
     this.#dataStateObserver.disconnect();
 
+    let firedTrigger: HTMLElement | undefined;
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const trigger = this.#triggers[i];
       if (inRange) {
-        trigger?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        firedTrigger = trigger;
+        if (
+          this.#triggers
+            .filter((item) => item !== trigger)
+            .some((item) => item.tabIndex === 0)
+        ) {
+          trigger.tabIndex = -1;
+        }
         break;
       }
     }
     await new Promise(requestAnimationFrame);
+    // if (
+    //   firedTrigger != null &&
+    //   this.#triggers
+    //     .filter((item) => item !== firedTrigger)
+    //     .some((item) => item.tabIndex === 0)
+    // ) {
+    //   firedTrigger.tabIndex = -1;
+    // }
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const targetState = inRange ? "active" : "inactive";
@@ -298,8 +310,15 @@ export class Slidytabs {
     ];
   };
 
+  #tabSolo = (index: number) => {
+    for (let i = 0; i < this.#triggers.length; i++) {
+      if (i !== index) {
+        this.#triggers[i].tabIndex = -1;
+      }
+    }
+  };
+
   #setupDataStateObserver = () => {
-    console.log("asdf");
     const dataStateObserver = new MutationObserver(
       async (mutationList: MutationRecord[]) => {
         for (const observation of mutationList) {

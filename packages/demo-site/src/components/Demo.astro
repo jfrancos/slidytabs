@@ -67,7 +67,7 @@ const { highlightFn, prefix, logo } = {
   //   logo: astro,
   // },
 }[framework];
-const code = `${prefix}\n${raw}`;
+const code = `${prefix}\n${raw.slice(0, -1)}`;
 // const code =
 //   framework === "astro"
 //     ? raw
@@ -76,7 +76,7 @@ const code = `${prefix}\n${raw}`;
 //         .toSpliced(1, 0, prefix)
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
-const highlight = await highlightFn(code);
+const highlight = highlightFn(code);
 ---
 
 <div
