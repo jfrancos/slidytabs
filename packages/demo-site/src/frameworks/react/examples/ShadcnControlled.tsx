@@ -6,6 +6,7 @@ export default () => {
   const [value, setValue] = useState("correct");
   const updateValue = (newValue: string) =>
     newValue !== "battery" && setValue(newValue);
+
   return (
     <Tabs value={value} onValueChange={updateValue} ref={tabs()}>
       <TabsList className="[&>:nth-child(3)]:!text-red">

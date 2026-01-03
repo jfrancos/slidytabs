@@ -28,7 +28,7 @@ export default () => {
   const [sticky, setSticky] = useState(5);
 
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-y-4 gap-x-8 items-center">
+    <div className="even:children:col-span-2 grid grid-cols-3 gap-y-4 gap-x-8 items-center">
       <div>Choose sticky:</div>
       <Slider value={sticky} handleValue={setSticky} />
       <div>Sticky applied:</div>

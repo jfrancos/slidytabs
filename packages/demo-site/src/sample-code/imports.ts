@@ -13,5 +13,5 @@ range({ value, onValueChange?, push? });
 
 
 // Each returns (target: Element) => void
+// To be called by your framework
 tabs()(TabsRootElement)
-// but it’s intended to be called by your framework
