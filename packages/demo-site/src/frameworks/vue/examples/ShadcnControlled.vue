@@ -15,9 +15,9 @@ const updateValue = (newValue: string | number) =>
       <TabsTrigger value="battery">Battery</TabsTrigger>
       <TabsTrigger value="staple">Staple</TabsTrigger>
     </TabsList>
-    <TabsContent class="text-center" value="correct" children="Correct" />
-    <TabsContent class="text-center" value="horse" children="Horse" />
-    <TabsContent class="text-center" value="battery" children="Battery" />
-    <TabsContent class="text-center" value="staple" children="Staple" />
+    <TabsContent class="text-center" value="correct">Correct</TabsContent>
+    <TabsContent class="text-center" value="horse">Horse</TabsContent>
+    <TabsContent class="text-center" value="battery">Battery</TabsContent>
+    <TabsContent class="text-center" value="staple">Staple</TabsContent>
   </Tabs>
 </template>

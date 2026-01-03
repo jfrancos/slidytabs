@@ -10,16 +10,12 @@ const onValueChange = (newValue: string | number) =>
 </script>
 
 <template>
-  <Tabs
-    :ref="tabs({ value, onValueChange })"
-    :default-value="options[0]"
-    class="text-center"
-  >
+  <Tabs :ref="tabs({ value, onValueChange })" :default-value="options[0]">
     <TabsList class="[&>:nth-child(3)]:!text-red">
       <TabsTrigger v-for="item in options" :key="item" :value="item">{{
         item
       }}</TabsTrigger>
     </TabsList>
-    {{ options[value] }}
+    <div class="text-center">{{ options[value] }}</div>
   </Tabs>
 </template>

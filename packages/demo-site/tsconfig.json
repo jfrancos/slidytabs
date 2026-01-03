@@ -1,11 +1,10 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "src/sample-code"],
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.vue.json" },
+    { "path": "./tsconfig.base.json" }
+  ],
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "baseUrl": ".",
     "paths": {
       "$lib/*": ["./src/lib/*"],
       "@/*": ["./src/*"]

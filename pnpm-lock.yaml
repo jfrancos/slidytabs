@@ -82,7 +82,7 @@ importers:
         specifier: ^9.39.2
         version: 9.39.2
       '@iconify/json':
-        specifier: ^2.2.421
+        specifier: ^2.2.423
         version: 2.2.423
       bits-ui:
         specifier: ^2.14.4
@@ -97,10 +97,10 @@ importers:
         specifier: ^2.12.7
         version: 2.12.7
       typescript-eslint:
-        specifier: ^8.50.1
+        specifier: ^8.51.0
         version: 8.51.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       unocss:
-        specifier: ^66.5.11
+        specifier: ^66.5.12
         version: 66.5.12(postcss@8.5.6)(vite@7.2.2(@types/node@25.0.3)(jiti@2.6.1))
 
   packages/lib:
@@ -4650,7 +4650,7 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
   '@babel/traverse@7.27.7':

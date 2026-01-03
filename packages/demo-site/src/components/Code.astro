@@ -7,6 +7,7 @@ interface Props {
   lang: BundledLanguage;
   class?: string;
   lineNumbers?: boolean;
+  height?: number;
 }
 const {
   code,
@@ -14,6 +15,7 @@ const {
   lang,
   class: className,
   lineNumbers = true,
+  height,
 } = Astro.props;
 const html = codeToHtml(code, {
   lang,
@@ -27,9 +29,10 @@ const html = codeToHtml(code, {
 ---
 
 <div
+  style={{ height: `${height}px` }}
   set:html={html}
   class:list={[
-    "children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll)",
+    "children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll h-full)",
     className,
     lineNumbers && "line-numbers",
   ]}

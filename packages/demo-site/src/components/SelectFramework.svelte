@@ -17,9 +17,15 @@
         ...document.querySelectorAll(`[data-docs="${filename}:${framework}"]`),
       ] as HTMLElement[];
       for (const doc of docs) {
-        framework === $frameworkAtom
-          ? doc.classList?.remove("hidden")
-          : doc.classList?.add("hidden");
+        if (framework === $frameworkAtom) {
+          doc.classList?.remove("opacity-0");
+          doc.classList?.remove("z-0");
+          doc.classList?.add("z-100");
+        } else {
+          doc.classList?.add("opacity-0");
+          doc.classList?.add("z-0");
+          doc.classList?.remove("z-100");
+        }
       }
     }
   };

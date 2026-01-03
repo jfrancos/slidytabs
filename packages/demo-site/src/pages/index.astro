@@ -75,49 +75,55 @@ const { github } = icons;
           <h1 class="text-2xl font-bold">Make tabs slide</h1>
           <JSX heading code='import { tabs } from "slidytabs";' />
         </div>
-        <Demos filename="Tabs">
-          Use <JSX code="shadcn" /> Tabs the way you normally would, and let your
-          framework pass the root <JSX code="Tabs" /> element to <JSX
-            code="slidytabs"
-          />.
-        </Demos>
-        <Demos filename="ShadcnControlled">
-          You can control the value via the usual <JSX code="shadcn" /> props.
-        </Demos>
-        <Demos filename="SlidytabsControlled">
-          Alternatively, with <JSX code="slidytabs" />, you can control it using
-          indices. Setting <JSX code="defaultValue" /> helps avoid a flash during
-          hydration.
-        </Demos>
+        <div class="flex flex-col .gap-3">
+          <Demos filename="Tabs">
+            Use <JSX code="shadcn" /> Tabs the way you normally would, and let your
+            framework pass the root <JSX code="Tabs" /> element to <JSX
+              code="slidytabs"
+            />.
+          </Demos>
+          <Demos filename="ShadcnControlled">
+            You can control the value via the usual <JSX code="shadcn" /> props.
+          </Demos>
+          <Demos filename="SlidytabsControlled">
+            Alternatively, with <JSX code="slidytabs" />, you can control it
+            using indices. Setting <JSX code="defaultValue" /> helps avoid a flash
+            during hydration.
+          </Demos>
+        </div>
       </div>
       <div class="flex flex-col gap-6">
         <div class="flex gap-4 items-baseline justify-between">
           <h1 class="text-2xl font-bold">Make tabs a slider</h1>
           <JSX heading code='import { slider } from "slidytabs";' />
         </div>
-        <Demos filename="Slider">
-          Same usage as above, with drag support. This example goes deeper into
-          controlled usage and explores some custom styling.
-        </Demos>
-        <Demos filename="Sticky">
-          The <JSX code="sticky" /> param lets you define a permanent endpoint, while
-          still passing around a single index.
-        </Demos>
-        <Demos filename="Vertical"> A vertical example </Demos>
+        <div>
+          <Demos filename="Slider">
+            Same usage as above, with drag support. This example goes deeper
+            into controlled usage and explores some custom styling.
+          </Demos>
+          <Demos filename="Sticky">
+            The <JSX code="sticky" /> param lets you define a permanent endpoint,
+            while still passing around a single index.
+          </Demos>
+          <Demos filename="Vertical"> A vertical example </Demos>
+        </div>
       </div>
       <div class="flex flex-col gap-6">
         <div class="flex gap-4 items-baseline justify-between">
           <h1 class="text-2xl font-bold">Make tabs a rangeslider</h1>
           <JSX heading code='import { range } from "slidytabs";' />
         </div>
-        <Demos filename="Range">
-          Similar usage as above, but now we're passing around tuples (<JSX
-            code="[number, number]"
-          />).
-        </Demos>
-        <Demos filename="Push">
-          Use <JSX code="push" /> to let one endpoint push the other.
-        </Demos>
+        <div>
+          <Demos filename="Range">
+            Similar usage as above, but now we're passing around tuples (<JSX
+              code="[number, number]"
+            />).
+          </Demos>
+          <Demos filename="Push">
+            Use <JSX code="push" /> to let one endpoint push the other.
+          </Demos>
+        </div>
       </div>
     </div>
   </body>

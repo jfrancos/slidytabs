@@ -11,24 +11,40 @@ const examples = import.meta.glob(
   "../frameworks/*/examples/*.{tsx,react,svelte,vue,solid,astro}"
 );
 
+const langForFramework = (framework: string) =>
+  framework === "react" ? "tsx" : framework;
+
 const exists = (framework: string) =>
   Object.keys(examples).some((path) =>
     path.endsWith(
-      `/frameworks/${framework}/examples/${filename}.${framework === "react" ? "tsx" : framework}`
+      `/frameworks/${framework}/examples/${filename}.${langForFramework(framework)}`
     )
   );
+
+const codes = Object.fromEntries(frameworks.map((item) => [item, ""]));
+
+let minLines = Infinity;
+for (const framework of frameworks.filter(exists)) {
+  const { default: raw } = await import(
+    `../frameworks/${framework}/examples/${filename}.${langForFramework(framework)}?raw`
+  );
+  codes[framework] = raw;
+  minLines = Math.min(minLines, raw.split("\n").length);
+}
 ---
 
 <div class="flex flex-col gap-3">
-  <!-- <div class="inline-flex items-baseline"> -->
   <div>
     <slot />
   </div>
-  <!-- </div> -->
   <SelectFramework {filename} client:load />
-  {
-    frameworks
-      .filter(exists)
-      .map((framework) => <Demo {framework} {filename} />)
-  }
+  <div class="relative" style={{ height: `${224 + minLines * 20}px` }}>
+    {
+      frameworks.filter(exists).map((framework) => (
+        <div class="absolute inset-0">
+          <Demo {framework} {filename} raw={codes[framework]} {minLines} />
+        </div>
+      ))
+    }
+  </div>
 </div>

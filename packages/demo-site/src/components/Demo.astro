@@ -23,9 +23,11 @@ const { react, svelte, vue } = icons;
 interface Props {
   filename: string;
   framework: Framework;
+  raw: string;
+  minLines: number;
 }
 
-const { filename, framework } = Astro.props;
+const { filename, framework, raw, minLines } = Astro.props;
 const lang = framework === "react" ? "tsx" : framework;
 const { default: Component } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}`
@@ -41,9 +43,9 @@ const { default: Component } = await import(
 
 // TODO ?raw files are preprocessed by unocss transformers
 // ^fs.readFile causes SSR flash and doesn't work in build
-const { default: raw } = await import(
-  `../frameworks/${framework}/examples/${filename}.${lang}?raw`
-);
+// const { default: raw } = await import(
+//   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
+// );
 
 const { highlightFn, prefix, logo } = {
   react: {
@@ -68,6 +70,7 @@ const { highlightFn, prefix, logo } = {
   // },
 }[framework];
 const code = `${prefix}\n${raw.slice(0, -1)}`;
+const height = 40 + minLines * 20;
 // const code =
 //   framework === "astro"
 //     ? raw
@@ -77,12 +80,15 @@ const code = `${prefix}\n${raw.slice(0, -1)}`;
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
 const highlight = highlightFn(code);
+
+const wip = filename==="Sticky" && framework === "vue"
 ---
 
 <div
-  class="flex flex-col border-gray-100 border-4 rounded-lg relative"
+  class:list={["flex flex-col border-gray-100 rounded-lg relative transition-opacity", !wip && "border-4 "]}
   data-docs={`${filename}:${framework}`}
 >
+{ wip ? "Coming soon ..." : 
   <div class="flex justify-center h-32 items-center relative select-none">
     <div
       class:list={[
@@ -92,13 +98,13 @@ const highlight = highlightFn(code);
     >
     </div>
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
-    {lang === "tsx" && <TsxShell {filename} client:idle />}
     {lang === "vue" && <VueShell {filename} client:idle />}
+    {lang === "tsx" && <TsxShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
   have both simultaneously and hide the SSR once the client is visible: -->
     <div class="[:has(*)~&]:hidden">
       <Component />
     </div>
   </div>
-  <Code {highlight} {code} {lang} />
+  <Code {highlight} {code} {lang} {height} />}
 </div>
