@@ -1,5 +1,5 @@
 import { slider } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/react/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/shadcn/react/tabs";
 
 export default () => (
   <Tabs ref={slider()} defaultValue="account" orientation="vertical">
