@@ -223,21 +223,25 @@ export class Slidytabs {
 
   #updateTriggersUI = async () => {
     this.#list.tabIndex = -1;
-    await new Promise(requestAnimationFrame);
     this.#dataStateObserver.disconnect();
+
+    for (let i = 0; i < this.#triggers.length; i++) {
+      const inRange = i >= this.value[0] && i <= this.value[1];
+      const trigger = this.#triggers[i];
+      if (inRange) {
+        trigger?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        break;
+      }
+    }
+    await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const targetState = inRange ? "active" : "inactive";
       const trigger = this.#triggers[i];
-      // if (trigger.dataset.state !== targetState) {
-      // }
-      trigger.dataset.state = targetState;
-      if (inRange) {
-        //   trigger.click();
-        trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      if (trigger.dataset.state !== targetState) {
+        trigger.dataset.state = targetState;
       }
     }
-    await new Promise(requestAnimationFrame);
     this.#dataStateObserver.observe(this.#list, {
       subtree: true,
       attributes: true,
@@ -295,8 +299,9 @@ export class Slidytabs {
   };
 
   #setupDataStateObserver = () => {
+    console.log("asdf");
     const dataStateObserver = new MutationObserver(
-      (mutationList: MutationRecord[]) => {
+      async (mutationList: MutationRecord[]) => {
         for (const observation of mutationList) {
           if (
             observation.target instanceof HTMLButtonElement &&
@@ -316,9 +321,9 @@ export class Slidytabs {
               },
               this
             );
-            this.#updateTriggersUI();
           }
         }
+        this.#updateTriggersUI();
       }
     );
     return dataStateObserver;
