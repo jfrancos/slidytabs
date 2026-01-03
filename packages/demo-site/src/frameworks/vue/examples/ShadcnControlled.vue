@@ -8,21 +8,16 @@ const updateValue = (newValue: string | number) =>
 </script>
 
 <template>
-  <Tabs
-    :ref="tabs()"
-    :model-value="value"
-    @update:model-value="updateValue"
-    class="text-center"
-  >
+  <Tabs :ref="tabs()" :model-value="value" @update:model-value="updateValue">
     <TabsList class="[&>:nth-child(3)]:!text-red">
       <TabsTrigger value="correct">Correct</TabsTrigger>
       <TabsTrigger value="horse">Horse</TabsTrigger>
       <TabsTrigger value="battery">Battery</TabsTrigger>
       <TabsTrigger value="staple">Staple</TabsTrigger>
     </TabsList>
-    <TabsContent value="correct">Correct</TabsContent>
-    <TabsContent value="horse">Horse</TabsContent>
-    <TabsContent value="battery">Battery</TabsContent>
-    <TabsContent value="staple">Staple</TabsContent>
+    <TabsContent class="text-center" value="correct" children="Correct" />
+    <TabsContent class="text-center" value="horse" children="Horse" />
+    <TabsContent class="text-center" value="battery" children="Battery" />
+    <TabsContent class="text-center" value="staple" children="Staple" />
   </Tabs>
 </template>
