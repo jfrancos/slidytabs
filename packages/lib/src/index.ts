@@ -108,8 +108,8 @@ export const slider =
   };
 
 export const range =
-  ({ value, onValueChange, push = false }: RangeOptions) =>
-  (root: HTMLElement | null) => {
+  ({ value, onValueChange, push = false }: RangeOptions): RefCallback =>
+  (root) => {
     return setupWithOptions(root, {
       push,
       swipe: true,
