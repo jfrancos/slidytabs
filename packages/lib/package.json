@@ -2,7 +2,7 @@
   "name": "slidytabs",
   "version": "0.0.0",
   "scripts": {
-    "dev": "tsup src/*.ts --watch --dts --format esm"
+    "dev": "tsup src/*.ts --watch --dts --format esm --splitting false --clean"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
