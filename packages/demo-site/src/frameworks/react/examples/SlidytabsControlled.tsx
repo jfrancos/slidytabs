@@ -5,14 +5,13 @@ const options = ["Correct", "Horse", "Battery", "Stapler"];
 
 export default () => {
   const [index, setIndex] = useState(0);
-  const onValueChange = (newIndex: number) => {
-    newIndex !== 2 && setIndex(newIndex);
-  };
+  const onValueChange = (newIndex: number) =>
+    newIndex === 2 ? undefined : setIndex(newIndex);
+
   return (
     <Tabs
       defaultValue={options[index]}
       ref={tabs({ value: index, onValueChange })}
-      className="text-center"
     >
       <TabsList className="[&>:nth-child(3)]:!text-red">
         {options.map((value) => (
@@ -21,7 +20,7 @@ export default () => {
           </TabsTrigger>
         ))}
       </TabsList>
-      {options[index]}
+      <div className="text-center">{options[index]}</div>
     </Tabs>
   );
 };

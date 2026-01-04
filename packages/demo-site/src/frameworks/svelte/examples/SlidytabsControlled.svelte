@@ -4,7 +4,8 @@
   const options = ["Correct", "Horse", "Battery", "Stapler"];
 
   let index = $state(0);
-  const onValueChange = (next: number) => next !== 2 && (index = next);
+  const onValueChange = (next: number) =>
+    next === 2 ? undefined : (index = next);
 </script>
 
 <Tabs {@attach tabs({ value: index, onValueChange })} value="correct">
@@ -13,5 +14,5 @@
       <Trigger {value}>{value}</Trigger>
     {/each}
   </List>
-  {options[index]}
+  <div class="text-center">{options[index]}</div>
 </Tabs>
