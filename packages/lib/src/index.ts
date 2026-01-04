@@ -54,16 +54,16 @@ const getInstance = (el: HTMLElement) => {
   return instance;
 };
 
-interface TabOptions {
+export interface TabOptions {
   value?: number;
   onValueChange?: (value: number) => void;
 }
-interface SliderOptions {
+export interface SliderOptions {
   value?: number;
   onValueChange?: (value: number) => void;
   sticky?: number;
 }
-interface RangeOptions {
+export interface RangeOptions {
   value: [number, number];
   onValueChange?: (value: [number, number]) => void;
   push?: boolean;
