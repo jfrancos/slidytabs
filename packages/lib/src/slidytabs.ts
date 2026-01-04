@@ -3,8 +3,7 @@ import {
   categorizeClasses,
   safelistGeneralizedClasses,
   getCurrentTargetX,
-} from "./util";
-import tabs from "../../demo-site/src/shadcn/astro/tabs";
+} from "./util.js";
 
 const defaultTransitionDuration = 0.2 * 1000;
 // const defaultTransitionDuration = 1500;
@@ -220,13 +219,10 @@ export class Slidytabs {
     this.#list.tabIndex = -1;
     this.#dataStateObserver.disconnect();
 
-    let firedTrigger: HTMLElement | undefined;
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const trigger = this.#triggers[i];
       if (inRange) {
-        trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-        firedTrigger = trigger;
         if (
           this.#triggers
             .filter((item) => item !== trigger)
@@ -238,14 +234,6 @@ export class Slidytabs {
       }
     }
     await new Promise(requestAnimationFrame);
-    // if (
-    //   firedTrigger != null &&
-    //   this.#triggers
-    //     .filter((item) => item !== firedTrigger)
-    //     .some((item) => item.tabIndex === 0)
-    // ) {
-    //   firedTrigger.tabIndex = -1;
-    // }
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const targetState = inRange ? "active" : "inactive";

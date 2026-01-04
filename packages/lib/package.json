@@ -1,11 +1,14 @@
 {
   "name": "slidytabs",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "tsup src/*.ts --watch --dts --format esm --splitting false --clean"
+    "dev": "tsup src/index.ts --watch --dts --format esm --splitting false --clean --sourcemap",
+    "build": "tsup src/index.ts --dts --format esm --splitting false --clean --sourcemap"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@unocss/core": "^66.5.12",
     "biome": "^0.3.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
@@ -17,10 +20,15 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.mts",
-  "exports": "./dist/index.mjs",
-  "dependencies": {
-    "@unocss/core": "^66.5.12",
-    "tailwind-merge": "^3.4.0"
-  }
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "tailwind-merge": "^3"
+  },
+  "description": "A DOM-level utility for animating shadcn Tabs"
 }

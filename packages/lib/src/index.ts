@@ -4,7 +4,7 @@ import {
   RangeValue,
   SlidytabOptions,
   instances,
-} from "./slidytabs";
+} from "./slidytabs.js";
 
 export type { RangeValue };
 
