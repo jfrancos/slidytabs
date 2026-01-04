@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tabs } from "slidytabs";
-  import * as Tabs from "@/shadcn/svelte/tabs";
+  import * as Tabs from "@/shadcn-svelte/tabs";
 </script>
 
 <Tabs.Root {@attach tabs()} value="account" class="text-center">

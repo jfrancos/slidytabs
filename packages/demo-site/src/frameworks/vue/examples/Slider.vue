@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { slider } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger } from "@/shadcn/vue/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/shadcn-vue/tabs";
 const triggerClasses =
   "min-w-0 ring-inset rounded-lg h-full !shadow-none data-[state=active]:(bg-gray-300 rounded-none) data-[state=inactive]:text-neutral-500";
 

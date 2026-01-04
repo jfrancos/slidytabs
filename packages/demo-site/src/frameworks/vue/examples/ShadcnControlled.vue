@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { tabs } from "slidytabs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/vue/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn-vue/tabs";
 const value = ref("correct");
 const updateValue = (newValue: string | number) =>
   newValue !== "battery" && (value.value = String(newValue));

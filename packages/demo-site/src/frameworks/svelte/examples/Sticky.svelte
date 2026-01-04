@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slider, type SliderOptions } from "slidytabs";
-  import * as Tabs from "@/shadcn/svelte/tabs";
+  import * as Tabs from "@/shadcn-svelte/tabs";
 
   let sticky = $state(5);
   const onValueChange = (next: number) => (sticky = next);

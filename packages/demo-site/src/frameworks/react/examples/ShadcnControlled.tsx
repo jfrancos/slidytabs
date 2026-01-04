@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { tabs } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/react/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/tabs";
 
 export default () => {
   const [value, setValue] = useState("correct");

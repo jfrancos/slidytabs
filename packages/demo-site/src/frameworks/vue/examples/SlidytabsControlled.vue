@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { tabs } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger } from "@/shadcn/vue/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/shadcn-vue/tabs";
 
 const options = ["Correct", "Horse", "Battery", "Stapler"];
 const index = ref(0);

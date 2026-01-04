@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slider } from "slidytabs";
-  import * as Tabs from "@/shadcn/svelte/tabs";
+  import * as Tabs from "@/shadcn-svelte/tabs";
 </script>
 
 <Tabs.Root {@attach slider()} value="account" orientation="vertical">

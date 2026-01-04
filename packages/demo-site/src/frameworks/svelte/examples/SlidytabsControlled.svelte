@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tabs } from "slidytabs";
-  import { Tabs, List, Trigger } from "@/shadcn/svelte/tabs";
+  import { Tabs, List, Trigger } from "@/shadcn-svelte/tabs";
   const options = ["Correct", "Horse", "Battery", "Stapler"];
 
   let index = $state(0);

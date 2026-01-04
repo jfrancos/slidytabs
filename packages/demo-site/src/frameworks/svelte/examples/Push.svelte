@@ -1,6 +1,6 @@
 <script lang="ts">
   import { range, type RangeValue } from "slidytabs";
-  import * as Tabs from "@/shadcn/svelte/tabs";
+  import * as Tabs from "@/shadcn-svelte/tabs";
 
   let value: RangeValue = $state([4, 6]);
   const onValueChange = (next: RangeValue) => (value = next);

@@ -3,7 +3,7 @@
   import { slider } from "slidytabs";
   import { frameworks, type Framework } from "@/lib/store";
   import { icons } from "@/lib/utils";
-  import { Root, List, Trigger } from "@/shadcn/svelte/tabs";
+  import { Root, List, Trigger } from "@/shadcn-svelte/tabs";
   import { persistentAtom } from "@nanostores/persistent";
   const defaultFramework = "react";
 

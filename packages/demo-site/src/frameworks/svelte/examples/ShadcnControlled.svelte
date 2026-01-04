@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tabs } from "slidytabs";
-  import { Tabs, List, Trigger, Content } from "@/shadcn/svelte/tabs";
+  import { Tabs, List, Trigger, Content } from "@/shadcn-svelte/tabs";
   let value = $state("correct");
 </script>
 
