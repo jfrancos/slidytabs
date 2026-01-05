@@ -89,7 +89,7 @@ const wip = filename==="Sticky" && framework === "vue"
   data-docs={`${filename}:${framework}`}
 >
 { wip ? "Coming soon ..." : 
-  <div class="flex justify-center h-32 items-center relative select-none">
+  <div class:list={["flex justify-center items-center relative select-none", filename === "Sticky" ? "h-40" : "h-32"]}>
     <div
       class:list={[
         logo,

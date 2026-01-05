@@ -29,10 +29,13 @@ const sticky = ref(5);
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-y-4 gap-x-8 items-center">
-    <div>Choose sticky:</div>
-    <Slider :value="sticky" :onValueChange="(v: number) => (sticky = v)" />
-    <div>Sticky applied:</div>
-    <Slider :sticky="sticky" />
+  <div class="flex flex-col gap-3 text-sm">
+    <div class="flex flex-col gap-1.5">
+      Choose sticky:
+      <Slider :value="sticky" :onValueChange="(v: number) => (sticky = v)" />
+    </div>
+    <div class="flex flex-col gap-1.5">
+      Sticky applied: <Slider :sticky="sticky" />
+    </div>
   </div>
 </template>

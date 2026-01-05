@@ -20,11 +20,15 @@ export default () => {
   const [sticky, setSticky] = useState(5);
 
   return (
-    <div className="even:children:col-span-2 grid grid-cols-3 gap-x-8 gap-y-4 items-center">
-      <div>Choose sticky:</div>
-      <Slider value={sticky} onValueChange={setSticky} />
-      <div>Sticky applied:</div>
-      <Slider sticky={sticky} />
+    <div className="flex flex-col gap-3 text-sm">
+      <div className="flex flex-col gap-1">
+        Choose sticky:
+        <Slider value={sticky} onValueChange={setSticky} />
+      </div>
+      <div className="flex flex-col gap-1">
+        Sticky applied:
+        <Slider sticky={sticky} />
+      </div>
     </div>
   );
 };

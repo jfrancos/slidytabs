@@ -16,9 +16,13 @@
   </Tabs.Root>
 {/snippet}
 
-<div class="even:*:col-span-2 grid grid-cols-3 gap-x-8 gap-y-4 items-center">
-  <div>Choose sticky:</div>
-  {@render Slider({ value: sticky, onValueChange })}
-  <div>Sticky applied:</div>
-  {@render Slider({ sticky })}
+<div class="flex flex-col gap-3 text-sm">
+  <div class="flex flex-col gap-1.5">
+    Choose sticky:
+    {@render Slider({ value: sticky, onValueChange })}
+  </div>
+  <div class="flex flex-col gap-1.5">
+    Sticky applied:
+    {@render Slider({ sticky })}
+  </div>
 </div>
