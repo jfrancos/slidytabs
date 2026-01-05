@@ -8,7 +8,7 @@ A DOM-level utility for animating shadcn `<Tabs />`
 npm i slidytabs
 ```
 
-## API
+## Usage
 
 ```
 import { tabs, slider, range } from "slidytabs";
@@ -16,7 +16,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### Make tabs slide
 
-single index
+`value` is a single index
 
 ```
 tabs({ value?, onValueChange? });
@@ -24,7 +24,8 @@ tabs({ value?, onValueChange? });
 
 ### Make tabs a slider
 
-single index, draggable
+same as `tabs`, with a draggable tab
+
 `sticky: number` appears visually as range, with one fixed endpoint
 
 ```
@@ -33,14 +34,15 @@ slider({ value?, onValueChange?, sticky? });
 
 ### Make tabs a range slider
 
-[start, end] indices
+`value` is a pair of indices `[start, end]`
+
 `push: boolean` lets one endpoint push the other
 
 ```
 range({ value, onValueChange?, push? });
 ```
 
-### Add to your `<Tabs />` component
+## Add to your `<Tabs />` component
 
 Each returns `(target: Element) => void`, to be called by your framework
 
