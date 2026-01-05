@@ -1,6 +1,7 @@
 # Slidytabs
 
 A DOM-level utility for animating shadcn `<Tabs />`
+Works with shadcn, shadcn-svelte, and shadcn-vue
 
 ## Install
 
@@ -24,7 +25,7 @@ tabs({ value?, onValueChange? });
 
 ### Make tabs a slider
 
-same as `tabs`, `value` is a single index, with a draggable tab
+Same as `tabs`. `value` is a single index, with a draggable tab
 
 `sticky: number` appears visually as range, with one fixed endpoint
 
