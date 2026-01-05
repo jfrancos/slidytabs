@@ -24,7 +24,7 @@ tabs({ value?, onValueChange? });
 
 ### Make tabs a slider
 
-same as `tabs`, with a draggable tab
+same as `tabs`, `value` is a single index, with a draggable tab
 
 `sticky: number` appears visually as range, with one fixed endpoint
 
