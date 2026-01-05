@@ -134,8 +134,11 @@ export class Slidytabs {
   };
 
   #onmousedown = (e: MouseEvent) => {
-    e.preventDefault();
+    // e.preventDefault();
     e.stopPropagation();
+    const { index, trigger } = this.#triggerFromEvent(e);
+    console.log("hi", index);
+    // trigger.focus();
   };
 
   #onpointerdown = async (e: PointerEvent) => {
@@ -169,6 +172,7 @@ export class Slidytabs {
       },
       this
     );
+    // trigger.focus();
     // this.#lastTriggered = trigger;
     // this.#list.focus();
     // await new Promise(requestAnimationFrame);
@@ -258,7 +262,7 @@ export class Slidytabs {
       },
       this
     );
-    // trigger.focus();
+    trigger.focus();
   };
 
   updateValue = (value: RangeValue) => {
@@ -331,8 +335,9 @@ export class Slidytabs {
       const trigger = this.#triggers[i];
       trigger.tabIndex = this.value.includes(i) ? 0 : -1;
       if (this.value.includes(i)) {
-        trigger.dispatchEvent(new FocusEvent("focus", { bubbles: true }));
-        trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        // trigger.focus();
+        // trigger.dispatchEvent(new FocusEvent("focus", { bubbles: true }));
+        // trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
       }
 
       if (trigger.dataset.state !== targetState) {
