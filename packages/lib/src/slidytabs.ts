@@ -55,6 +55,8 @@ export class Slidytabs {
     // this.#list.addEventListener("mousedown", this.#onclick);
     this.#list.addEventListener("keydown", this.#onkeydown, false);
     this.#list.addEventListener("mousedown", this.#onmousedown, true);
+    this.#list.addEventListener("click", this.#onmousedown, true);
+    // this.#list.addEventListener("touchstart", this.#ontouchdown, true);
     this.#list.addEventListener("focus", this.#onfocus, true);
     // this.#root.addEventListener("mousedown", this.#onmousedown, true);
     this.#list.addEventListener("pointerdown", this.#onpointerdown, true);
@@ -118,7 +120,7 @@ export class Slidytabs {
       return;
     }
     const index = this.#triggers.indexOf(e.target);
-    e.stopPropagation();
+    // e.stopPropagation();
     e.preventDefault();
     console.log(index);
     this.#onValueChange?.(
@@ -136,7 +138,7 @@ export class Slidytabs {
   #onmousedown = (e: MouseEvent) => {
     // e.preventDefault();
     e.stopPropagation();
-    const { index, trigger } = this.#triggerFromEvent(e);
+    const { index, trigger } = this.#triggerFromEvent(e as PointerEvent);
     console.log("hi", index);
     // trigger.focus();
   };
@@ -311,6 +313,7 @@ export class Slidytabs {
   };
 
   #updateTriggersUI = async () => {
+    // focus goes to wrong component without this - even in "experimental"
     this.#list.tabIndex = -1;
     // this.#dataStateObserver.disconnect();
 
@@ -338,6 +341,7 @@ export class Slidytabs {
         // trigger.focus();
         // trigger.dispatchEvent(new FocusEvent("focus", { bubbles: true }));
         // trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        // trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       }
 
       if (trigger.dataset.state !== targetState) {
