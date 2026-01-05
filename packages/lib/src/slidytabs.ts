@@ -21,7 +21,6 @@ export interface SlidytabsOptions {
 export interface Update {
   activeEdge: number | null;
   index: number;
-  // trigger?: HTMLElement;
   value: RangeValue;
 }
 
@@ -120,9 +119,7 @@ export class Slidytabs {
   };
 
   #onfocus = (e: FocusEvent) => {
-    // const { trigger, index } = this.#triggerFromEvent(e);
     if (!(e.target instanceof HTMLButtonElement)) {
-      console.log("returnING FROM FOUCS");
       return;
     }
     if (this.#source === "shadcn") {
@@ -131,9 +128,6 @@ export class Slidytabs {
     const index = this.#triggers.indexOf(e.target);
     // e.stopPropagation();
     // e.preventDefault();
-    console.log(e);
-    console.log(index);
-    // if (e.relatedTarget?.parentElement === e.target.parentElement) {
     this.#onValueChange?.(
       {
         index,
@@ -143,8 +137,6 @@ export class Slidytabs {
       },
       this
     );
-    // }
-    // e.target.focus();
   };
 
   #stopPropagation = (e: MouseEvent) => {
@@ -183,7 +175,7 @@ export class Slidytabs {
   };
 
   #onpointerup = () => {
-    this.down = null;
+    // this.down = null;
   };
 
   #triggerFromEvent = (e: PointerEvent) => {
@@ -208,7 +200,6 @@ export class Slidytabs {
           ? this.#triggers[this.#triggers.length - 1]
           : this.#triggers[0],
     }[this.#orientation];
-
     const index = this.#triggers.indexOf(trigger);
     return { index, trigger };
   };
@@ -287,25 +278,9 @@ export class Slidytabs {
   };
 
   #updateTriggersUI = async () => {
-    // focus goes to wrong component without this - even in "experimental"
+    // focus goes to wrong component without this
     this.#list.tabIndex = -1;
-
     this.#dataStateObserver.disconnect();
-
-    // for (let i = 0; i < this.#triggers.length; i++) {
-    //   const inRange = i >= this.value[0] && i <= this.value[1];
-    //   const trigger = this.#triggers[i];
-    //   if (inRange) {
-    //     if (
-    //       this.#triggers
-    //         .filter((item) => item !== trigger)
-    //         .some((item) => item.tabIndex === 0)
-    //     ) {
-    //       trigger.tabIndex = -1;
-    //     }
-    //     break;
-    //   }
-    // }
     await new Promise(requestAnimationFrame);
     for (let i = 0; i < this.#triggers.length; i++) {
       const inRange = i >= this.value[0] && i <= this.value[1];
@@ -322,7 +297,6 @@ export class Slidytabs {
       if (trigger.dataset.state !== targetState) {
         // trigger.tabIndex = targetState === "active" ? 0 : 1;
         trigger.dataset.state = targetState;
-        // trigger.focus();
       }
     }
     this.#dataStateObserver.observe(this.#list, {

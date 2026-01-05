@@ -12,7 +12,7 @@ const onValueChange = (next: number) =>
 <template>
   <Tabs
     :ref="tabs({ value: index, onValueChange })"
-    :default-value="options[0]"
+    :default-value="options[index]"
   >
     <TabsList class="[&>:nth-child(3)]:!text-red">
       <TabsTrigger v-for="item in options" :value="item" :key="item">{{
