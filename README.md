@@ -16,7 +16,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### Make tabs slide
 
-`value` is a single index
+`value` is a single index.
 
 ```
 tabs({ value?, onValueChange? });
@@ -24,9 +24,9 @@ tabs({ value?, onValueChange? });
 
 ### Make tabs a slider
 
-Same as `tabs()`. `value` is a single index, with a draggable tab
+Same as `tabs()`. `value` is a single index, with a draggable tab.
 
-`sticky: number` appears visually as range, with one fixed endpoint
+`sticky: number` appears visually as range, with one fixed endpoint.
 
 ```
 slider({ value?, onValueChange?, sticky? });
@@ -34,9 +34,9 @@ slider({ value?, onValueChange?, sticky? });
 
 ### Make tabs a range slider
 
-`value` is a pair of indices `[start, end]`
+`value` is a pair of indices `[start, end]`.
 
-`push: boolean` lets one endpoint push the other
+`push: boolean` lets one endpoint push the other.
 
 ```
 range({ value, onValueChange?, push? });
@@ -44,7 +44,7 @@ range({ value, onValueChange?, push? });
 
 ## Add to your `<Tabs />` component
 
-Each returns `(target: Element) => void`, to be called by your framework
+Each returns `(target: Element) => void`, to be called by your framework.
 
 #### React
 
