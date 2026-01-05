@@ -8,13 +8,15 @@ import {
 const defaultTransitionDuration = 0.2 * 1000;
 // const defaultTransitionDuration = 1500;
 
+type ClickSource = "shadcn" | "slidytabs";
 export const instances = new WeakMap<HTMLElement, Slidytabs>();
 export type RangeValue = [start: number, end: number];
-export interface SlidytabOptions {
+export interface SlidytabsOptions {
   value?: RangeValue;
-  swipe: boolean;
   onValueChange?: (update: Update, instance: Slidytabs) => void;
+  swipe: boolean;
   push: boolean;
+  source: ClickSource;
 }
 export interface Update {
   activeEdge: number | null;
@@ -24,6 +26,7 @@ export interface Update {
 }
 
 export class Slidytabs {
+  #source!: ClickSource;
   #push = false;
   #root;
   #swipe!: boolean;
@@ -52,13 +55,9 @@ export class Slidytabs {
       safelistGeneralizedClasses(trigger);
     }
     this.#slidytab = this.#setupSlidytab();
-    // this.#list.addEventListener("mousedown", this.#onclick);
-    this.#list.addEventListener("keydown", this.#onkeydown, false);
-    this.#list.addEventListener("mousedown", this.#onmousedown, true);
-    this.#list.addEventListener("click", this.#onmousedown, true);
-    // this.#list.addEventListener("touchstart", this.#ontouchdown, true);
+    this.#list.addEventListener("mousedown", this.#stopPropagation, true);
+    this.#list.addEventListener("click", this.#stopPropagation, true);
     this.#list.addEventListener("focus", this.#onfocus, true);
-    // this.#root.addEventListener("mousedown", this.#onmousedown, true);
     this.#list.addEventListener("pointerdown", this.#onpointerdown, true);
     this.#list.addEventListener("pointerup", this.#onpointerup);
     this.#list.addEventListener("pointermove", this.#onpointermove, true);
@@ -78,10 +77,17 @@ export class Slidytabs {
     this.#dataStateObserver = this.#setupDataStateObserver();
   }
 
-  setOptions = ({ value, onValueChange, swipe, push }: SlidytabOptions) => {
+  setOptions = ({
+    value,
+    onValueChange,
+    swipe,
+    push,
+    source,
+  }: SlidytabsOptions) => {
     this.#onValueChange = onValueChange;
     this.#swipe = swipe;
     this.#push = push;
+    this.#source = source;
     if (!value) {
       onValueChange?.(
         {
@@ -119,10 +125,15 @@ export class Slidytabs {
       console.log("returnING FROM FOUCS");
       return;
     }
+    if (this.#source === "shadcn") {
+      return;
+    }
     const index = this.#triggers.indexOf(e.target);
     // e.stopPropagation();
-    e.preventDefault();
+    // e.preventDefault();
+    console.log(e);
     console.log(index);
+    // if (e.relatedTarget?.parentElement === e.target.parentElement) {
     this.#onValueChange?.(
       {
         index,
@@ -132,26 +143,18 @@ export class Slidytabs {
       },
       this
     );
+    // }
     // e.target.focus();
   };
 
-  #onmousedown = (e: MouseEvent) => {
-    // e.preventDefault();
+  #stopPropagation = (e: MouseEvent) => {
+    if (this.#source === "shadcn") {
+      return;
+    }
     e.stopPropagation();
-    const { index, trigger } = this.#triggerFromEvent(e as PointerEvent);
-    console.log("hi", index);
-    // trigger.focus();
   };
 
   #onpointerdown = async (e: PointerEvent) => {
-    // maybe an earlier handler will let stoppropogation stop it
-    // then focus will work without preventdefault
-
-    // since we're listening on the list, this could actually work
-    // we just need to listen to mouseevents and preventdefault
-
-    // e.preventDefault();
-    // e.stopImmediatePropagation();
     this.#slideToken = true;
     // must be a better place for this if we really care
     // mutation observer?
@@ -162,10 +165,13 @@ export class Slidytabs {
     }
     const tabListX = getCurrentTargetX(e);
     const [x0, x1] = this.#getEndpoints();
-    // TODO does this work for vertical
+    // TODO test out vertical range
     this.down = Math.abs(tabListX - x0) < Math.abs(tabListX - x1) ? 0 : 1;
     // keep getting events when pointer leaves tabs:
     this.#list.setPointerCapture(e.pointerId);
+    if (this.#source === "shadcn") {
+      return;
+    }
     this.#onValueChange?.(
       {
         index,
@@ -174,41 +180,6 @@ export class Slidytabs {
       },
       this
     );
-    // trigger.focus();
-    // this.#lastTriggered = trigger;
-    // this.#list.focus();
-    // await new Promise(requestAnimationFrame);
-    // await new Promise(requestAnimationFrame);
-    // await new Promise(requestAnimationFrame);
-    // await new Promise(requestAnimationFrame);
-    // await new Promise(requestAnimationFrame);
-    // await new Promise(requestAnimationFrame);
-    // trigger.focus();
-    // trigger.blur();
-    // trigger.focus();
-    // await new Promise(requestAnimationFrame);
-    // trigger.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-    // trigger.click();
-    // trigger.dispatchEvent(new KeyboardEvent())
-    // const event = new KeyboardEvent("keydown", {
-    //   key: " ",
-    //   code: "Space",
-    //   keyCode: 32, // deprecated but still used by some libs
-    //   which: 32, // same
-    //   bubbles: true,
-    //   cancelable: true,
-    // });
-
-    // trigger.dispatchEvent(event);
-  };
-
-  #onkeydown = (e: KeyboardEvent) => {
-    // console.log(document.activeElement);
-    // document.activeElement?.focus?.();
-    // console.log("asdf");
-    // this.#lastTriggered?.focus();
-    // const { index, trigger } = this.#triggerFromEvent(e);
-    // trigger.focus();
   };
 
   #onpointerup = () => {
@@ -256,15 +227,18 @@ export class Slidytabs {
     ) {
       return;
     }
-    this.#onValueChange?.(
-      {
-        index,
-        activeEdge: this.down,
-        value: this.value,
-      },
-      this
-    );
-    trigger.focus();
+    if (this.#source === "slidytabs") {
+      this.#onValueChange?.(
+        {
+          index,
+          activeEdge: this.down,
+          value: this.value,
+        },
+        this
+      );
+    } else {
+      trigger.focus();
+    }
   };
 
   updateValue = (value: RangeValue) => {
@@ -315,7 +289,8 @@ export class Slidytabs {
   #updateTriggersUI = async () => {
     // focus goes to wrong component without this - even in "experimental"
     this.#list.tabIndex = -1;
-    // this.#dataStateObserver.disconnect();
+
+    this.#dataStateObserver.disconnect();
 
     // for (let i = 0; i < this.#triggers.length; i++) {
     //   const inRange = i >= this.value[0] && i <= this.value[1];
@@ -336,7 +311,7 @@ export class Slidytabs {
       const inRange = i >= this.value[0] && i <= this.value[1];
       const targetState = inRange ? "active" : "inactive";
       const trigger = this.#triggers[i];
-      trigger.tabIndex = this.value.includes(i) ? 0 : -1;
+      // trigger.tabIndex = this.value.includes(i) ? 0 : -1;
       if (this.value.includes(i)) {
         // trigger.focus();
         // trigger.dispatchEvent(new FocusEvent("focus", { bubbles: true }));
@@ -350,11 +325,11 @@ export class Slidytabs {
         // trigger.focus();
       }
     }
-    // this.#dataStateObserver.observe(this.#list, {
-    //   subtree: true,
-    //   attributes: true,
-    //   attributeFilter: ["data-state"],
-    // });
+    this.#dataStateObserver.observe(this.#list, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-state"],
+    });
   };
 
   get transitionDuration(): string {
@@ -417,28 +392,30 @@ export class Slidytabs {
   #setupDataStateObserver = () => {
     const dataStateObserver = new MutationObserver(
       async (mutationList: MutationRecord[]) => {
-        // for (const observation of mutationList) {
-        //   if (
-        //     observation.target instanceof HTMLButtonElement &&
-        //     observation.target.dataset.state === "active"
-        //   ) {
-        //     const index = this.#triggers.indexOf(observation.target);
-        //     this.#slidytab.className = twMerge(
-        //       this.#classes[this.value?.[index] ?? 0].base,
-        //       this.#classes[this.value?.[index] ?? 0].activeIndicator
-        //     );
-        //     this.#onValueChange?.(
-        //       {
-        //         index,
-        //         activeEdge: this.down,
-        //         trigger: observation.target,
-        //         value: this.value,
-        //       },
-        //       this
-        //     );
-        //   }
-        // }
-        // this.#updateTriggersUI();
+        if (this.#source === "slidytabs") {
+          return;
+        }
+        for (const observation of mutationList) {
+          if (
+            observation.target instanceof HTMLButtonElement &&
+            observation.target.dataset.state === "active"
+          ) {
+            const index = this.#triggers.indexOf(observation.target);
+            this.#slidytab.className = twMerge(
+              this.#classes[this.value?.[index] ?? 0].base,
+              this.#classes[this.value?.[index] ?? 0].activeIndicator
+            );
+            this.#onValueChange?.(
+              {
+                index,
+                activeEdge: this.down,
+                value: this.value,
+              },
+              this
+            );
+          }
+        }
+        this.#updateTriggersUI();
       }
     );
     dataStateObserver.observe(this.#list, {

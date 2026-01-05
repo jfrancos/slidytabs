@@ -2,7 +2,7 @@ import {
   Slidytabs,
   Update,
   RangeValue,
-  SlidytabOptions,
+  SlidytabsOptions,
   instances,
 } from "./slidytabs.js";
 
@@ -11,7 +11,7 @@ export type { RangeValue };
 type RefTarget = Element | { $el: Element } | string | null;
 type RefCallback = (node: RefTarget, refs?: unknown) => void;
 
-const setupWithOptions = (ref: RefTarget, options: SlidytabOptions) => {
+const setupWithOptions = (ref: RefTarget, options: SlidytabsOptions) => {
   const elements =
     typeof ref === "string"
       ? // For adding in a <script> e.g. starwind
@@ -74,6 +74,7 @@ export const tabs =
   (root) => {
     const controlled = value != null || onValueChange != null;
     return setupWithOptions(root, {
+      source: "shadcn",
       push: false,
       swipe: false,
       value: value != null ? [value, value] : undefined,
@@ -94,6 +95,7 @@ export const slider =
     const stickyValue = (value: number) =>
       [sticky ?? value, value].toSorted((a, b) => a - b) as RangeValue;
     return setupWithOptions(root, {
+      source: sticky == null ? "shadcn" : "slidytabs",
       push: true,
       swipe: true,
       value: value != null ? stickyValue(value) : undefined,
@@ -111,6 +113,7 @@ export const range =
   ({ value, onValueChange, push = false }: RangeOptions): RefCallback =>
   (root) => {
     return setupWithOptions(root, {
+      source: "slidytabs",
       push,
       swipe: true,
       value,
