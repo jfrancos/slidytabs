@@ -18,7 +18,7 @@ import { Tabs } from "@/components/ui/tabs";
 
 <Tabs ref={tabs()}>
   …
-</Tabs>
+</Tabs>;
 ```
 
 ## Usage
@@ -97,3 +97,9 @@ range(options?: {
 ([svelte attachments](https://svelte.dev/docs/svelte/@attach))
 
 Examples/demo at https://slidytabs.dev
+
+## Bugs
+
+Getting this to work requires some `document.styleSheets` acrobatics, and this is an early release, so edge cases likely exist.
+
+Please open issues, especially if your Tabs component works as expected without `slidytabs`, but behaves unexpectedly once `slidytabs` is applied.
