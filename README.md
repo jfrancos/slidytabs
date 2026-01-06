@@ -4,7 +4,7 @@ A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https:/
 
 ## Install
 
-```bash
+```console
 npm i slidytabs
 ```
 
@@ -57,12 +57,13 @@ tabs(options?: {
 
 `push: boolean` lets one endpoint push the other.
 
-```
+```ts
 tabs(options?: {
   value: number;
   onValueChange?: (value: number) => void;
   push: boolean;
-});```
+});
+```
 
 ## Add to your `<Tabs />` component
 
@@ -70,19 +71,19 @@ tabs(options?: {
 
 #### React
 
-```
+```tsx
 <Tabs ref={tabs()} />
 ```
 
 #### Vue
 
-```
+```vue
 <Tabs :ref="tabs()" />
 ```
 
 #### Svelte
 
-```
+```svelte
 <Tabs {@attach tabs()} />
 ```
 
