@@ -37,7 +37,7 @@ tabs({ value?, onValueChange? });
 
 Same as `tabs()`, with a draggable tab.
 
-`sticky: number` appears visually as range, with one fixed endpoint. `sticky` is not compatible with `shadcn` control props.
+`sticky: number` appears visually as a range slider, with one fixed endpoint. `sticky` is not compatible with `shadcn` control props.
 
 ```
 slider({ value?, onValueChange?, sticky? });
@@ -55,7 +55,7 @@ range({ value, onValueChange?, push? });
 
 ## Add to your `<Tabs />` component
 
-`tabs()`, `slider()`, and `range()` each return a [`ref` callback functions](https://react.dev/reference/react-dom/components/common#ref-callback), to be called by your framework.
+`tabs()`, `slider()`, and `range()` each return a [`ref` callback function](https://react.dev/reference/react-dom/components/common#ref-callback), to be called by your framework.
 
 #### React
 
