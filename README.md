@@ -18,7 +18,7 @@ import { Tabs } from "@/components/ui/tabs";
 
 <Tabs ref={tabs()}>
   …
-</Tabs>;
+</Tabs>
 ```
 
 ## Usage
