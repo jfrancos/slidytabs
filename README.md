@@ -24,6 +24,7 @@ import { Tabs, … } from "@/components/ui/tabs"
 ```
 import { tabs, slider, range } from "slidytabs";
 ```
+`tabs()` adds a sliding animation where active tab updates normally would jump.  `slider()` and `range()` add additional functionality.
 
 ### Make tabs slide with `tabs()`
 
