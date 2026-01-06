@@ -2,7 +2,7 @@
 
 A DOM-level utility for animating shadcn `<Tabs />`. No wrappers or reimplementation. Use `shadcn` the way you normally use `shadcn`.
 
-Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
+Works with [`shadcn`](https://ui.shadcn.com/docs/components/tabs), [`shadcn-svelte`](https://www.shadcn-svelte.com/docs/components/tabs), and [`shadcn-vue`](https://www.shadcn-vue.com/docs/components/tabs).
 
 ## Install
 
@@ -31,7 +31,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. `tabs()` can be controlled either via `shadcn`’s semantic value/onValueChange props or via `slidytabs`’ index-based props.
+`value` is a single index. `tabs()` works uncontrolled, or can be controlled either via `shadcn`’s semantic value/onValueChange props or via `slidytabs`’ index-based props.
 
 ```ts
 tabs(options?: {
