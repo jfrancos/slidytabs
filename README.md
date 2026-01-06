@@ -1,4 +1,4 @@
-# Slidytabs
+# slidytabs
 
 A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
 
@@ -27,7 +27,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### `tabs()`: Make tabs slide
 
-`value` is a single index.
+`value` is a single index. You can still control using shadcn’s `value`/`onValueChange` props, or use `slidytab`’s index-based props.
 
 ```
 tabs({ value?, onValueChange? });
@@ -35,9 +35,9 @@ tabs({ value?, onValueChange? });
 
 ### `slider()`: Make tabs a slider
 
-Same as `tabs()`. `value` is a single index, with a draggable tab.
+Same as `tabs()`, with a draggable tab.
 
-`sticky: number` appears visually as range, with one fixed endpoint.
+`sticky: number` appears visually as range, with one fixed endpoint. `sticky` is not compatible with `shadcn` control props.
 
 ```
 slider({ value?, onValueChange?, sticky? });
@@ -45,7 +45,7 @@ slider({ value?, onValueChange?, sticky? });
 
 ### `range()` Make tabs a range slider
 
-`value` is a pair of indices `[start, end]`.
+`value` is a pair of indices `[start, end]`. Not compatible with `shadcn` control props.
 
 `push: boolean` lets one endpoint push the other.
 
@@ -55,24 +55,24 @@ range({ value, onValueChange?, push? });
 
 ## Add to your `<Tabs />` component
 
-Each returns `(target: Element) => void`, to be called by your framework.
+`tabs()`, `slider()`, and `range()` each return a [`ref` callback functions](https://react.dev/reference/react-dom/components/common#ref-callback), to be called by your framework.
 
 #### React
 
 ```
-ref={tabs()} // or slider() or range()
+<Tabs ref={tabs()} />
 ```
 
 #### Vue
 
 ```
-:ref="tabs()" // or slider() or range()
+<Tabs :ref="tabs()" />
 ```
 
 #### Svelte
 
 ```
-{@attach tabs()} // or slider() or range()
+<Tabs {@attach tabs()} />
 ```
 
 Examples/demo at https://slidytabs.dev
