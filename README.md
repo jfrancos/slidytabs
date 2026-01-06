@@ -1,11 +1,22 @@
 # Slidytabs
 
-A DOM-level utility for animating shadcn `<Tabs />`.  Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
+A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
 
 ## Install
 
 ```
 npm i slidytabs
+```
+
+## Quick start
+
+```
+import { tabs } from "slidytabs";
+import { Tabs, … } from "@/components/ui/tabs"
+
+<Tabs ref={tabs()}>
+…
+</ Tabs>
 ```
 
 ## Usage
@@ -14,7 +25,7 @@ npm i slidytabs
 import { tabs, slider, range } from "slidytabs";
 ```
 
-### Make tabs slide
+### `tabs()`: Make tabs slide
 
 `value` is a single index.
 
@@ -22,7 +33,7 @@ import { tabs, slider, range } from "slidytabs";
 tabs({ value?, onValueChange? });
 ```
 
-### Make tabs a slider
+### `slider()`: Make tabs a slider
 
 Same as `tabs()`. `value` is a single index, with a draggable tab.
 
@@ -32,7 +43,7 @@ Same as `tabs()`. `value` is a single index, with a draggable tab.
 slider({ value?, onValueChange?, sticky? });
 ```
 
-### Make tabs a range slider
+### `range()` Make tabs a range slider
 
 `value` is a pair of indices `[start, end]`.
 
