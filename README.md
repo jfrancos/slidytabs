@@ -31,7 +31,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. `tabs()` works uncontrolled, or can be controlled either via `shadcn`’s semantic value/onValueChange props or via `slidytabs`’ index-based props.
+`value` is a single index. `tabs()` works uncontrolled, or can be controlled via `shadcn`’s semantic value/onValueChange props or via `slidytabs`’ index-based props.
 
 ```ts
 tabs(options?: {
