@@ -1,6 +1,6 @@
 # slidytabs
 
-A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
+A DOM-level utility for animating shadcn `<Tabs />`. that lets you use shadcn the way you normally use shadcn. Works with [shadcn](https://ui.shadcn.com/docs/components/tabs), [shadcn-svelte](https://www.shadcn-svelte.com/docs/components/tabs), and [shadcn-vue](https://www.shadcn-vue.com/docs/components/tabs).
 
 ## Install
 
@@ -14,9 +14,7 @@ npm i slidytabs
 import { tabs } from "slidytabs";
 import { Tabs } from "@/components/ui/tabs";
 
-<Tabs ref={tabs()}>
-  …
-</Tabs>
+<Tabs ref={tabs()}>…</Tabs>;
 ```
 
 ## Usage
@@ -25,7 +23,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { tabs, slider, range } from "slidytabs";
 ```
 
-`tabs()` adds a sliding animation where active tab updates normally would jump. `slider()` and `range()` add additional functionality.
+`tabs()` adds a sliding animation where active tab updates would normally jump. `slider()` and `range()` add additional functionality.
 
 ### Make tabs slide with `tabs()`
 
@@ -62,7 +60,7 @@ slider(options?: {
 range(options?: {
   value: [number, number];
   onValueChange?: (value: [number, number]) => void;
-  push: boolean;
+  push?: boolean;
 });
 ```
 
