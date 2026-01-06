@@ -14,7 +14,9 @@ npm i slidytabs
 import { tabs } from "slidytabs";
 import { Tabs } from "@/components/ui/tabs";
 
-<Tabs ref={tabs()}>…</Tabs>;
+<Tabs ref={tabs()}>
+  …
+</Tabs>;
 ```
 
 ## Usage
