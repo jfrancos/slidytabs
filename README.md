@@ -68,7 +68,7 @@ tabs(options?: {
 
 ## Add to your `<Tabs />` component
 
-`tabs()`, `slider()`, and `range()` each return a [`ref` callback function](https://react.dev/reference/react-dom/components/common#ref-callback), to be called by your framework.
+`tabs()`, `slider()`, and `range()` each return a setup function that your framework calls with the `<Tabs />` root element.
 
 #### React
 
