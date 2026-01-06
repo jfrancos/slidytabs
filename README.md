@@ -25,15 +25,15 @@ import { Tabs, … } from "@/components/ui/tabs"
 import { tabs, slider, range } from "slidytabs";
 ```
 
-### `tabs()`: Make tabs slide
+### Make tabs slide with `tabs()`
 
-`value` is a single index. You can still control using shadcn’s `value`/`onValueChange` props, or use `slidytab`’s index-based props.
+`value` is a single index. If you want to control it, you can still do so using shadcn’s `value`/`onValueChange` props, or use `slidytab`’s index-based props.
 
 ```
 tabs({ value?, onValueChange? });
 ```
 
-### `slider()`: Make tabs a slider
+### Make tabs a slider with `slider()`
 
 Same as `tabs()`, with a draggable tab.
 
@@ -43,7 +43,7 @@ Same as `tabs()`, with a draggable tab.
 slider({ value?, onValueChange?, sticky? });
 ```
 
-### `range()` Make tabs a range slider
+### Make tabs a range slider with `range()`
 
 `value` is a pair of indices `[start, end]`. Not compatible with `shadcn` control props.
 
