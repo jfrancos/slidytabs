@@ -4,7 +4,7 @@ A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https:/
 
 ## Install
 
-```console
+```bash
 npm i slidytabs
 ```
 
@@ -12,11 +12,11 @@ npm i slidytabs
 
 ```tsx
 import { tabs } from "slidytabs";
-import { Tabs, … } from "@/components/ui/tabs"
+import { Tabs } from "@/components/ui/tabs";
 
 <Tabs ref={tabs()}>
-…
-</ Tabs>
+  …
+</Tabs>
 ```
 
 ## Usage
@@ -45,7 +45,7 @@ Same as `tabs()`, with a draggable tab.
 `sticky: number` appears visually as a range slider, with one fixed endpoint. `sticky` is not compatible with `shadcn` control props.
 
 ```ts
-tabs(options?: {
+slider(options?: {
   value?: number;
   onValueChange?: (value: number) => void;
   sticky?: number;
@@ -59,9 +59,9 @@ tabs(options?: {
 `push: boolean` lets one endpoint push the other.
 
 ```ts
-tabs(options?: {
-  value: number;
-  onValueChange?: (value: number) => void;
+range(options?: {
+  value: [number, number];
+  onValueChange?: (value: [number, number]) => void;
   push: boolean;
 });
 ```
