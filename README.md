@@ -4,13 +4,13 @@ A DOM-level utility for animating shadcn `<Tabs />`. Works with [shadcn](https:/
 
 ## Install
 
-```
+```bash
 npm i slidytabs
 ```
 
 ## Quick start
 
-```
+```tsx
 import { tabs } from "slidytabs";
 import { Tabs, … } from "@/components/ui/tabs"
 
@@ -21,17 +21,20 @@ import { Tabs, … } from "@/components/ui/tabs"
 
 ## Usage
 
-```
+```ts
 import { tabs, slider, range } from "slidytabs";
 ```
 `tabs()` adds a sliding animation where active tab updates normally would jump.  `slider()` and `range()` add additional functionality.
 
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. If you want to control it, you can still do so using shadcn’s `value`/`onValueChange` props, or use `slidytab`’s index-based props.
+`value` is a single index. If you want to control it, you can still do so using shadcn’s `value`/`onValueChange` props, or use `slidytabs`’ index-based props.
 
-```
-tabs({ value?, onValueChange? });
+```ts
+tabs(options?: {
+  value?: number;
+  onValueChange?: (value: number) => void;
+});
 ```
 
 ### Make tabs a slider with `slider()`
@@ -40,8 +43,12 @@ Same as `tabs()`, with a draggable tab.
 
 `sticky: number` appears visually as a range slider, with one fixed endpoint. `sticky` is not compatible with `shadcn` control props.
 
-```
-slider({ value?, onValueChange?, sticky? });
+```ts
+tabs(options?: {
+  value?: number;
+  onValueChange?: (value: number) => void;
+  sticky?: number;
+});
 ```
 
 ### Make tabs a range slider with `range()`
@@ -51,8 +58,11 @@ slider({ value?, onValueChange?, sticky? });
 `push: boolean` lets one endpoint push the other.
 
 ```
-range({ value, onValueChange?, push? });
-```
+tabs(options?: {
+  value: number;
+  onValueChange?: (value: number) => void;
+  push: boolean;
+});```
 
 ## Add to your `<Tabs />` component
 
