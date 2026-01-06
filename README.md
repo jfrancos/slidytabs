@@ -24,11 +24,12 @@ import { Tabs, … } from "@/components/ui/tabs"
 ```ts
 import { tabs, slider, range } from "slidytabs";
 ```
-`tabs()` adds a sliding animation where active tab updates normally would jump.  `slider()` and `range()` add additional functionality.
+
+`tabs()` adds a sliding animation where active tab updates normally would jump. `slider()` and `range()` add additional functionality.
 
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. If you want to control it, you can still do so using shadcn’s `value`/`onValueChange` props, or use `slidytabs`’ index-based props.
+`value` is a single index. `tabs()` can be controlled either via `shadcn`’s semantic value/onValueChange props or via `slidytabs`’ index-based props.
 
 ```ts
 tabs(options?: {
@@ -75,16 +76,22 @@ tabs(options?: {
 <Tabs ref={tabs()} />
 ```
 
+([ref callbacks](https://react.dev/reference/react-dom/components/common#ref-callback))
+
 #### Vue
 
 ```vue
 <Tabs :ref="tabs()" />
 ```
 
+([ref callbacks](https://vuejs.org/guide/essentials/template-refs#function-refs))
+
 #### Svelte
 
 ```svelte
 <Tabs {@attach tabs()} />
 ```
+
+([svelte attachments](https://svelte.dev/docs/svelte/@attach))
 
 Examples/demo at https://slidytabs.dev
