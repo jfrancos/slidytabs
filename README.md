@@ -30,8 +30,10 @@ import { Tabs } from "@/components/ui/tabs";
 ### Svelte
 
 ```svelte
-import { tabs } from "slidytabs";
-import * as Tabs from "$lib/components/ui/tabs/index.js";
+<script lang="ts">
+  import { tabs } from "slidytabs";
+  import * as Tabs from "$lib/components/ui/tabs/index.js";
+</script>
 
 <Tabs.Root {@attach tabs()}>
   …
@@ -43,8 +45,10 @@ import * as Tabs from "$lib/components/ui/tabs/index.js";
 ### Vue
 
 ```vue
+<script setup lang="ts">
 import { tabs } from "slidytabs";
 import { Tabs } from "@/components/ui/tabs";
+</script>
 
 <Tabs :ref="tabs()">
   …
