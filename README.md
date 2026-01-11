@@ -63,7 +63,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { tabs, slider, range } from "slidytabs";
 ```
 
-`tabs()` adds a sliding animation where active tab updates would normally jump. `slider()` and `range()` add additional functionality.
+`tabs()` adds a sliding animation where active tab updates would normally jump. Use `slider()` or `range()` instead, for additional functionality.
 
 ### Make tabs slide with `tabs()`
 
