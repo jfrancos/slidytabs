@@ -1,6 +1,6 @@
 # slidytabs
 
-A DOM-level utility for animating `shadcn` `<Tabs />`. It’s not a `<Tabs />` edit or replacement; it simply adds animation while you use `shadcn` the way you normally use `shadcn`.
+A DOM-level utility for animating shadcn `<Tabs />`. Not a `<Tabs />` edit or replacement; it simply adds animation while you use `shadcn` the way you normally use `shadcn`.
 
 Works with [`shadcn`](https://ui.shadcn.com/docs/components/tabs), [`shadcn-svelte`](https://www.shadcn-svelte.com/docs/components/tabs), and [`shadcn-vue`](https://www.shadcn-vue.com/docs/components/tabs).
 
@@ -12,14 +12,46 @@ npm i slidytabs
 
 ## Quick start
 
+`tabs()`, `slider()`, and `range()` each return a setup function, automatically called by your framework.
+
+### React
+
 ```tsx
 import { tabs } from "slidytabs";
 import { Tabs } from "@/components/ui/tabs";
 
 <Tabs ref={tabs()}>
   …
-</Tabs>;
+</Tabs>
 ```
+
+[What's a ref callback?](https://react.dev/reference/react-dom/components/common#ref-callback)
+
+### Svelte
+
+```svelte
+import { tabs } from "slidytabs";
+import * as Tabs from "$lib/components/ui/tabs/index.js";
+
+<Tabs.Root {@attach tabs()}>
+  …
+</Tabs>
+```
+
+[What's an attachment?](https://svelte.dev/docs/svelte/@attach)
+
+### Vue
+
+```vue
+import { tabs } from "slidytabs";
+import { Tabs } from "@/components/ui/tabs";
+
+<Tabs :ref="tabs()">
+  …
+</Tabs>
+```
+
+[What's a ref callback?](https://vuejs.org/guide/essentials/template-refs#function-refs)
 
 ## Usage
 
@@ -67,34 +99,6 @@ range(options?: {
   push?: boolean;
 });
 ```
-
-## Add to your `<Tabs />` component
-
-`tabs()`, `slider()`, and `range()` each return a setup function that your framework calls with the `<Tabs />` root element.
-
-#### React
-
-```tsx
-<Tabs ref={tabs()} />
-```
-
-([ref callbacks](https://react.dev/reference/react-dom/components/common#ref-callback))
-
-#### Vue
-
-```vue
-<Tabs :ref="tabs()" />
-```
-
-([ref callbacks](https://vuejs.org/guide/essentials/template-refs#function-refs))
-
-#### Svelte
-
-```svelte
-<Tabs {@attach tabs()} />
-```
-
-([svelte attachments](https://svelte.dev/docs/svelte/@attach))
 
 Examples/demo at https://slidytabs.dev
 
