@@ -18,6 +18,7 @@ export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
     );
     triggerClasses.push({ activeIndicator, base });
   }
+  // console.log(triggerClasses);
   return triggerClasses;
 };
 
@@ -30,30 +31,36 @@ export const safelistGeneralizedClasses = (el: HTMLElement) => {
     .filter((item) => item.startsWith(activePrefix))
     .map(toEscapedSelector);
 
-  if (typeof document !== "undefined") {
+  for (const sheet of document.styleSheets) {
     try {
-      [...document.styleSheets].forEach((styleSheet) => {
-        [...styleSheet.cssRules]
-          .filter(
-            (item) =>
-              // for firefox
-              item instanceof CSSStyleRule &&
-              activeSelector !== item.selectorText.trim() &&
-              classes.some((prefix) => item.selectorText.startsWith(prefix))
-          )
-          .forEach(({ cssText }) => {
-            const newRule = cssText
-              .replaceAll(escapeSelector(activePrefix), "")
-              .replaceAll(activeSelector, "");
-            if (!inserted.has(newRule)) {
-              inserted.add(newRule);
-              globalThis.sheet.insertRule(newRule);
-            }
-          });
+      walkRules(sheet.cssRules, (rule) => {
+        if (
+          rule instanceof CSSStyleRule &&
+          activeSelector !== rule.selectorText.trim() &&
+          classes.some((prefix) => rule.selectorText.startsWith(prefix))
+        ) {
+          const newRule = rule.cssText
+            .replaceAll(escapeSelector(activePrefix), "")
+            .replaceAll(activeSelector, "");
+          if (!inserted.has(newRule)) {
+            inserted.add(newRule);
+            globalThis.sheet.insertRule(newRule);
+          }
+        }
       });
     } catch {}
   }
 };
+
+function walkRules(rules: CSSRuleList, visit: (rule: CSSStyleRule) => void) {
+  for (const rule of rules) {
+    if (rule instanceof CSSStyleRule) {
+      visit(rule);
+    } else if ("cssRules" in rule) {
+      walkRules(rule.cssRules as CSSRuleList, visit);
+    }
+  }
+}
 
 export const getCurrentTargetX = (e: PointerEvent) =>
   e.clientX - (e.currentTarget as Element).getBoundingClientRect().left;
