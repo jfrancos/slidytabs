@@ -233,6 +233,10 @@ export class Slidytabs {
   };
 
   updateValue = (value: RangeValue) => {
+    // guard against no default value and not controlled by slidy
+    if (!value || value[0] === -1) {
+      return;
+    }
     if (
       this.value &&
       value[0] === this.value[0] &&
@@ -348,6 +352,10 @@ export class Slidytabs {
   };
 
   #getEndpoints = () => {
+    // guard against no default value and not controlled by slidy
+    if (!this.value) {
+      return [0, 0];
+    }
     const [x0, x1] = this.value;
     return [
       this.#triggers[x0].offsetLeft,
