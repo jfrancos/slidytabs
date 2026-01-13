@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { slider, type SliderOptions } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
-const triggerClasses =
-  "min-w-0 ring-inset rounded-lg h-full !shadow-none data-[state=active]:(bg-gray-300 rounded-none) data-[state=inactive]:text-neutral-500";
 
 const Slider = (sliderOptions: SliderOptions) => (
   <Tabs defaultValue={"5"} ref={slider(sliderOptions)}>
-    <TabsList className="p-0 overflow-hidden">
+    <TabsList>
       {Array.from({ length: 11 }, (_, i) => (
-        <TabsTrigger key={i} value={i.toString()} className={triggerClasses}>
+        <TabsTrigger className="min-w-0" key={i} value={i.toString()}>
           {i}
         </TabsTrigger>
       ))}
@@ -21,11 +19,11 @@ export default () => {
 
   return (
     <div className="flex flex-col gap-3 text-sm">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         Choose sticky:
         <Slider value={sticky} onValueChange={setSticky} />
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         Sticky applied:
         <Slider sticky={sticky} />
       </div>
