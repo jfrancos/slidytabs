@@ -24,7 +24,7 @@
     "@types/react-dom": "^19.2.3",
     "@vue/compiler-dom": "^3.5.26",
     "@vueuse/core": "^14.1.0",
-    "astro": "^5.16.8",
+    "astro": "^5.16.9",
     "clsx": "^2.1.1",
     "nanostores": "^1.1.0",
     "react": "^19.2.3",
@@ -32,7 +32,7 @@
     "reka-ui": "^2.7.0",
     "shiki": "^3.21.0",
     "slidytabs": "link:../lib",
-    "svelte": "^5.46.1",
+    "svelte": "^5.46.3",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "typescript": "^5.9.3",
@@ -46,7 +46,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "tiged": "^2.12.7",
-    "typescript-eslint": "^8.52.0",
+    "typescript-eslint": "^8.53.0",
     "unocss": "^66.5.12"
   }
 }
