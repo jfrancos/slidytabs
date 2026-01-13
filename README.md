@@ -14,7 +14,7 @@ npm i slidytabs
 
 ## Quick start
 
-`tabs()` adds a sliding animation where `value` updates would normally be "jumpy". Use `slider()` or `range()` instead, for additional functionality. `tabs()`, `slider()`, and `range()` each return a setup function, automatically called by your framework.
+`tabs()` adds a sliding animation where `value` updates would normally be “jumpy”. Use `slider()` or `range()` instead, for additional functionality. `tabs()`, `slider()`, and `range()` each return a setup function, automatically called by your framework.
 
 ### React
 
