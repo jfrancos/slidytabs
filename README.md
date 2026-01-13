@@ -1,8 +1,10 @@
 # slidytabs
 
-A DOM-level utility for animating shadcn `<Tabs />`. Not a `<Tabs />` edit or replacement; it simply adds animation while you use `shadcn` the way you normally use `shadcn`.
+A DOM-level utility for animating shadcn `<Tabs />`.
 
 Works with [`shadcn`](https://ui.shadcn.com/docs/components/tabs), [`shadcn-svelte`](https://www.shadcn-svelte.com/docs/components/tabs), and [`shadcn-vue`](https://www.shadcn-vue.com/docs/components/tabs).
+
+Examples/demo at https://slidytabs.dev
 
 ## Install
 
@@ -12,7 +14,7 @@ npm i slidytabs
 
 ## Quick start
 
-`tabs()`, `slider()`, and `range()` each return a setup function, automatically called by your framework.
+`tabs()` adds a sliding animation where `value` updates would normally be "jumpy". Use `slider()` or `range()` instead, for additional functionality. `tabs()`, `slider()`, and `range()` each return a setup function, automatically called by your framework.
 
 ### React
 
@@ -22,7 +24,7 @@ import { Tabs } from "@/components/ui/tabs";
 
 <Tabs ref={tabs()}>
   …
-</Tabs>
+</Tabs>;
 ```
 
 [What’s a ref callback?](https://react.dev/reference/react-dom/components/common#ref-callback)
@@ -63,11 +65,9 @@ import { Tabs } from "@/components/ui/tabs";
 import { tabs, slider, range } from "slidytabs";
 ```
 
-`tabs()` adds a sliding animation where active tab updates would normally jump. Use `slider()` or `range()` instead, for additional functionality.
-
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. `tabs()` works uncontrolled, or can be controlled via `shadcn`’s `value`/`onValueChange` props *or* via `slidytabs`’ index-based props.
+`value` is a single index. `tabs()` works uncontrolled, or can be controlled via `shadcn`’s `value`/`onValueChange` props _or_ via `slidytabs`’ index-based props.
 
 ```ts
 tabs(options?: {
@@ -103,8 +103,6 @@ range(options?: {
   push?: boolean;
 });
 ```
-
-Examples/demo at https://slidytabs.dev
 
 ## Bugs
 
