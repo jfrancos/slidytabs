@@ -8,7 +8,7 @@ const onValueChange = (newValue: RangeValue) => (value.value = newValue);
 </script>
 
 <template>
-  <Tabs :ref="range({ value, onValueChange, push: true })" default-value="5">
+  <Tabs :ref="range({ value, onValueChange, push: true })">
     <TabsList>
       <TabsTrigger class="min-w-0" v-for="i in 11" :value="i - 1">{{
         i - 1

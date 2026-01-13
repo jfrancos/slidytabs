@@ -8,17 +8,11 @@ const onValueChange = (newValue: RangeValue) => (value.value = newValue);
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <Tabs
-      :ref="range({ value, onValueChange })"
-      default-value="5"
-      class="text-center"
-    >
-      <TabsList>
-        <TabsTrigger class="min-w-0" v-for="i in 11" :value="i - 1">{{
-          i - 1
-        }}</TabsTrigger>
-      </TabsList>
-    </Tabs>
-  </div>
+  <Tabs :ref="range({ value, onValueChange })">
+    <TabsList>
+      <TabsTrigger class="min-w-0" v-for="i in 11" :value="i - 1">{{
+        i - 1
+      }}</TabsTrigger>
+    </TabsList>
+  </Tabs>
 </template>
