@@ -25,7 +25,7 @@ import { Tabs } from "@/components/ui/tabs";
 </Tabs>
 ```
 
-[What's a ref callback?](https://react.dev/reference/react-dom/components/common#ref-callback)
+[What’s a ref callback?](https://react.dev/reference/react-dom/components/common#ref-callback)
 
 ### Svelte
 
@@ -40,7 +40,7 @@ import { Tabs } from "@/components/ui/tabs";
 </Tabs>
 ```
 
-[What's an attachment?](https://svelte.dev/docs/svelte/@attach)
+[What’s an attachment?](https://svelte.dev/docs/svelte/@attach)
 
 ### Vue
 
@@ -55,7 +55,7 @@ import { Tabs } from "@/components/ui/tabs";
 </Tabs>
 ```
 
-[What's a ref callback?](https://vuejs.org/guide/essentials/template-refs#function-refs)
+[What’s a ref callback?](https://vuejs.org/guide/essentials/template-refs#function-refs)
 
 ## Usage
 
@@ -67,7 +67,7 @@ import { tabs, slider, range } from "slidytabs";
 
 ### Make tabs slide with `tabs()`
 
-`value` is a single index. `tabs()` works uncontrolled, or can be controlled via `shadcn`’s semantic `value`/`onValueChange` props *or* via `slidytabs`’ index-based props.
+`value` is a single index. `tabs()` works uncontrolled, or can be controlled via `shadcn`’s `value`/`onValueChange` props *or* via `slidytabs`’ index-based props.
 
 ```ts
 tabs(options?: {
