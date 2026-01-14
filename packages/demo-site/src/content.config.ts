@@ -10,7 +10,6 @@ const readme = defineCollection({
     load: async ({ renderMarkdown, store }) => {
       store.clear();
       const lines = readmeContent.rawContent().split("\n");
-      console.log(lines);
       let entry;
       for (const [index, line] of Object.entries(lines)) {
         if (line.startsWith("#") || Number(index) === lines.length - 1) {

@@ -4,6 +4,7 @@ import Demos from "@/components/Demos.astro";
 import { icons } from "@/lib/utils";
 import { getCollection } from "astro:content";
 import "github-markdown-css/github-markdown.css";
+import boston from "../assets/boston.svg";
 
 const { github } = icons;
 const readme = await getCollection("readme");
@@ -105,6 +106,14 @@ const exampleText = Object.fromEntries(
       <Demos filename="Push" />
       <div class="markdown-body">
         <section set:html={sections["## Bugs"]} />
+      </div>
+      <div class="text-xs self-center pb-2 flex flex-col items-center">
+        <img
+          alt="Boston skyline"
+          class="opacity-25 h-32"
+          src={boston.src}
+        />
+        Made with love in Camberville, MA
       </div>
     </div>
   </body>
