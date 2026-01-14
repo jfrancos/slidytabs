@@ -1,7 +1,6 @@
 ---
 import { Code } from "astro:components";
 import CustomCode from "@/components/Code.astro";
-import SelectFramework from "@/components/SelectFramework.astro";
 // import Demo from "@/components/Demo.astro";
 import Demos from "@/components/Demos.astro";
 import { icons } from "@/lib/utils";
@@ -49,7 +48,9 @@ const { github } = icons;
       </div>
     </div>
 
-    <div class="flex flex-col gap-8 py-6 mx-auto w-full max-w-217 px-4 md:px-12">
+    <div
+      class="flex flex-col gap-8 py-6 mx-auto w-full max-w-217 px-4 md:px-12"
+    >
       <div class="flex flex-col gap-3">
         <h1 class="text-2xl font-bold">Install</h1>
         <!-- TODO not children: -->
@@ -134,125 +135,3 @@ const { github } = icons;
     </div>
   </body>
 </html>
-
-<!-- <div class="flex flex-col gap-6">
-        <div>
-          <h1 class="text-2xl font-bold">Make tabs slide</h1>
-          <div class="w-full flex flex-col gap-6">
-            <Demos filename="Tabs"
-              ><div>
-                Use shadcn Tabs as usual, and pass <Code
-                  code="tabs()"
-                  lang="ts"
-                  theme="github-light"
-                  class="text-sm text-nowrap inline-flex p-1 -my-1 mx-1 rounded-sm !bg-neutral-100"
-                /> to the root ref.
-              </div></Demos
-            >
-            <Demos filename="ShadControlled">
-              For more control, use <a
-                class="inline-flex underline"
-                href="https://www.radix-ui.com/primitives/docs/components/tabs#api-reference"
-                >radix props</a
-              > as usual.
-            </Demos>
-            <Demos filename="TabsControlled">
-              Alternatively, control with indices via slidytabs
-            </Demos>
-          </div>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold">Make tabs a slider</h1>
-          <div class="w-full flex flex-col gap-6">
-            <Demos filename="DoubleSliders"
-              >Looks like tabs, feels like a slider</Demos
-            >
-          </div>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold">Make tabs a slider</h1>
-          <div class="w-full flex flex-col gap-6">
-            <Demos filename="DoubleSliders"
-              >Looks like tabs, feels like a slider</Demos
-            >
-          </div>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold">Make tabs a range slider</h1>
-          <div class="w-full flex flex-col gap-6">
-            <Demos filename="NumbersRange"
-              >Looks like tabs, feels like a range slider</Demos
-            >
-          </div>
-        </div>
-      </div> -->
-
-<!-- <div class="flex-1">
-        <div class="flex justify-center items-center flex-col gap-6 py-6">
-          <a
-            rel="noopener"
-            target="_blank"
-            class="font-medium underline"
-            href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-          ><div class="flex flex-col gap-12">
-            <Demo lang="tsx" filename="NumbersRange" />
-            <Demos filename="Tabs" />
-          </div>
-        </div>
-      </div> -->
-<!-- <div class="flex-1 pb-6">
-        <div class="flex justify-center items-center flex-col gap-6 py-6">
-          <a
-            rel="noopener"
-            target="_blank"
-            class="font-medium underline"
-            href="https://www.shadcn-svelte.com/docs/components/tabs"
-            >shadcn-svelte</a
-          ><div class="flex flex-col gap-12">
-            <Demos filename="Tabs">
-              Some text. There's a sentence here probably.</Demos
-            >
-            <Demos filename="VerticalTabs">This text is probably okay too</Demos
-            >
-            <Demos filename="UncontrolledSlider" />
-            <Demos filename="ControlledSlider" />
-            <Demos filename="HalfControlledSlider" />
-            <Demos filename="FrozenControlledSlider" />
-            <Demos filename="RangeSlider" />
-          </div>
-        </div>
-      </div> -->
-<!-- <div class="2xl:block bg-white flex-1 shadow-xl hidden">
-        <div class="flex justify-center items-center flex-col gap-6 py-6">
-          <a
-            rel="noopener"
-            target="_blank"
-            class="font-medium underline"
-            href="https://ui.shadcn.com/docs/components/tabs">shadcn</a
-          ><div class="flex flex-col gap-12">
-            <Demo lang="tsx" filename="NumbersRange" />
-            <Demos filename="Tabs" />
-          </div>
-        </div>
-      </div> -->
-
-<!-- 
-<script>
-  import { frameworkAtom, frameworks } from "../lib/store";
-
-  frameworkAtom.subscribe((newFramework) => {
-    for (const framework of frameworks) {
-      const docs = [
-        ...document.querySelectorAll(`[data-docs="${framework}"]`),
-      ] as HTMLElement[];
-      for (const doc of docs) {
-        framework === newFramework
-          ? doc.classList?.remove("hidden")
-          : doc.classList?.add("hidden");
-      }
-    }
-  });
-</script> -->
-
-<!-- individual trigger classes
-focus for unreachable tabs -->

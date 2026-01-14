@@ -1,0 +1,30 @@
+---
+// import { render } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
+
+// import { marked } from 'marked';
+const readme = await getCollection("readme");
+console.log(readme);
+
+const install = await getEntry("readme", "## Install");
+console.log(install);
+// const allBlogPosts = await getEntry("cats", "asdf");
+// console.log(allBlogPosts);
+// const content = readme.rawContent();
+// import * as markdown from "@astrojs/markdown-remark";
+
+// const { createMarkdownProcessor } = markdown;
+// const entry = await getEntry("cats", "0");
+
+// const render = await createMarkdownProcessor();
+// const { Content } = await render(content);
+// console.log(render(content));
+// getCollection();
+---
+
+<!-- <Content /> -->
+<article
+  class="prose prose-neutral max-w-none [&_code:not(pre>code)]:(bg-#818b981f px-1 -mx-0.5 py-0.5 -my-0.25 rounded font-medium) prose-code:before:content-none prose-code:after:content-none"
+>
+  <div set:html={install?.rendered?.html} />
+</article>
