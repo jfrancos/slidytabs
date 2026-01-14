@@ -9,9 +9,11 @@ const readme = defineCollection({
     name: "readme",
     load: async ({ renderMarkdown, store }) => {
       store.clear();
+      const lines = readmeContent.rawContent().split("\n");
+      console.log(lines);
       let entry;
-      for (const line of readmeContent.rawContent().split("\n")) {
-        if (line.startsWith("#")) {
+      for (const [index, line] of Object.entries(lines)) {
+        if (line.startsWith("#") || Number(index) === lines.length - 1) {
           if (entry) {
             store.set({
               id: entry.id,

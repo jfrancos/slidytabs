@@ -2,9 +2,10 @@
 import { Code } from "astro:components";
 import Demos from "@/components/Demos.astro";
 import { icons } from "@/lib/utils";
-const { github } = icons;
 import { getCollection } from "astro:content";
 import "github-markdown-css/github-markdown.css";
+
+const { github } = icons;
 const readme = await getCollection("readme");
 const sections = Object.fromEntries(
   readme.map(({ id, rendered }) => [id, rendered?.html])
@@ -24,40 +25,38 @@ const exampleText = Object.fromEntries(
     <title>slidytabs</title>
   </head>
   <body class="flex flex-col h-screen bg-white">
-    <div class="px-8 py-6 bg-neutral-200 color-neutral-700 flex flex-col gap-2">
-      <div class="flex justify-between .h-9">
-        <div class="font-semibold color-pink-700 .tracking-wide text-3xl">
-          slidytabs
+    <div class="py-6 bg-zinc-200 color-zinc-700 flex gap-2">
+      <div
+        class="max-w-217 mx-auto w-full px-4 md:px-12 flex justify-between items-center"
+      >
+        <div class="flex flex-col">
+          <div class="font-semibold color-pink-700 text-32px">slidytabs</div>
+          <div class="text-balance">
+            A DOM-level utility for animating <span class="font-semibold"
+              >shadcn</span
+            >&ensp;
+            <Code
+              code="<Tabs />"
+              lang="jsx"
+              theme="github-light"
+              class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
+            />
+          </div>
         </div>
-        <div class="flex items-center gap-8 h-9">
-          <a
-            href="https://github.com/jfrancos/slidytabs"
-            class="hover:bg-neutral-300 p-2 -m-2 rounded-full transition-colors"
-            target="_blank"
-            rel="noreferer"
-          >
-            <div class:list={[github, ".text-lg"]}></div>
-          </a>
-        </div>
-      </div>
-      <div class="text-balance">
-        A DOM-level utility for animating <span class="font-semibold"
-          >shadcn</span
-        >&ensp;
-        <Code
-          code="<Tabs />"
-          lang="jsx"
-          theme="github-light"
-          class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
-        />
+        <a
+          href="https://github.com/jfrancos/slidytabs"
+          class="hover:bg-zinc-300 p-2 -m-2 rounded-full transition-colors"
+          target="_blank"
+          rel="noreferer"
+        >
+          <div class:list={[github, "text-lg"]}></div>
+        </a>
       </div>
     </div>
 
     <div
       class="flex flex-col .gap-8 .py-6 mx-auto w-full max-w-217 px-4 md:px-12"
     >
-      <!-- <div class="markdown-body" set:html={sections["## Install"]} /> -->
-
       <div class="markdown-body [&_pre]:bg-muted!">
         <section set:html={sections["## Why this exists"]} />
         <section set:html={sections["## Install"]} />
@@ -104,42 +103,9 @@ const exampleText = Object.fromEntries(
         <p set:html={exampleText["Push"]} />
       </div>
       <Demos filename="Push" />
-
-      <!-- <div class="markdown-body [&_pre]:bg-muted!">
-        <Demos filename="ShadcnControlled">
-          You can control the value via the usual <JSX code="shadcn" /> props.
-        </Demos>
-        <Demos filename="SlidytabsControlled">
-          Alternatively, with <JSX code="slidytabs" />, you can control it using
-          indices. Setting <JSX code="defaultValue" /> helps avoid a flash during
-          hydration.
-        </Demos>
-
-        <div class="prose max-w-none">
-          <h4>Examples</h4>
-        </div>
-        <Demos filename="Slider">
-          Same usage as above, with drag support. This example goes deeper into
-          controlled usage and explores some custom styling.
-        </Demos>
-        <Demos filename="Sticky">
-          The <JSX code="sticky" /> param lets you define a permanent endpoint, while
-          still passing around a single index.
-        </Demos>
-        <Demos filename="Vertical"> A vertical example </Demos>
-
-        <div class="prose max-w-none">
-          <h4>Examples</h4>
-        </div>
-        <Demos filename="Range">
-          Similar usage as above, but now we're passing around tuples (<JSX
-            code="[number, number]"
-          />).
-        </Demos>
-        <Demos filename="Push">
-          Use <JSX code="push" /> to let one endpoint push the other.
-        </Demos>
-      </div> -->
+      <div class="markdown-body">
+        <section set:html={sections["## Bugs"]} />
+      </div>
     </div>
   </body>
 </html>
