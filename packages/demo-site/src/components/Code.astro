@@ -32,13 +32,12 @@ const html = codeToHtml(code, {
   style={{ height: `${height}px` }}
   set:html={html}
   class:list={[
-    "children:(text-sm px-6 py-5 !bg-neutral-100 overflow-scroll h-full)",
+    "children:(text-sm px-6 py-5 !bg-muted overflow-scroll h-full)",
     className,
     lineNumbers && "line-numbers",
   ]}
 />
 
-<!-- index from 0 since the first-line comments don't actually exist -->
 <style is:global>
   .shiki {
     counter-reset: step;

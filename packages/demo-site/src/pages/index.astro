@@ -1,13 +1,18 @@
 ---
 import { Code } from "astro:components";
-import CustomCode from "@/components/Code.astro";
-// import Demo from "@/components/Demo.astro";
 import Demos from "@/components/Demos.astro";
 import { icons } from "@/lib/utils";
-import JSX from "@/components/InlineJSX.astro";
-import sampleImports from "@/sample-code/imports?raw";
-import sampleInstall from "@/sample-code/install.sh?raw";
 const { github } = icons;
+import { getCollection } from "astro:content";
+import "github-markdown-css/github-markdown.css";
+const readme = await getCollection("readme");
+const sections = Object.fromEntries(
+  readme.map(({ id, rendered }) => [id, rendered?.html])
+);
+const exampleCollection = await getCollection("examples");
+const exampleText = Object.fromEntries(
+  exampleCollection.map(({ id, rendered }) => [id, rendered?.html])
+);
 ---
 
 <html lang="en" class="h-screen">
@@ -49,89 +54,92 @@ const { github } = icons;
     </div>
 
     <div
-      class="flex flex-col gap-8 py-6 mx-auto w-full max-w-217 px-4 md:px-12"
+      class="flex flex-col .gap-8 .py-6 mx-auto w-full max-w-217 px-4 md:px-12"
     >
-      <div class="flex flex-col gap-3">
-        <h1 class="text-2xl font-bold">Install</h1>
-        <!-- TODO not children: -->
-        <CustomCode
-          lineNumbers={false}
-          code={sampleInstall}
-          lang="bash"
-          class="children:rounded"
+      <!-- <div class="markdown-body" set:html={sections["## Install"]} /> -->
+
+      <div class="markdown-body [&_pre]:bg-muted!">
+        <section set:html={sections["## Why this exists"]} />
+        <section set:html={sections["## Install"]} />
+        <section set:html={sections["## Usage"]} />
+        <section set:html={sections["### Make tabs slide with `tabs()`"]} />
+        <h4>Examples</h4>
+        <p set:html={exampleText["Tabs"]} />
+      </div>
+      <Demos filename="Tabs" />
+      <div class="markdown-body">
+        <p set:html={exampleText["ShadcnControlled"]} />
+      </div>
+      <Demos filename="ShadcnControlled" />
+      <div class="markdown-body">
+        <p set:html={exampleText["SlidytabsControlled"]} />
+      </div>
+      <Demos filename="SlidytabsControlled" />
+      <div class="markdown-body [&_pre]:bg-muted!">
+        <section
+          set:html={sections["### Make tabs a slider with `slider()`"]}
         />
+        <h4>Examples</h4>
+        <p set:html={exampleText["Slider"]} />
       </div>
-      <div class="flex flex-col gap-3">
-        <h1 class="text-2xl font-bold">API</h1>
-        <!-- TODO not children: -->
-        <CustomCode
-          lineNumbers={false}
-          code={sampleImports}
-          lang="ts"
-          class="children:rounded"
+      <Demos filename="Slider" />
+      <div class="markdown-body">
+        <p set:html={exampleText["Sticky"]} />
+      </div>
+      <Demos filename="Sticky" />
+      <div class="markdown-body">
+        <p set:html={exampleText["Vertical"]} />
+      </div>
+      <Demos filename="Vertical" />
+
+      <div class="markdown-body [&_pre]:bg-muted!">
+        <section
+          set:html={sections["### Make tabs a range slider with `range()`"]}
         />
+        <h4>Examples</h4>
+        <p set:html={exampleText["Range"]} />
       </div>
-      <div class="flex flex-col gap-6">
-        <div class="flex gap-4 items-baseline justify-between">
-          <h1 class="text-2xl font-bold">Make tabs slide</h1>
-          <!-- <div class="w-full"> -->
-          <JSX heading code='import { tabs } from "slidytabs";' />
-          <!-- </div> -->
-        </div>
-        <div class="flex flex-col .gap-3">
-          <Demos filename="Tabs">
-            Use <JSX code="shadcn" /> Tabs the way you normally would, and let your
-            framework pass the root <JSX code="Tabs" /> element to <JSX
-              code="slidytabs"
-            />.
-          </Demos>
-          <Demos filename="ShadcnControlled">
-            You can control the value via the usual <JSX code="shadcn" /> props.
-          </Demos>
-          <Demos filename="SlidytabsControlled">
-            Alternatively, with <JSX code="slidytabs" />, you can control it
-            using indices. Setting <JSX code="defaultValue" /> helps avoid a flash
-            during hydration.
-          </Demos>
-        </div>
+      <Demos filename="Range" />
+      <div class="markdown-body">
+        <p set:html={exampleText["Push"]} />
       </div>
-      <div class="flex flex-col gap-6">
-        <div class="flex gap-4 items-baseline justify-between">
-          <h1 class="text-2xl font-bold">Make tabs a slider</h1>
-          <!-- <div class="w-full"> -->
-          <JSX heading code='import { slider } from "slidytabs";' />
-          <!-- </div> -->
+      <Demos filename="Push" />
+
+      <!-- <div class="markdown-body [&_pre]:bg-muted!">
+        <Demos filename="ShadcnControlled">
+          You can control the value via the usual <JSX code="shadcn" /> props.
+        </Demos>
+        <Demos filename="SlidytabsControlled">
+          Alternatively, with <JSX code="slidytabs" />, you can control it using
+          indices. Setting <JSX code="defaultValue" /> helps avoid a flash during
+          hydration.
+        </Demos>
+
+        <div class="prose max-w-none">
+          <h4>Examples</h4>
         </div>
-        <div>
-          <Demos filename="Slider">
-            Same usage as above, with drag support. This example goes deeper
-            into controlled usage and explores some custom styling.
-          </Demos>
-          <Demos filename="Sticky">
-            The <JSX code="sticky" /> param lets you define a permanent endpoint,
-            while still passing around a single index.
-          </Demos>
-          <Demos filename="Vertical"> A vertical example </Demos>
+        <Demos filename="Slider">
+          Same usage as above, with drag support. This example goes deeper into
+          controlled usage and explores some custom styling.
+        </Demos>
+        <Demos filename="Sticky">
+          The <JSX code="sticky" /> param lets you define a permanent endpoint, while
+          still passing around a single index.
+        </Demos>
+        <Demos filename="Vertical"> A vertical example </Demos>
+
+        <div class="prose max-w-none">
+          <h4>Examples</h4>
         </div>
-      </div>
-      <div class="flex flex-col gap-6">
-        <div class="flex gap-4 items-baseline justify-between">
-          <h1 class="text-2xl font-bold">Make tabs a rangeslider</h1>
-          <!-- <div class="w-full"> -->
-          <JSX heading code='import { range } from "slidytabs";' />
-          <!-- </div> -->
-        </div>
-        <div>
-          <Demos filename="Range">
-            Similar usage as above, but now we're passing around tuples (<JSX
-              code="[number, number]"
-            />).
-          </Demos>
-          <Demos filename="Push">
-            Use <JSX code="push" /> to let one endpoint push the other.
-          </Demos>
-        </div>
-      </div>
+        <Demos filename="Range">
+          Similar usage as above, but now we're passing around tuples (<JSX
+            code="[number, number]"
+          />).
+        </Demos>
+        <Demos filename="Push">
+          Use <JSX code="push" /> to let one endpoint push the other.
+        </Demos>
+      </div> -->
     </div>
   </body>
 </html>

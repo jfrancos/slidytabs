@@ -1,0 +1,10 @@
+{
+  "Tabs": "Use `shadcn` Tabs the way you normally would, and let your framework pass the root `Tabs` element to `slidytabs`.",
+  "ShadcnControlled": "You can control the value via the usual `shadcn` props.",
+  "SlidytabsControlled": "Alternatively, with `slidytabs`, you can control it using indices. Setting `defaultValue` helps avoid a flash during hydration.",
+  "Slider": "Same usage as above, with drag support. This example goes deeper into controlled usage and explores some custom styling.",
+  "Sticky": "The sticky param lets you define a permanent endpoint, while still passing around a single index.",
+  "Vertical": "A vertical example",
+  "Range": "Similar usage as above, but now we're passing around tuples (`[number, number]`).",
+  "Push": "Use `push` to let one endpoint push the other."
+}

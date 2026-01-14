@@ -36,9 +36,6 @@ const height = filename === "Sticky" ? 256 : 224;
 ---
 
 <div class="flex flex-col gap-3">
-  <div>
-    <slot />
-  </div>
   <SelectFramework {filename} client:load />
   <div class="relative" style={{ height: `${height + minLines * 20}px` }}>
     {

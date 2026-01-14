@@ -2,9 +2,13 @@
 
 A DOM-level utility for animating shadcn `<Tabs />`.
 
-Works with [`shadcn`](https://ui.shadcn.com/docs/components/tabs), [`shadcn-svelte`](https://www.shadcn-svelte.com/docs/components/tabs), and [`shadcn-vue`](https://www.shadcn-vue.com/docs/components/tabs).
-
 Examples/demo at https://slidytabs.dev
+
+## Why this exists
+
+- `shadcn` `<Tabs />` switch discretely between positions, which can feel jumpy in motion-oriented UIs. A proper solution should work with Tabs as-is, not as a wrapper.
+
+- **Separately:** Tabs are good for discrete structure; sliders are good for continuous interaction — there isn't a clear way to combine the two.
 
 ## Install
 

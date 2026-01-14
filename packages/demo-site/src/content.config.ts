@@ -1,5 +1,8 @@
 import { defineCollection } from "astro:content";
-import * as content from "@base/README.md";
+import * as readmeContent from "@base/README.md";
+import exampleContent from "./example-text.json";
+// import {remark}
+// import remarkToc from "remark-toc";
 
 const readme = defineCollection({
   loader: {
@@ -7,7 +10,7 @@ const readme = defineCollection({
     load: async ({ renderMarkdown, store }) => {
       store.clear();
       let entry;
-      for (const line of content.rawContent().split("\n")) {
+      for (const line of readmeContent.rawContent().split("\n")) {
         if (line.startsWith("#")) {
           if (entry) {
             store.set({
@@ -27,4 +30,20 @@ const readme = defineCollection({
   },
 });
 
-export const collections = { readme };
+const examples = defineCollection({
+  loader: {
+    name: "examples",
+    load: async ({ renderMarkdown, store }) => {
+      store.clear();
+      for (const [name, entry] of Object.entries(exampleContent)) {
+        store.set({
+          id: name,
+          data: {},
+          rendered: await renderMarkdown(entry),
+        });
+      }
+    },
+  },
+});
+
+export const collections = { readme, examples };

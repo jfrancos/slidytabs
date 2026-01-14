@@ -4,33 +4,22 @@ import svelte from "@astrojs/svelte";
 import react from "@astrojs/react";
 import vue from "@astrojs/vue";
 import path from "path";
+// import mdx from "@astrojs/mdx";
+import remarkToc from "remark-toc";
 
 // https://astro.build/config
 export default defineConfig({
   markdown: {
-    gfm: true,
+    // remarkPlugins: [remarkToc],
+    remarkPlugins: [[remarkToc, {}]],
+
+    // gfm: true,
     shikiConfig: {
-      themes: {
-        light: "github-light",
-        dark: "github-dark",
-      },
-      transformers: [
-        {
-          pre(node) {
-            delete node.properties.style;
-          },
-        },
-      ],
+      theme: "github-light",
     },
-    // shikiConfig: {
-    //   theme: "github-light",
-    //   defaultColor: false,
-    //   // themes: undefined,
-    //   themes: [{ light: { theme: "github-light" } }],
-    //   // cssVariables: false,
-    // },
   },
   integrations: [
+    // mdx(),
     svelte(),
     react({ include: ["**/react/**"] }),
     vue({
