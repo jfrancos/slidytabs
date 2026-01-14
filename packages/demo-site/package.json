@@ -27,6 +27,7 @@
     "@vueuse/core": "^14.1.0",
     "astro": "^5.16.9",
     "clsx": "^2.1.1",
+    "github-markdown-css": "^5.8.1",
     "nanostores": "^1.1.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
