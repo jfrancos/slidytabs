@@ -14,7 +14,7 @@ const onValueChange = (newValue: number) => (value.value = Number(newValue));
   <div class="flex flex-col gap-4">
     <Tabs
       :ref="slider({ value, onValueChange })"
-      default-value="0"
+      :default-value="scale[value]"
       v-for="scale in [flats, sharps]"
     >
       <TabsList class="p-0 overflow-hidden w-88">

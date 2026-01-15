@@ -11,10 +11,7 @@
 
 <div class="flex flex-col gap-4">
   {#each [flats, sharps] as scale}
-    <Tabs.Root
-      value={value.toString()}
-      {@attach slider({ value, onValueChange })}
-    >
+    <Tabs.Root value={scale[value]} {@attach slider({ value, onValueChange })}>
       <Tabs.List class="p-0 overflow-hidden w-88">
         {#each scale as note}
           <Tabs.Trigger class={triggerClasses} value={note}>{note}</Tabs.Trigger

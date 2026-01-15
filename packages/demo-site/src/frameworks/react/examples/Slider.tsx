@@ -10,7 +10,11 @@ export default () => {
   return (
     <div className="flex flex-col gap-4">
       {[flats, sharps].map((scale, i) => (
-        <Tabs key={i} defaultValue={"0"} ref={slider({ value, onValueChange })}>
+        <Tabs
+          key={i}
+          defaultValue={scale[value]}
+          ref={slider({ value, onValueChange })}
+        >
           <TabsList className="p-0 overflow-hidden w-88">
             {scale.map((note) => (
               <TabsTrigger

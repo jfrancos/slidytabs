@@ -11,4 +11,4 @@ interface Props {
 const { example } = Astro.props;
 ---
 
-<p set:html={exampleText[example]} id={example} />
+<p set:html={exampleText[example]} id={example.toLocaleLowerCase()} />
