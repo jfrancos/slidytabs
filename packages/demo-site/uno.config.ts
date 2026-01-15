@@ -27,5 +27,5 @@ export default defineConfig({
     // "relative z-0 bg-neutral-300 rounded-sm .px-1 .-mx-1 [&.line]:inline-flex h-full w-full",
     // "relative z-0 before:(content-[''] absolute -inset-0.5 bg-neutral-300 rounded-sm -z-100 .w-full [&.line]:inline-flex) w-full [&.line]:inline-flex .bg-neutral-300 .rounded-sm .p-1 .-m-1 .-z-10",
   },
-  theme: { breakpoint: { md: "38rem" } },
+  // theme: { breakpoint: { sm: "38rem", md: "48rem" } },
 });

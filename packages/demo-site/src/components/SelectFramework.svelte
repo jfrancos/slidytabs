@@ -43,7 +43,7 @@
     }
   }
 >
-  <List class="*:px-2 *:gap-1 md:*:px-4 md:*:gap-2 *:h-7 rounded-md text-sm">
+  <List class="*:px-2 *:gap-1 sm:*:px-4 sm:*:gap-2 *:h-7 rounded-md text-sm">
     {#each frameworks as framework}
       <Trigger
         value={framework}

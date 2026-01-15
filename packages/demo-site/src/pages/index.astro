@@ -17,7 +17,7 @@ const exampleText = Object.fromEntries(
 );
 ---
 
-<html lang="en" class="scroll-smooth">
+<html lang="en" class=".scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -28,7 +28,7 @@ const exampleText = Object.fromEntries(
   <body class="flex flex-col">
     <div class="py-6 bg-zinc-200 color-zinc-700">
       <div
-        class="max-w-217 mx-auto w-full px-4 md:px-12 flex justify-between items-center"
+        class="max-w-217 mx-auto w-full px-4 sm:px-12 flex justify-between items-center"
       >
         <!-- bg-transparent and border-0 need !important for build but not dev -->
         <div
@@ -50,7 +50,7 @@ const exampleText = Object.fromEntries(
       </div>
     </div>
 
-    <div class="flex flex-col mx-auto w-full max-w-217 px-4 md:px-12">
+    <div class="flex flex-col mx-auto w-full max-w-217 px-4 sm:px-12">
       <div class="markdown-body [&_pre]:bg-muted! [&_li]:list-disc">
         <section set:html={sections["## Contents"]} />
         <section set:html={sections["## Why this exists"]} />
@@ -98,10 +98,53 @@ const exampleText = Object.fromEntries(
         <DemoText example={"Push"} />
       </div>
       <Demos filename="Push" />
-      <div class="text-xs self-center pb-2 flex flex-col items-center">
-        <img alt="Boston skyline" class="opacity-25 h-32" src={boston.src} />
-        Made with love in Camberville, MA
+      <div
+        class="flex text-xs md:items-end md:justify-between [&_a]:underline pb-4 flex-wrap md:flex-row flex-col items-center md:gap-0 gap-8"
+      >
+        <div class="flex-1 flex whitespace-nowrap">
+          <div class="flex flex-col gap-1.5 items-center">
+            <a
+              target="_blank"
+              rel="noopener"
+              href="https://docs.astro.build/en/concepts/islands"
+              >An Astro archipelago</a
+            >
+            <a
+              class="mono bg-#818b981f rounded-sm px-1 py-0.5 -mx-1 w-fit"
+              href="https://github.com/jfrancos/slidytabs/blob/main/packages/demo-site/src/pages/index.astro"
+              target="_blank"
+              rel="noopener"
+            >
+              querySelectorAll("astro-island").length === <span id="archipelago"
+              ></span>
+            </a>
+          </div>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 whitespace-nowrap">
+          Other projects:
+          <a href="https://oklch.beauty" target="_blank" rel="noopener"
+            >oklch.beauty</a
+          >
+        </div>
+        <div class="flex-1 flex justify-end whitespace-nowrap">
+          <div class="flex flex-col items-center">
+            <img
+              alt="Boston skyline"
+              class="opacity-25 h-32 -mt-8"
+              src={boston.src}
+            />
+            Made with love in Camberville, MA
+          </div>
+        </div>
       </div>
     </div>
   </body>
 </html>
+
+<script>
+  const numIslands = document.querySelectorAll("astro-island").length;
+  const span = document.querySelector("#archipelago");
+  if (span) {
+    span.textContent = numIslands.toString();
+  }
+</script>
