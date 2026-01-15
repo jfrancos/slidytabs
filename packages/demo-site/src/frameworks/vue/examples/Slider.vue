@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { slider } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn-vue/tabs";
+import { sharps, flats } from "@/lib/scales";
 const triggerClasses =
   "min-w-0 ring-inset rounded-lg h-full !shadow-none data-[state=active]:(bg-zinc-300 rounded-none) data-[state=inactive]:text-zinc-500";
 
@@ -13,14 +14,16 @@ const onValueChange = (newValue: number) => (value.value = Number(newValue));
   <div class="flex flex-col gap-4">
     <Tabs
       :ref="slider({ value, onValueChange })"
-      default-value="5"
-      class="text-center"
-      v-for=" in 2"
+      default-value="0"
+      v-for="scale in [flats, sharps]"
     >
-      <TabsList class="p-0 overflow-hidden">
-        <TabsTrigger :class="triggerClasses" v-for="i in 11" :value="i - 1">{{
-          i - 1
-        }}</TabsTrigger>
+      <TabsList class="p-0 overflow-hidden w-88">
+        <TabsTrigger
+          :class="triggerClasses"
+          v-for="note in scale"
+          :value="note"
+          >{{ note }}</TabsTrigger
+        >
       </TabsList>
     </Tabs>
   </div>

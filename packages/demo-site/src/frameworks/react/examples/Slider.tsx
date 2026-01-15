@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { slider } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
+import { sharps, flats } from "@/lib/scales";
 const triggerClasses =
   "min-w-0 ring-inset rounded-lg h-full !shadow-none data-[state=active]:(bg-zinc-300 rounded-none) data-[state=inactive]:text-zinc-500";
 
 export default () => {
-  const [value, onValueChange] = useState(5);
+  const [value, onValueChange] = useState(0);
   return (
     <div className="flex flex-col gap-4">
-      {Array.from({ length: 2 }, (_, n) => (
-        <Tabs key={n} defaultValue={"5"} ref={slider({ value, onValueChange })}>
-          <TabsList className="p-0 overflow-hidden">
-            {Array.from({ length: 11 }, (_, i) => (
+      {[flats, sharps].map((scale, i) => (
+        <Tabs key={i} defaultValue={"0"} ref={slider({ value, onValueChange })}>
+          <TabsList className="p-0 overflow-hidden w-88">
+            {scale.map((note) => (
               <TabsTrigger
-                key={i}
-                value={i.toString()}
-                children={i}
+                key={note}
+                value={note}
+                children={note}
                 className={triggerClasses}
               />
             ))}
