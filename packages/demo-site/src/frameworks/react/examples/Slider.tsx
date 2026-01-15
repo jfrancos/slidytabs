@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { slider } from "../../../../../slidytabs/dist";
+import { slider } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 import { sharps, flats } from "@/lib/scales";
 const triggerClasses =

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { slider, type SliderOptions } from "../../../../../slidytabs/dist";
+import { slider, type SliderOptions } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 const Slider = (sliderOptions: SliderOptions) => (

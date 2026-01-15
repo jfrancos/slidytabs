@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { tabs } from "../../../../../slidytabs/dist";
+import { tabs } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/tabs";
 
 export default () => {
