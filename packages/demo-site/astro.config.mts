@@ -31,7 +31,7 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        "@base": path.resolve("../.."),
+        "@README.md": path.resolve("../../README.md"),
       },
     },
   },

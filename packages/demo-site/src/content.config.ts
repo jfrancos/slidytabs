@@ -1,8 +1,8 @@
 import { defineCollection } from "astro:content";
-import * as readmeContent from "@base/README.md";
-import exampleContent from "./example-text.json";
 import { remark } from "remark";
 import remarkToc from "remark-toc";
+import * as readmeContent from "@README.md";
+import exampleContent from "./example-text.json";
 
 const { value: readmeWithToc } = await remark()
   .use(remarkToc, { skip: "slidytabs|Quick start|React|Svelte|Vue|Bugs" })
