@@ -1,9 +1,10 @@
 {
   "name": "slidytabs",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "prepublishOnly": "cp ../../README.md .",
     "dev": "tsup src/index.ts --watch --dts --format esm --splitting false --clean --sourcemap",
     "build": "tsup src/index.ts --dts --format esm --splitting false --clean --sourcemap"
   },
