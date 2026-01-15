@@ -29,9 +29,9 @@ const exampleText = Object.fromEntries(
       <div
         class="max-w-217 mx-auto w-full px-4 md:px-12 flex justify-between items-center"
       >
-        <div class="markdown-body bg-transparent">
+        <div class="markdown-body bg-transparent [&_p]:text-balance [&_code]:bg-white">
           <section
-            class="[&>*:nth-child(4)]:hidden [&>h1]:(color-pink-700 border-0) children:my-0! [&_code]:bg-white"
+            class="[&>*:nth-child(4)]:hidden [&>h1]:(color-pink-700 border-0) children:(my-0! py-0!) flex flex-col gap-2"
             set:html={sections["# slidytabs"]}
           />
         </div>
@@ -49,10 +49,12 @@ const exampleText = Object.fromEntries(
     <div
       class="flex flex-col .gap-8 .py-6 mx-auto w-full max-w-217 px-4 md:px-12"
     >
-      <div class="markdown-body [&_pre]:bg-muted!">
+      <div class="markdown-body [&_pre]:bg-muted! [&_li]:list-disc">
+        <section set:html={sections["## Contents"]} />
         <section set:html={sections["## Why this exists"]} />
         <section set:html={sections["## Install"]} />
         <section set:html={sections["## Usage"]} />
+        <!-- <section set:html={sections["## Quick start"]} /> -->
         <section set:html={sections["### Make tabs slide with `tabs()`"]} />
         <h4>Examples</h4>
         <p set:html={exampleText["Tabs"]} />

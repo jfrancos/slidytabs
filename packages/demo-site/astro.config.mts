@@ -11,7 +11,7 @@ import remarkToc from "remark-toc";
 export default defineConfig({
   markdown: {
     // remarkPlugins: [remarkToc],
-    remarkPlugins: [[remarkToc, {}]],
+    remarkPlugins: [[remarkToc, { heading: "Quick start", maxDepth: 3 }]],
 
     // gfm: true,
     shikiConfig: {
