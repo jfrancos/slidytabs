@@ -6,7 +6,12 @@ import exampleContent from "./example-text.json";
 
 const { value: readmeWithToc } = await remark()
   .use(remarkToc, { skip: "slidytabs|Quick start|React|Svelte|Vue|Bugs" })
-  .process("## Contents\n" + readmeContent.rawContent());
+  .process(
+    "## Contents\n" +
+      readmeContent
+        .rawContent()
+        .replace("(http://slidytabs.dev#slider) (demo site)", "(#slider)")
+  );
 
 const readme = defineCollection({
   loader: {
