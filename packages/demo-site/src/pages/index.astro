@@ -1,10 +1,9 @@
 ---
-import { Code } from "astro:components";
 import Demos from "@/components/Demos.astro";
-import { icons } from "@/lib/utils";
 import { getCollection } from "astro:content";
 import "github-markdown-css/github-markdown.css";
-import boston from "../assets/boston.svg";
+import { icons } from "@/lib/utils";
+import boston from "@/assets/boston.svg";
 
 const { github } = icons;
 const readme = await getCollection("readme");
@@ -17,7 +16,7 @@ const exampleText = Object.fromEntries(
 );
 ---
 
-<html lang="en" class="h-screen">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -25,32 +24,24 @@ const exampleText = Object.fromEntries(
     <meta name="generator" content={Astro.generator} />
     <title>slidytabs</title>
   </head>
-  <body class="flex flex-col h-screen bg-white">
-    <div class="py-6 bg-zinc-200 color-zinc-700 flex gap-2">
+  <body class="flex flex-col">
+    <div class="py-6 bg-zinc-200 color-zinc-700">
       <div
         class="max-w-217 mx-auto w-full px-4 md:px-12 flex justify-between items-center"
       >
-        <div class="flex flex-col">
-          <div class="font-semibold color-pink-700 text-32px">slidytabs</div>
-          <div class="text-balance">
-            A DOM-level utility for animating <span class="font-semibold"
-              >shadcn</span
-            >&ensp;
-            <Code
-              code="<Tabs />"
-              lang="jsx"
-              theme="github-light"
-              class="text-xs text-nowrap inline p-1 -m-1 rounded-sm"
-            />
-          </div>
+        <div class="markdown-body bg-transparent">
+          <section
+            class="[&>*:nth-child(4)]:hidden [&>h1]:(color-pink-700 border-0) children:my-0! [&_code]:bg-white"
+            set:html={sections["# slidytabs"]}
+          />
         </div>
         <a
           href="https://github.com/jfrancos/slidytabs"
-          class="hover:bg-zinc-300 p-2 -m-2 rounded-full transition-colors"
+          class="hover:bg-zinc-300 p-2.5 -m-2.5 rounded-full transition-colors"
           target="_blank"
           rel="noreferer"
         >
-          <div class:list={[github, "text-lg"]}></div>
+          <div class:list={[github, "text-xl"]}></div>
         </a>
       </div>
     </div>
@@ -108,11 +99,7 @@ const exampleText = Object.fromEntries(
         <section set:html={sections["## Bugs"]} />
       </div>
       <div class="text-xs self-center pb-2 flex flex-col items-center">
-        <img
-          alt="Boston skyline"
-          class="opacity-25 h-32"
-          src={boston.src}
-        />
+        <img alt="Boston skyline" class="opacity-25 h-32" src={boston.src} />
         Made with love in Camberville, MA
       </div>
     </div>

@@ -1,6 +1,8 @@
 # slidytabs
 
-A DOM-level utility for animating shadcn `<Tabs />`.
+A DOM-level utility for animating shadcn `<Tabs />`
+
+Works with [`shadcn`](https://ui.shadcn.com/docs/components/tabs), [`shadcn-svelte`](https://www.shadcn-svelte.com/docs/components/tabs), and [`shadcn-vue`](https://www.shadcn-vue.com/docs/components/tabs).
 
 Examples/demo at https://slidytabs.dev
 
