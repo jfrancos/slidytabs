@@ -36,7 +36,7 @@
     "remark": "^15.0.1",
     "remark-toc": "^9.0.0",
     "shiki": "^3.21.0",
-    "slidytabs": "link:../slidytabs",
+    "slidytabs": "^0.1",
     "svelte": "^5.46.4",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
