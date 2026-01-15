@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import "github-markdown-css/github-markdown.css";
 import { icons } from "@/lib/utils";
 import boston from "@/assets/boston.svg";
+import DemoText from "@/components/DemoText.astro";
 
 const { github } = icons;
 const readme = await getCollection("readme");
@@ -16,7 +17,7 @@ const exampleText = Object.fromEntries(
 );
 ---
 
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -55,18 +56,17 @@ const exampleText = Object.fromEntries(
         <section set:html={sections["## Why this exists"]} />
         <section set:html={sections["## Install"]} />
         <section set:html={sections["## Usage"]} />
-        <!-- <section set:html={sections["## Quick start"]} /> -->
         <section set:html={sections["### Make tabs slide with `tabs()`"]} />
         <h4>Examples</h4>
-        <p set:html={exampleText["Tabs"]} />
+        <DemoText example="Tabs" />
       </div>
       <Demos filename="Tabs" />
       <div class="markdown-body">
-        <p set:html={exampleText["ShadcnControlled"]} />
+        <DemoText example={"ShadcnControlled"} />
       </div>
       <Demos filename="ShadcnControlled" />
       <div class="markdown-body">
-        <p set:html={exampleText["SlidytabsControlled"]} />
+        <DemoText example={"SlidytabsControlled"} />
       </div>
       <Demos filename="SlidytabsControlled" />
       <div class="markdown-body [&_pre]:bg-muted!">
@@ -74,15 +74,15 @@ const exampleText = Object.fromEntries(
           set:html={sections["### Make tabs a slider with `slider()`"]}
         />
         <h4>Examples</h4>
-        <p set:html={exampleText["Slider"]} />
+        <DemoText example={"Slider"} />
       </div>
       <Demos filename="Slider" />
       <div class="markdown-body">
-        <p set:html={exampleText["Sticky"]} />
+        <DemoText example={"Sticky"} />
       </div>
       <Demos filename="Sticky" />
       <div class="markdown-body">
-        <p set:html={exampleText["Vertical"]} />
+        <DemoText example={"Vertical"} />
       </div>
       <Demos filename="Vertical" />
 
@@ -91,11 +91,11 @@ const exampleText = Object.fromEntries(
           set:html={sections["### Make tabs a range slider with `range()`"]}
         />
         <h4>Examples</h4>
-        <p set:html={exampleText["Range"]} />
+        <DemoText example={"Range"} />
       </div>
       <Demos filename="Range" />
       <div class="markdown-body">
-        <p set:html={exampleText["Push"]} />
+        <DemoText example={"Push"} />
       </div>
       <Demos filename="Push" />
       <div class="markdown-body">

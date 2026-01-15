@@ -1,0 +1,14 @@
+---
+import { getCollection } from "astro:content";
+
+const exampleCollection = await getCollection("examples");
+const exampleText = Object.fromEntries(
+  exampleCollection.map(({ id, rendered }) => [id, rendered?.html])
+);
+interface Props {
+  example: string;
+}
+const { example } = Astro.props;
+---
+
+<p set:html={exampleText[example]} id={example} />
