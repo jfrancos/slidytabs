@@ -1,6 +1,7 @@
 {
   "name": "slidytabs",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsup src/index.ts --watch --dts --format esm --splitting false --clean --sourcemap",
@@ -30,5 +31,11 @@
   "peerDependencies": {
     "tailwind-merge": "^3"
   },
-  "description": "A DOM-level utility for animating shadcn Tabs"
+  "description": "A DOM-level utility for animating shadcn Tabs",
+  "homepage": "https://slidytabs.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfrancos/slidytabs.git",
+    "directory": "packages/lib"
+  }
 }

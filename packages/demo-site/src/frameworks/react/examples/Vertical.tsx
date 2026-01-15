@@ -1,4 +1,4 @@
-import { slider } from "slidytabs";
+import { slider } from "../../../../../slidytabs/dist";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 export default () => (

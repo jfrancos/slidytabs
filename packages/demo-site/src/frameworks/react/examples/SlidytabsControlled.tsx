@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { tabs } from "slidytabs";
+import { tabs } from "../../../../../slidytabs/dist";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 const options = ["Correct", "Horse", "Battery", "Stapler"];
 
