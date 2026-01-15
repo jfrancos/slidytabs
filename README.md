@@ -8,7 +8,7 @@ Examples/demo at https://slidytabs.dev
 
 ## Why this exists
 
-* `shadcn` `<Tabs />` switch discretely between positions, which can feel jumpy in motion-oriented UIs. A proper solution should work with Tabs as-is, not as a wrapper.
+* `shadcn` `<Tabs />` jump between positions, which can feel abrupt in motion-oriented UIs. A proper solution should work with Tabs as-is, not as a wrapper.
 
 * **Separately:** Tabs are good for discrete structure; sliders are good for continuous interaction — there isn't a clear way to combine the two.
 

@@ -10,10 +10,7 @@ const onValueChange = (next: number) =>
 </script>
 
 <template>
-  <Tabs
-    :ref="tabs({ value: index, onValueChange })"
-    :default-value="options[index]"
-  >
+  <Tabs :ref="tabs({ value: index, onValueChange })" default-value="Correct">
     <TabsList class="[&>:nth-child(3)]:!text-red">
       <TabsTrigger v-for="item in options" :value="item" :key="item">{{
         item

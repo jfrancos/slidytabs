@@ -8,7 +8,7 @@
     next === 2 ? undefined : (index = next);
 </script>
 
-<Tabs {@attach tabs({ value: index, onValueChange })} value="correct">
+<Tabs {@attach tabs({ value: index, onValueChange })} value="Correct">
   <List class="[&>:nth-child(3)]:!text-red">
     {#each options as value}
       <Trigger {value}>{value}</Trigger>

@@ -9,10 +9,7 @@ export default () => {
     newIndex === 2 ? undefined : setIndex(newIndex);
 
   return (
-    <Tabs
-      defaultValue={options[index]}
-      ref={tabs({ value: index, onValueChange })}
-    >
+    <Tabs defaultValue="Correct" ref={tabs({ value: index, onValueChange })}>
       <TabsList className="[&>:nth-child(3)]:!text-red">
         {options.map((value) => (
           <TabsTrigger key={value} value={value}>
