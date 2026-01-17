@@ -94,7 +94,7 @@ export class Slidytabs {
           activeEdge: null,
           value: [this.activeIndex, this.activeIndex],
         },
-        this
+        this,
       );
     } else {
       this.updateValue(value);
@@ -104,7 +104,7 @@ export class Slidytabs {
   #extractFromDOM = () => {
     this.#triggers = [...this.#root.querySelectorAll("button")];
     const list = this.#root.querySelector(
-      "div[role=tablist]"
+      "div[role=tablist]",
     ) as HTMLDivElement | null;
     if (!list) {
       throw new Error("No list element");
@@ -135,7 +135,7 @@ export class Slidytabs {
         // trigger: e.target,
         value: this.value,
       },
-      this
+      this,
     );
   };
 
@@ -170,7 +170,7 @@ export class Slidytabs {
         activeEdge: this.down,
         value: this.value,
       },
-      this
+      this,
     );
   };
 
@@ -225,7 +225,7 @@ export class Slidytabs {
           activeEdge: this.down,
           value: this.value,
         },
-        this
+        this,
       );
     } else {
       trigger.focus();
@@ -252,7 +252,7 @@ export class Slidytabs {
     if (value[0] > value[1] && this.#push && this.down !== null) {
       adjustedValue = value.with(
         (this.down + 1) % 2,
-        value[this.down]
+        value[this.down],
       ) as RangeValue;
     }
     this.#slidytab.style.transitionDuration =
@@ -269,7 +269,7 @@ export class Slidytabs {
     }
     this.#slidytab.className = twMerge(
       this.#classes[this.value?.[0] ?? 0].base,
-      this.#classes[this.value?.[0] ?? 0].activeIndicator
+      this.#classes[this.value?.[0] ?? 0].activeIndicator,
     );
     const leftRect = this.#triggers[this.value[0]].getBoundingClientRect();
     const rightRect = this.#triggers[this.value[1]].getBoundingClientRect();
@@ -320,7 +320,7 @@ export class Slidytabs {
 
   get activeIndex() {
     const activeElement = this.#root.querySelector<HTMLButtonElement>(
-      "button[data-state=active]"
+      "button[data-state=active]",
     );
     if (!activeElement) {
       return -1;
@@ -344,8 +344,7 @@ export class Slidytabs {
   #setupResizeObserver = () => {
     const resizeObserver = new ResizeObserver(() => {
       this.#slidytab.style.transitionDuration = "0ms";
-      this.updateValue(this.value);
-      // this.value = this.value;
+      this.#updateIndicatorUI();
     });
     resizeObserver.observe(this.#list);
     return resizeObserver;
@@ -385,7 +384,7 @@ export class Slidytabs {
             const index = this.#triggers.indexOf(observation.target);
             this.#slidytab.className = twMerge(
               this.#classes[this.value?.[index] ?? 0].base,
-              this.#classes[this.value?.[index] ?? 0].activeIndicator
+              this.#classes[this.value?.[index] ?? 0].activeIndicator,
             );
             this.#onValueChange?.(
               {
@@ -393,12 +392,12 @@ export class Slidytabs {
                 activeEdge: this.down,
                 value: this.value,
               },
-              this
+              this,
             );
           }
         }
         this.#updateTriggersUI();
-      }
+      },
     );
     dataStateObserver.observe(this.#list, {
       subtree: true,
