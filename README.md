@@ -8,7 +8,7 @@ Examples/demo at https://slidytabs.dev
 
 ## Why this exists
 
-- **`tabs()`**: shadcn `<Tabs />` jump between positions, which can feel abrupt in motion-oriented UIs. A solution should work with Tabs _as-is_, not as a wrapper or replacement.
+- **`tabs()`**: [shadcn `<Tabs />`](https://ui.shadcn.com/docs/components/tabs) jump between positions, which can feel abrupt in motion-oriented UIs. A solution should work with Tabs _as-is_, not as a wrapper or replacement.
 
 - **`slider()` / `range()`**: Sometimes you want the semantics of a radio button or select, with the linearity and tactility of a slider. This comes up often when selecting from small, discrete sets where sliders feel _almost_ right, but slightly wrong. Think clothing sizes, days of the week, months, tip amounts, or school grades. [See this UX StackExchange discussion](https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1).
 

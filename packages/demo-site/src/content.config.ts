@@ -8,10 +8,13 @@ const { value: readmeWithToc } = await remark()
   .use(remarkToc, { skip: "slidytabs|Quick start|React|Svelte|Vue|Bugs" })
   .process("## Contents\n" + readmeContent.rawContent());
 
-const link =
+const articleLink =
   '<a href="https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1">';
-const targetLink =
+const articleTargetLink =
   '<a target="_blank" rel="noopener noreferrer" href="https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1">';
+const shadcnLink = '<a href="https://ui.shadcn.com/docs/components/tabs">';
+const shadcnTargetLink =
+  '<a target="_blank" rel="noopener noreferrer" href="https://ui.shadcn.com/docs/components/tabs">';
 
 const readme = defineCollection({
   loader: {
@@ -24,7 +27,9 @@ const readme = defineCollection({
         if (line.startsWith("#") || Number(index) === lines.length - 1) {
           if (entry) {
             const rendered = await renderMarkdown(entry.text);
-            rendered.html = rendered.html.replace(link, targetLink);
+            rendered.html = rendered.html
+              .replace(articleLink, articleTargetLink)
+              .replace(shadcnLink, shadcnTargetLink);
             store.set({
               id: entry.id,
               data: {},
