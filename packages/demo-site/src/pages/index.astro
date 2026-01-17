@@ -9,7 +9,7 @@ import DemoText from "@/components/DemoText.astro";
 const { github } = icons;
 const readme = await getCollection("readme");
 const sections = Object.fromEntries(
-  readme.map(({ id, rendered }) => [id, rendered?.html])
+  readme.map(({ id, rendered }) => [id, rendered?.html]),
 );
 // const exampleCollection = await getCollection("examples");
 // const exampleText = Object.fromEntries(
@@ -23,7 +23,7 @@ const sections = Object.fromEntries(
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta property="og:url" content="https://slidytabs.dev">
+    <meta property="og:url" content="https://slidytabs.dev" />
     <title>slidytabs</title>
   </head>
   <body class="flex flex-col">
@@ -41,6 +41,7 @@ const sections = Object.fromEntries(
           />
         </div>
         <a
+          aria-label="visit the slidytabs repo at github"
           href="https://github.com/jfrancos/slidytabs"
           class="hover:bg-zinc-300 p-2.5 -m-2.5 rounded-full transition-colors"
           target="_blank"
@@ -51,7 +52,7 @@ const sections = Object.fromEntries(
       </div>
     </div>
 
-    <div class="flex flex-col mx-auto w-full max-w-217 px-4 sm:px-12">
+    <main class="flex flex-col mx-auto w-full max-w-217 px-4 sm:px-12">
       <div class="markdown-body [&_pre]:bg-muted! [&_li]:list-disc">
         <section set:html={sections["## Contents"]} />
         <section set:html={sections["## Why this exists"]} />
@@ -138,7 +139,7 @@ const sections = Object.fromEntries(
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </body>
 </html>
 
