@@ -8,9 +8,10 @@ Examples/demo at https://slidytabs.dev
 
 ## Why this exists
 
-- `shadcn` `<Tabs />` jump between positions, which can feel abrupt in motion-oriented UIs. A solution should work with Tabs as-is, not as a wrapper.
+- **`tabs()`**: shadcn `<Tabs />` jump between positions, which can feel abrupt in motion-oriented UIs. A solution should work with Tabs *as-is*, not as a wrapper or replacement.
 
-- **Separately:** Tabs are good for discrete structure; sliders are good for continuous interaction — there isn't a clear way to combine the two. [See the first `slider()` example](http://slidytabs.dev#slider) (demo site)
+
+- **`slider()` / `range()`**: Tabs are good for discrete structure; sliders are good for continuous interaction — but there isn’t a clear way to combine the two. [See the first `slider()` example](http://slidytabs.dev#slider) (demo site)
 
 ## Install
 
