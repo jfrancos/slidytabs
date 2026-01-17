@@ -6,12 +6,12 @@ import exampleContent from "./example-text.json";
 
 const { value: readmeWithToc } = await remark()
   .use(remarkToc, { skip: "slidytabs|Quick start|React|Svelte|Vue|Bugs" })
-  .process(
-    "## Contents\n" +
-      readmeContent
-        .rawContent()
-        .replace("(http://slidytabs.dev#slider) (demo site)", "(#slider)"),
-  );
+  .process("## Contents\n" + readmeContent.rawContent());
+
+const link =
+  '<a href="https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1">';
+const targetLink =
+  '<a target="_blank" rel="noopener noreferrer" href="https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1">';
 
 const readme = defineCollection({
   loader: {
@@ -23,10 +23,12 @@ const readme = defineCollection({
       for (const [index, line] of Object.entries(lines)) {
         if (line.startsWith("#") || Number(index) === lines.length - 1) {
           if (entry) {
+            const rendered = await renderMarkdown(entry.text);
+            rendered.html = rendered.html.replace(link, targetLink);
             store.set({
               id: entry.id,
               data: {},
-              rendered: await renderMarkdown(entry.text),
+              rendered,
             });
           }
           entry = { id: line, text: "" };
