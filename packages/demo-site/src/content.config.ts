@@ -10,7 +10,7 @@ const { value: readmeWithToc } = await remark()
     "## Contents\n" +
       readmeContent
         .rawContent()
-        .replace("(http://slidytabs.dev#slider) (demo site)", "(#slider)")
+        .replace("(http://slidytabs.dev#slider) (demo site)", "(#slider)"),
   );
 
 const readme = defineCollection({

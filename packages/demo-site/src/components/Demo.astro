@@ -1,15 +1,30 @@
 ---
+import { range } from "@isaacs/balanced-match";
 import Code from "./Code.astro";
 import SvelteShell from "@/frameworks/svelte/Shell.svelte";
 import TsxShell from "@/frameworks/react/Shell.tsx";
 import VueShell from "@/frameworks/vue/Shell.vue";
 import { icons } from "@/lib/utils";
-import {
-  extractTsx,
-  extractSvelte,
-  extractVue,
-  // extractAstro,
-} from "@/lib/findHighlight.ts";
+
+
+export const extractVueCode = (code: string) => {
+  const start = code.indexOf(':ref="')
+  const end = range('"', '"', code.slice(start))?.[1] ?? 0;
+  return code.slice(start, end + start + 1)
+};
+
+export const extractTsxCode = (code: string) => {
+  const start = code.indexOf("ref={")
+  const end = range("{", "}", code.slice(start))?.[1] ?? 0;
+    return code.slice(start, end+ start + 1)
+};
+
+export const extractSvelteCode = (code: string) => {
+  const start = code.indexOf("{@attach ")
+  const end = range("{", "}", code.slice(start))?.[1] ?? 0;
+    return code.slice(start, end + start + 1)
+};
+
 import type { Framework } from "@/lib/store";
 
 // import fs from "node:fs/promises";
@@ -47,19 +62,21 @@ const { default: Component } = await import(
 //   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 // );
 
-const { highlightFn, prefix, logo } = {
+
+
+const { prefix, logo, highlightFnCode } = {
   react: {
-    highlightFn: extractTsx,
+    highlightFnCode: extractTsxCode,
     prefix: `// ${filename}.tsx`,
     logo: react,
   },
   svelte: {
-    highlightFn: extractSvelte,
+    highlightFnCode: extractSvelteCode,
     prefix: `<!-- ${filename}.svelte -->`,
     logo: svelte,
   },
   vue: {
-    highlightFn: extractVue,
+    highlightFnCode: extractVueCode,
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
@@ -79,7 +96,8 @@ const height = 40 + minLines * 20;
 //         .toSpliced(1, 0, prefix)
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
-const highlight = highlightFn(code);
+const highlightedCode = highlightFnCode(code)
+// console.log(highlightedCode)
 
 const wip = filename==="Sticky" && framework === "vue"
 ---
@@ -106,5 +124,5 @@ const wip = filename==="Sticky" && framework === "vue"
       <Component />
     </div>
   </div>
-  <Code {highlight} {code} {lang} {height} />}
+  <Code {code} {lang} {height} {highlightedCode} />}
 </div>

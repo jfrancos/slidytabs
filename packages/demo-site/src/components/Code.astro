@@ -1,52 +1,65 @@
 ---
-import { codeToHtml, type BundledLanguage } from "shiki";
+import { Code as AstroCode } from "astro:components";
+import { transformerMetaWordHighlight } from "@shikijs/transformers";
+import type { CodeLanguage } from "astro";
 
 interface Props {
   code: string;
-  highlight?: { start: number; end: number }[];
-  lang: BundledLanguage;
+  lang: CodeLanguage;
   class?: string;
   lineNumbers?: boolean;
   height?: number;
+  highlightedCode?: string;
 }
+
 const {
   code,
-  highlight,
   lang,
   class: className,
   lineNumbers = true,
   height,
+  highlightedCode,
 } = Astro.props;
-const html = codeToHtml(code, {
-  lang,
-  theme: "github-light",
-  decorations: highlight?.map(({ start, end }) => ({
-    start,
-    end,
-    properties: { class: "highlight" },
-  })),
-});
+
+const meta = [
+  highlightedCode,
+  'import { tabs } from "slidytabs";',
+  '  import { tabs } from "slidytabs";',
+  'import { slider } from "slidytabs";',
+  '  import { slider } from "slidytabs";',
+  'import { slider, type SliderOptions } from "slidytabs";',
+  '  import { slider, type SliderOptions } from "slidytabs";',
+  'import { range, type RangeValue } from "slidytabs";',
+  '  import { range, type RangeValue } from "slidytabs";',
+]
+  .map((item) => `/${item}/`)
+  .join("");
 ---
 
-<div
-  style={{ height: `${height}px` }}
-  set:html={html}
-  class:list={[
-    "children:(text-sm px-6 py-5 !bg-muted overflow-scroll h-full)",
-    className,
-    lineNumbers && "line-numbers",
-  ]}
-/>
+<div style={{ height: `${height}px` }}>
+  <AstroCode
+    transformers={[transformerMetaWordHighlight()]}
+    {meta}
+    {code}
+    {lang}
+    theme="github-light"
+    class:list={[
+      "text-sm px-6 py-5 bg-muted! h-full",
+      className,
+      lineNumbers && "line-numbers",
+    ]}
+  />
+</div>
 
 <style is:global>
-  .shiki {
+  .astro-code {
     counter-reset: step;
     counter-increment: step 0;
   }
-  :not(.line-numbers) > .shiki .line::before {
+  :not(.line-numbers).astro-code .line::before {
     display: none;
   }
-  .shiki .line::before {
+  .astro-code .line::before {
     content: counter(step);
     counter-increment: step;
     width: 1rem;

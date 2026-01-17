@@ -11,10 +11,10 @@ const readme = await getCollection("readme");
 const sections = Object.fromEntries(
   readme.map(({ id, rendered }) => [id, rendered?.html])
 );
-const exampleCollection = await getCollection("examples");
-const exampleText = Object.fromEntries(
-  exampleCollection.map(({ id, rendered }) => [id, rendered?.html])
-);
+// const exampleCollection = await getCollection("examples");
+// const exampleText = Object.fromEntries(
+//   exampleCollection.map(({ id, rendered }) => [id, rendered?.html])
+// );
 ---
 
 <html lang="en" class=".scroll-smooth">
@@ -23,6 +23,7 @@ const exampleText = Object.fromEntries(
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <meta property="og:url" content="https://slidytabs.dev">
     <title>slidytabs</title>
   </head>
   <body class="flex flex-col">
