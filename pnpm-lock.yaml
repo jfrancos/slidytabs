@@ -69,8 +69,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       slidytabs:
-        specifier: link:../slidytabs
-        version: link:../slidytabs
+        specifier: ^0.1.6
+        version: 0.1.6(tailwind-merge@3.4.0)
       svelte:
         specifier: ^5.46.4
         version: 5.46.4
@@ -3730,6 +3730,11 @@ packages:
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
+  slidytabs@0.1.6:
+    resolution: {integrity: sha512-VnjyqMz3exjAZCv0Td6e4PvNjwdvwLQ1B0DPv5shDID7TrB5kpDWfgNFoEgrUgX8ASgnwOH2r9JPuGT7cQwbJA==}
+    peerDependencies:
+      tailwind-merge: ^3
 
   smol-toml@1.6.0:
     resolution: {integrity: sha512-4zemZi0HvTnYwLfrpk/CF9LOd9Lt87kAt50GnqhMpyF9U3poDAP2+iukq2bZsO/ufegbYehBkqINbsWxj4l4cw==}
@@ -8607,6 +8612,10 @@ snapshots:
       totalist: 3.0.1
 
   sisteransi@1.0.5: {}
+
+  slidytabs@0.1.6(tailwind-merge@3.4.0):
+    dependencies:
+      tailwind-merge: 3.4.0
 
   smol-toml@1.6.0: {}
 
