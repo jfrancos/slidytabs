@@ -11,7 +11,7 @@ Examples/demo at https://slidytabs.dev
 - **`tabs()`**: shadcn `<Tabs />` jump between positions, which can feel abrupt in motion-oriented UIs. A solution should work with Tabs *as-is*, not as a wrapper or replacement.
 
 
-- **`slider()` / `range()`**: Tabs are good for discrete structure; sliders are good for continuous interaction — but there isn’t a clear way to combine the two. [See the first `slider()` example](http://slidytabs.dev#slider) (demo site)
+- **`slider()` / `range()`**: Sometimes you want the semantics of a radio button or select, with the linearity and tactility of a slider.  This comes up often when selecting from small, discrete sets where sliders feel *almost* right, but slightly wrong.  Think clothing sizes, days of the week, months, tip amounts, or school grades.  [See this UX StackExchange discussion](https://ux.stackexchange.com/questions/122217/what-is-the-best-ui-component-to-make-user-select-a-number-from-small-range-1-1).
 
 ## Install
 
@@ -116,3 +116,5 @@ range(options?: {
 Getting this to work requires some `document.styleSheets` acrobatics, and this is an early release, so edge cases likely exist.
 
 Please open issues, especially if your Tabs component works as expected without `slidytabs`, but behaves unexpectedly once `slidytabs` is applied.
+
+Sliders can smuggle in unwanted semantics
