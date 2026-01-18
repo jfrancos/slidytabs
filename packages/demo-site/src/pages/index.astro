@@ -11,10 +11,6 @@ const readme = await getCollection("readme");
 const sections = Object.fromEntries(
   readme.map(({ id, rendered }) => [id, rendered?.html]),
 );
-// const exampleCollection = await getCollection("examples");
-// const exampleText = Object.fromEntries(
-//   exampleCollection.map(({ id, rendered }) => [id, rendered?.html])
-// );
 ---
 
 <html lang="en" class=".scroll-smooth">
@@ -52,7 +48,7 @@ const sections = Object.fromEntries(
           target="_blank"
           rel="noopener noreferrer"
         >
-          <div class:list={[github, "text-xl"]}></div>
+          <div class:list={[github, "size-7"]}></div>
         </a>
       </div>
     </div>

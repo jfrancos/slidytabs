@@ -5,35 +5,16 @@ import SvelteShell from "@/frameworks/svelte/Shell.svelte";
 import TsxShell from "@/frameworks/react/Shell.tsx";
 import VueShell from "@/frameworks/vue/Shell.vue";
 import { icons } from "@/lib/utils";
+import type { Framework } from "@/lib/store";
 
 
-export const extractVueCode = (code: string) => {
-  const start = code.indexOf(':ref="')
-  const end = range('"', '"', code.slice(start))?.[1] ?? 0;
+const extractCode = ({chunk, open, close}: {chunk: string, open: string, close :string} ) =>   (code: string) => {
+  const start = code.indexOf(chunk)
+  const end = range(open, close, code.slice(start))?.[1] ?? 0;
   return code.slice(start, end + start + 1)
 };
 
-export const extractTsxCode = (code: string) => {
-  const start = code.indexOf("ref={")
-  const end = range("{", "}", code.slice(start))?.[1] ?? 0;
-    return code.slice(start, end+ start + 1)
-};
-
-export const extractSvelteCode = (code: string) => {
-  const start = code.indexOf("{@attach ")
-  const end = range("{", "}", code.slice(start))?.[1] ?? 0;
-    return code.slice(start, end + start + 1)
-};
-
-import type { Framework } from "@/lib/store";
-
-// import fs from "node:fs/promises";
-// import path from "node:path";
-// import test from "../frameworks/react/examples/DoubleSliders.tsx?raw";
-// console.log(test);
-
 const { react, svelte, vue } = icons;
-// const { react, svelte, vue, astro } = icons;
 
 interface Props {
   filename: string;
@@ -48,13 +29,6 @@ const { default: Component } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}`
 );
 
-// const raw = await fs.readFile(
-//   path.resolve(
-//     new URL(".", import.meta.url).pathname,
-//     `../frameworks/${framework}/examples/${filename}.${lang}`
-//   ),
-//   "utf8"
-// );
 
 // TODO ?raw files are preprocessed by unocss transformers
 // ^fs.readFile causes SSR flash and doesn't work in build
@@ -66,25 +40,20 @@ const { default: Component } = await import(
 
 const { prefix, logo, highlightFnCode } = {
   react: {
-    highlightFnCode: extractTsxCode,
+    highlightFnCode: extractCode({chunk: "ref={", open: "{", close: "}"}),
     prefix: `// ${filename}.tsx`,
     logo: react,
   },
   svelte: {
-    highlightFnCode: extractSvelteCode,
+        highlightFnCode: extractCode({chunk: "{@attach ", open: "{", close: "}"}),
     prefix: `<!-- ${filename}.svelte -->`,
     logo: svelte,
   },
   vue: {
-    highlightFnCode: extractVueCode,
+            highlightFnCode: extractCode({chunk: ':ref="', open: '"', close: '"'}),
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
-  // astro: {
-  //   highlightFn: extractAstro,
-  //   prefix: `// ${filename}.astro`,
-  //   logo: astro,
-  // },
 }[framework];
 const code = `${prefix}\n${raw.slice(0, -1)}`;
 const height = 40 + minLines * 20;
@@ -97,7 +66,6 @@ const height = 40 + minLines * 20;
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
 const highlightedCode = highlightFnCode(code)
-// console.log(highlightedCode)
 
 const wip = filename==="Sticky" && framework === "vue"
 ---
