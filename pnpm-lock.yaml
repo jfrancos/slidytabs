@@ -68,6 +68,9 @@ importers:
       remark-toc:
         specifier: ^9.0.0
         version: 9.0.0
+      shiki:
+        specifier: ^3.21.0
+        version: 3.21.0
       slidytabs:
         specifier: ^0.1.6
         version: 0.1.6(tailwind-merge@3.4.0)

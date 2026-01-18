@@ -1,5 +1,5 @@
 ---
-import { range } from "@isaacs/balanced-match";
+import { balanced } from "@isaacs/balanced-match";
 import Code from "./Code.astro";
 import SvelteShell from "@/frameworks/svelte/Shell.svelte";
 import TsxShell from "@/frameworks/react/Shell.tsx";
@@ -7,11 +7,18 @@ import VueShell from "@/frameworks/vue/Shell.vue";
 import { icons } from "@/lib/utils";
 import type { Framework } from "@/lib/store";
 
-
-const extractCode = ({chunk, open, close}: {chunk: string, open: string, close :string} ) =>   (code: string) => {
-  const start = code.indexOf(chunk)
-  const end = range(open, close, code.slice(start))?.[1] ?? 0;
-  return code.slice(start, end + start + 1)
+const getRefToken = (code: string) => {
+  const refMatch = /ref={|:ref="|{@attach /.exec(code);
+  if (!refMatch) {
+    return "";
+  }
+  const pair: [string, string] =
+    refMatch[0] === ':ref="' ? ['"', '"'] : ["{", "}"];
+  const pairMatch = balanced(...pair, code.slice(refMatch.index));
+  if (!pairMatch) {
+    throw new Error("Unbalanced pair");
+  }
+  return code.slice(refMatch.index, refMatch.index + pairMatch.end + 1);
 };
 
 const { react, svelte, vue } = icons;
@@ -29,28 +36,22 @@ const { default: Component } = await import(
   `../frameworks/${framework}/examples/${filename}.${lang}`
 );
 
-
 // TODO ?raw files are preprocessed by unocss transformers
 // ^fs.readFile causes SSR flash and doesn't work in build
 // const { default: raw } = await import(
 //   `../frameworks/${framework}/examples/${filename}.${lang}?raw`
 // );
 
-
-
-const { prefix, logo, highlightFnCode } = {
+const { prefix, logo } = {
   react: {
-    highlightFnCode: extractCode({chunk: "ref={", open: "{", close: "}"}),
     prefix: `// ${filename}.tsx`,
     logo: react,
   },
   svelte: {
-        highlightFnCode: extractCode({chunk: "{@attach ", open: "{", close: "}"}),
     prefix: `<!-- ${filename}.svelte -->`,
     logo: svelte,
   },
   vue: {
-            highlightFnCode: extractCode({chunk: ':ref="', open: '"', close: '"'}),
     prefix: `<!-- ${filename}.vue -->`,
     logo: vue,
   },
@@ -65,17 +66,26 @@ const height = 40 + minLines * 20;
 //         .toSpliced(1, 0, prefix)
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
-const highlightedCode = highlightFnCode(code)
+const highlightedCode = getRefToken(code);
 
-const wip = filename==="Sticky" && framework === "vue"
+const wip = filename === "Sticky" && framework === "vue";
 ---
 
 <div
-  class:list={["flex flex-col border-gray-100 rounded-lg relative transition-opacity", !wip && "border-4 "]}
+  class:list={[
+    "flex flex-col border-gray-100 rounded-lg relative transition-opacity",
+    !wip && "border-4 ",
+  ]}
   data-docs={`${filename}:${framework}`}
 >
-{ wip ? "Coming soon ..." : 
-  <div class:list={["flex justify-center items-center relative select-none", filename === "Sticky" ? "h-40" : "h-32"]}>
+  <div class:list={[wip || "hidden"]}>Coming soon ...</div>
+  <div
+    class:list={[
+      "flex justify-center items-center relative select-none",
+      wip && "hidden",
+      filename === "Sticky" ? "h-40" : "h-32",
+    ]}
+  >
     <div
       class:list={[
         logo,
@@ -92,5 +102,7 @@ const wip = filename==="Sticky" && framework === "vue"
       <Component />
     </div>
   </div>
-  <Code {code} {lang} {height} {highlightedCode} />}
+  <div class:list={[wip && "hidden"]}>
+    <Code {code} {lang} {height} {highlightedCode} />
+  </div>
 </div>
