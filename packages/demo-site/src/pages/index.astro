@@ -16,13 +16,23 @@ const sections = Object.fromEntries(
 <html lang="en" class=".scroll-smooth">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="slidytabs" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.png" /> -->
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.png" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta property="og:url" content="https://slidytabs.dev" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="slidytabs" />
     <meta property="og:image" content="https://slidytabs.dev/sliders.png" />
+
     <meta
       property="og:description"
       content="slidytabs adds a sliding indicator animation to shadcn-svelte `<Tabs />` without changing how you use or customize the component"
