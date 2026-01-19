@@ -51,7 +51,8 @@ const html = codeToHtml(code, {
   meta: {
     __raw: meta,
     class: clsx([
-      "text-sm py-5 bg-muted h-full overflow-scroll astro-code [&_.line]:(px-6 block)",
+      // test small scolling widths before adjusting this
+      "text-sm py-5 bg-muted h-full overflow-auto astro-code [&_.line]:(px-6 block) [&>code]:(inline-block min-w-max w-full)",
       lineNumbers && "line-numbers",
     ]),
   },
