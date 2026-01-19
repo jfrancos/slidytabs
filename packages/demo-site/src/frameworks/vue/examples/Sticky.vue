@@ -7,11 +7,11 @@ const triggerClasses =
 
 const Slider = ({
   value,
-  handleValue: onValueChange,
+  onValueChange,
   sticky,
 }: {
   value?: number;
-  handleValue?: (value: number) => void;
+  onValueChange?: (value: number) => void;
   sticky?: number;
 }) => (
   <Tabs defaultValue={"5"} ref={slider({ value, onValueChange, sticky })}>
