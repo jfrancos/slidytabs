@@ -22,7 +22,7 @@ export default defineConfig({
   safelist: ["highlight", "line", "highlighted-word"],
   shortcuts: {
     "highlighted-word":
-      "bg-green-200 .bg-#c7e8ce .bg-#c6ffd3 .bg-#d7f9de .bg-#dafbe1 px-0.25rem -mx-0.25rem py-0.125rem -my-0.125rem w-full",
+      "bg-green-200 .bg-#c7e8ce .bg-#c6ffd3 .bg-#d7f9de .bg-#dafbe1 [&:not(.line)]:(px-0.25rem -mx-0.25rem py-0.125rem -my-0.125rem) .w-full",
     // highlight: "bg-zinc-300 rounded-sm p-1 -m-1",
     // code: "bg-zinc-300 rounded-sm p-1 -m-1",
     // "relative z-0 before:(content-[''] bg-neutral-300 absolute drop-shadow -z-100 inset-0 w-full block .-mx-10) w-full inline-block bg-blend-lighten"

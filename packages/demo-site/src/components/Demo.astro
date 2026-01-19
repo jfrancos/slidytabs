@@ -7,20 +7,6 @@ import VueShell from "@/frameworks/vue/Shell.vue";
 import { icons } from "@/lib/utils";
 import type { Framework } from "@/lib/store";
 
-const getRefToken = (code: string) => {
-  const refMatch = /ref={|:ref="|{@attach /.exec(code);
-  if (!refMatch) {
-    return "";
-  }
-  const pair: [string, string] =
-    refMatch[0] === ':ref="' ? ['"', '"'] : ["{", "}"];
-  const pairMatch = balanced(...pair, code.slice(refMatch.index));
-  if (!pairMatch) {
-    throw new Error("Unbalanced pair");
-  }
-  return code.slice(refMatch.index, refMatch.index + pairMatch.end + 1);
-};
-
 const { react, svelte, vue } = icons;
 
 interface Props {
@@ -66,23 +52,17 @@ const height = 40 + minLines * 20;
 //         .toSpliced(1, 0, prefix)
 //         .join("\n")
 //     : `${prefix}\n${raw}`;
-const highlightedCode = getRefToken(code);
 
 const wip = filename === "Sticky" && framework === "vue";
 ---
 
 <div
-  class:list={[
-    "flex flex-col border-gray-100 rounded-lg relative transition-opacity",
-    !wip && "border-4 ",
-  ]}
+  class="flex flex-col relative transition-opacity"
   data-docs={`${filename}:${framework}`}
 >
-  <div class:list={[wip || "hidden"]}>Coming soon ...</div>
   <div
     class:list={[
-      "flex justify-center items-center relative select-none",
-      wip && "hidden",
+      "flex justify-center items-center relative select-none border-4 border-gray-100 rounded-t-lg",
       filename === "Sticky" ? "h-40" : "h-32",
     ]}
   >
@@ -94,15 +74,13 @@ const wip = filename === "Sticky" && framework === "vue";
     >
     </div>
     {lang === "svelte" && <SvelteShell {filename} client:idle />}
-    {lang === "vue" && <VueShell {filename} client:idle />}
+    {lang === "vue" && !wip && <VueShell {filename} client:idle />}
     {lang === "tsx" && <TsxShell {filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
   have both simultaneously and hide the SSR once the client is visible: -->
     <div class="[:has(*)~&]:hidden">
-      <Component />
+      {wip ? "Coming soon…" : <Component />}
     </div>
   </div>
-  <div class:list={[wip && "hidden"]}>
-    <Code {code} {lang} {height} {highlightedCode} />
-  </div>
+  <Code {code} {lang} {height} />
 </div>
