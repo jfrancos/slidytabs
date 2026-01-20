@@ -60,6 +60,8 @@ const html = codeToHtml(code, {
 });
 ---
 
+<!-- It's tempting to try and use <Code /> but it shiki won't
+handle vue with embedded jsx, without astro exposing `langs` -->
 <Fragment set:html={html} />
 
 <!-- <AstroCode
