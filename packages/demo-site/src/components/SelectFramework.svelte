@@ -1,15 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { slider } from "slidytabs";
-  import { frameworks, type Framework } from "@/lib/store";
-  import { icons } from "@/lib/utils";
+  import { icons, frameworks, type Framework } from "@/lib/utils";
   import { Root, List, Trigger } from "@/shadcn-svelte/tabs";
   import { persistentAtom } from "@nanostores/persistent";
   const defaultFramework = "react";
 
   const { filename }: { filename: string } = $props();
   const frameworkAtom = $derived(
-    persistentAtom<Framework>(`framework:${filename}`, defaultFramework)
+    persistentAtom<Framework>(`framework:${filename}`, defaultFramework),
   );
   const updateState = () => {
     for (const framework of frameworks) {

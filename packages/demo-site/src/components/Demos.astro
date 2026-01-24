@@ -1,5 +1,5 @@
 ---
-import { frameworks } from "@/lib/store";
+import { frameworks } from "@/lib/utils";
 import Demo from "./Demo.astro";
 import SelectFramework from "./SelectFramework.svelte";
 
@@ -8,17 +8,16 @@ interface Props {
 }
 const { filename } = Astro.props;
 const examples = import.meta.glob(
-  "../frameworks/*/examples/*.{tsx,react,svelte,vue,solid,astro}"
+  "../frameworks/*/examples/*.{tsx,react,svelte,vue,solid,astro}",
 );
-
 const langForFramework = (framework: string) =>
   framework === "react" ? "tsx" : framework;
 
 const exists = (framework: string) =>
   Object.keys(examples).some((path) =>
     path.endsWith(
-      `/frameworks/${framework}/examples/${filename}.${langForFramework(framework)}`
-    )
+      `/frameworks/${framework}/examples/${filename}.${langForFramework(framework)}`,
+    ),
   );
 
 const codes = Object.fromEntries(frameworks.map((item) => [item, ""]));

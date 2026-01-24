@@ -13,3 +13,6 @@ export const icons = {
   astro: "i-logos-astro-icon",
   github: "i-logos:github-icon",
 };
+
+export const frameworks = ["react", "vue", "svelte"] as const;
+export type Framework = (typeof frameworks)[number];
