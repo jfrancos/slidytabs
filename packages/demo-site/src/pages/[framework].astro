@@ -1,0 +1,13 @@
+---
+import Index from "./index.astro";
+
+export function getStaticPaths() {
+  return [
+    { params: { framework: "svelte" } },
+    { params: { framework: "vue" } },
+    { params: { framework: "react" } },
+  ];
+}
+---
+
+<Index />

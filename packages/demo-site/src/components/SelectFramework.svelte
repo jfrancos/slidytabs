@@ -29,19 +29,25 @@
       }
     }
   };
-  onMount(updateState);
+  onMount(async () => {
+    for (const framework of frameworks) {
+      if (location.pathname === `/${framework}`) {
+        frameworkAtom.set(framework);
+      }
+    }
+  });
 </script>
 
 <Root
-  {@attach slider()}
-  class="items-end"
-  bind:value={
-    () => $frameworkAtom,
-    (newValue) => {
-      frameworkAtom.set(newValue);
+  {@attach slider({
+    value: frameworks.indexOf($frameworkAtom),
+    onValueChange: (value) => {
+      frameworkAtom.set(frameworks[value]);
       updateState();
-    }
-  }
+    },
+  })}
+  class="items-end"
+  value="react"
 >
   <List class="*:px-2 *:gap-1 sm:*:px-4 sm:*:gap-2 *:h-7 rounded-md text-sm">
     {#each frameworks as framework}
