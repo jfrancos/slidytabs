@@ -33,6 +33,7 @@
     for (const framework of frameworks) {
       if (location.pathname === `/${framework}`) {
         frameworkAtom.set(framework);
+        updateState();
       }
     }
   });
