@@ -1,16 +1,32 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "formatter": {
-    "indentStyle": "space",
-    "enabled": true
-  },
+  // "formatter": {
+  //   "indentStyle": "space",
+  //   "enabled": true,
+  //   "lineWidth": 96
+  // },
+  // "linter": {
+  //   "enabled": true
+  // },
   "html": {
     "experimentalFullSupportEnabled": true,
-    "formatter": { "enabled": true }
-  },
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
+    "formatter": { "enabled": true, "indentScriptAndStyle": true }
   }
+  //   "vcs": {
+  //     "enabled": true,
+  //     "clientKind": "git",
+  //     "useIgnoreFile": true
+  //   },
+  //   "overrides": [
+  //     {
+  //       "includes": ["**/react/examples/**"],
+  //       "linter": { "rules": { "correctness": { "noChildrenProp": "off" } } }
+  //     },
+  //     {
+  //       "includes": ["**/svelte/examples/**"],
+  //       // https://github.com/biomejs/biome/issues/9193
+  //       "linter": { "rules": { "correctness": { "noUnusedImports": "off" } } },
+  //       "html": { "formatter": { "indentScriptAndStyle": true } }
+  //     }
+  //   ]
 }

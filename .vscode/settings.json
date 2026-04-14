@@ -10,5 +10,8 @@
   "biome.lsp.trace.server": "verbose",
   "[astro]": {
     "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }

@@ -10,8 +10,7 @@ const { filename } = Astro.props;
 const examples = import.meta.glob(
   "../frameworks/*/examples/*.{tsx,react,svelte,vue,solid,astro}",
 );
-const langForFramework = (framework: string) =>
-  framework === "react" ? "tsx" : framework;
+const langForFramework = (framework: string) => (framework === "react" ? "tsx" : framework);
 
 const exists = (framework: string) =>
   Object.keys(examples).some((path) =>
@@ -37,12 +36,10 @@ const height = filename === "Sticky" ? 228 : 196;
 <div class="flex flex-col gap-3">
   <SelectFramework {filename} client:load />
   <div class="relative" style={{ height: `${height + minLines * 20}px` }}>
-    {
-      frameworks.filter(exists).map((framework) => (
+    {frameworks.filter(exists).map((framework) => (
         <div class="absolute inset-0">
           <Demo {framework} {filename} raw={codes[framework]} {minLines} />
         </div>
-      ))
-    }
+      ))}
   </div>
 </div>

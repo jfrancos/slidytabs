@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { range, type RangeValue } from "slidytabs";
+  import { type RangeValue, range } from "slidytabs";
   import * as Tabs from "@/shadcn-svelte/tabs";
 
   let value: RangeValue = $state([4, 6]);

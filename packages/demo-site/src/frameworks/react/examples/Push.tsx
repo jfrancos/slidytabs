@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { range, type RangeValue } from "slidytabs";
+import { type RangeValue, range } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 export default () => {
@@ -7,8 +7,8 @@ export default () => {
   return (
     <Tabs ref={range({ value, onValueChange, push: true })}>
       <TabsList>
-        {Array.from({ length: 11 }, (_, i) => (
-          <TabsTrigger key={i} value={String(i)} className="min-w-0">
+        {Array.from({ length: 11 }, (_, i) => i.toString()).map((i) => (
+          <TabsTrigger key={i} value={i} className="min-w-0">
             {i}
           </TabsTrigger>
         ))}

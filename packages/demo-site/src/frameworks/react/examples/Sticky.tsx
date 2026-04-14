@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { slider, type SliderOptions } from "slidytabs";
+import { type SliderOptions, slider } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 const Slider = (sliderOptions: SliderOptions) => (
   <Tabs defaultValue={"5"} ref={slider(sliderOptions)}>
     <TabsList>
-      {Array.from({ length: 11 }, (_, i) => (
+      {Array.from({ length: 11 }, (_, i) => i.toString()).map((i) => (
         <TabsTrigger className="min-w-0" key={i} value={i.toString()}>
           {i}
         </TabsTrigger>

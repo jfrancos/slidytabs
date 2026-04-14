@@ -1,12 +1,12 @@
 ---
-import { Code as AstroCode } from "astro:components";
-import clsx from "clsx";
+// import { Code as AstroCode } from "astro:components";
 import { balanced } from "@isaacs/balanced-match";
-import { codeToHtml, type BundledLanguage } from "shiki";
 import {
   transformerMetaWordHighlight,
   transformerRemoveLineBreak,
 } from "@shikijs/transformers";
+import clsx from "clsx";
+import { type BundledLanguage, codeToHtml } from "shiki";
 
 interface Props {
   code: string;
@@ -18,12 +18,13 @@ interface Props {
 const { code, lang, lineNumbers = true, height } = Astro.props;
 
 const highlightedCode = (code: string) => {
-  const refMatch = /ref={|:ref="|{@attach /.exec(code);
+  // https://github.com/biomejs/biome/issues/9187
+  // const refMatch = /ref={|:ref="|{@attach /.exec(code);
+  const refMatch = new RegExp(`${'ref={|:ref="|{@attach '}`).exec(code);
   if (!refMatch) {
     return "";
   }
-  const pair: [string, string] =
-    refMatch[0] === ':ref="' ? ['"', '"'] : ["{", "}"];
+  const pair: [string, string] = refMatch[0] === ':ref="' ? ['"', '"'] : ["{", "}"];
   const pairMatch = balanced(...pair, code.slice(refMatch.index));
   if (!pairMatch) {
     throw new Error("Unbalanced pair");
@@ -78,20 +79,20 @@ handle vue with embedded jsx, without astro exposing `langs` -->
 /> -->
 
 <style is:global>
-  .astro-code {
-    counter-reset: step;
-    counter-increment: step 0;
-  }
-  :not(.line-numbers).astro-code .line::before {
-    display: none;
-  }
-  .astro-code .line::before {
-    content: counter(step);
-    counter-increment: step;
-    width: 1rem;
-    margin-right: 1.5rem;
-    display: inline-block;
-    text-align: right;
-    color: rgba(115, 138, 148, 0.4);
-  }
+.astro-code .line::before {
+  content: counter(step);
+  counter-increment: step;
+  width: 1rem;
+  margin-right: 1.5rem;
+  display: inline-block;
+  text-align: right;
+  color: rgba(115, 138, 148, 0.4);
+}
+.astro-code {
+  counter-reset: step;
+  counter-increment: step 0;
+}
+:not(.line-numbers).astro-code .line::before {
+  display: none;
+}
 </style>

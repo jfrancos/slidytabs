@@ -1,5 +1,5 @@
 import { tabs } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 export default () => (
   <Tabs ref={tabs()} defaultValue="account" className="text-center">

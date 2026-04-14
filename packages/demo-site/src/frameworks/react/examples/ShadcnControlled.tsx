@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { tabs } from "slidytabs";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shadcn/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shadcn/tabs";
 
 export default () => {
   const [value, setValue] = useState("correct");
-  const updateValue = (newValue: string) =>
-    newValue !== "battery" && setValue(newValue);
+  const updateValue = (newValue: string) => newValue !== "battery" && setValue(newValue);
 
   return (
     <Tabs value={value} onValueChange={updateValue} ref={tabs()}>

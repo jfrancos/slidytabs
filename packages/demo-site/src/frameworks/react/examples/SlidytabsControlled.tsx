@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { tabs } from "slidytabs";
 import { Tabs, TabsList, TabsTrigger } from "@/shadcn/tabs";
+
 const options = ["Correct", "Horse", "Battery", "Stapler"];
 
 export default () => {
   const [index, setIndex] = useState(0);
-  const onValueChange = (newIndex: number) =>
-    newIndex === 2 ? undefined : setIndex(newIndex);
+  const onValueChange = (newIndex: number) => (newIndex === 2 ? undefined : setIndex(newIndex));
 
   return (
     <Tabs defaultValue="Correct" ref={tabs({ value: index, onValueChange })}>

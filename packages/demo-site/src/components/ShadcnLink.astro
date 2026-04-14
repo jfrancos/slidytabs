@@ -1,5 +1,5 @@
 ---
-import type { Framework } from "@/lib/store";
+import type { Framework } from "@/lib/utils";
 
 interface Props {
   framework: Framework;
@@ -28,4 +28,5 @@ const link = {
 ---
 
 <a rel="noopener" target="_blank" class="font-medium underline" href={link.href}
-></a>
+  >{link.title}</a
+>

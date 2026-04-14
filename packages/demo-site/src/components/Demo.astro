@@ -1,11 +1,10 @@
 ---
-import { balanced } from "@isaacs/balanced-match";
-import Code from "./Code.astro";
-import SvelteShell from "@/frameworks/svelte/Shell.svelte";
 import TsxShell from "@/frameworks/react/Shell.tsx";
+import SvelteShell from "@/frameworks/svelte/Shell.svelte";
 import VueShell from "@/frameworks/vue/Shell.vue";
+import type { Framework } from "@/lib/utils";
 import { icons } from "@/lib/utils";
-import type { Framework } from "@/lib/store";
+import Code from "./Code.astro";
 
 const { react, svelte, vue } = icons;
 
@@ -56,10 +55,7 @@ const height = 40 + minLines * 20;
 const wip = filename === "Sticky" && framework === "vue";
 ---
 
-<div
-  class="flex flex-col relative transition-opacity"
-  data-docs={`${filename}:${framework}`}
->
+<div class="flex flex-col relative transition-opacity" data-docs={`${filename}:${framework}`}>
   <div
     class:list={[
       "flex justify-center items-center relative select-none border-4 border-gray-100 rounded-t-lg",
@@ -71,16 +67,14 @@ const wip = filename === "Sticky" && framework === "vue";
         logo,
         "text-xl absolute top-4 right-4 z-10 sm:opacity-100 opacity-50",
       ]}
-    >
-    </div>
-    {lang === "svelte" && <SvelteShell {filename} client:idle />}
-    {lang === "vue" && !wip && <VueShell {filename} client:idle />}
-    {lang === "tsx" && <TsxShell {filename} client:idle />}
+    ></div>
+    <!-- https://github.com/biomejs/biome/issues/9140 -->
+    {lang === "svelte" && <SvelteShell filename={filename} client:idle />}
+    {lang === "vue" && !wip && <VueShell filename={filename} client:idle />}
+    {lang === "tsx" && <TsxShell filename={filename} client:idle />}
     <!-- flash between SSR awaited component and client awaited component so we
   have both simultaneously and hide the SSR once the client is visible: -->
-    <div class="[:has(*)~&]:hidden">
-      {wip ? "Coming soon…" : <Component />}
-    </div>
+    <div class="[:has(*)~&]:hidden">{wip ? "Coming soon…" : <Component />}</div>
   </div>
   <Code {code} {lang} {height} />
 </div>

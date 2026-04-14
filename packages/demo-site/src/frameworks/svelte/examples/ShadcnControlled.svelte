@@ -1,13 +1,11 @@
 <script lang="ts">
   import { tabs } from "slidytabs";
-  import { Tabs, List, Trigger, Content } from "@/shadcn-svelte/tabs";
+  import { Content, List, Tabs, Trigger } from "@/shadcn-svelte/tabs";
+
   let value = $state("correct");
 </script>
 
-<Tabs
-  {@attach tabs()}
-  bind:value={() => value, (next) => next !== "battery" && (value = next)}
->
+<Tabs {@attach tabs()} bind:value={() => value, (next) => next !== "battery" && (value = next)}>
   <List class="[&>:nth-child(3)]:!text-red">
     <Trigger value="correct">Correct</Trigger>
     <Trigger value="horse">Horse</Trigger>
