@@ -1,4 +1,5 @@
 import { escapeSelector, toEscapedSelector } from "@unocss/core";
+
 declare global {
   var sheet: CSSStyleSheet;
 }
@@ -6,17 +7,22 @@ declare global {
 export const categorizeClasses = (triggers: HTMLButtonElement[]) => {
   const textClasses =
     /(^|:)(text|font|color|tracking|leading|decoration|underline|line-through|overline|uppercase|lowercase|capitalize)\b/;
-  const activeVariant = "data-[state=active]:";
+  const activeVariants = ["data-[state=active]:", "data-active:"];
   const triggerClasses = [];
-  for (const trigger of triggers) {
-    const classList = [...trigger.classList];
-    const activeIndicator = classList
-      .filter((item) => item.includes(activeVariant))
-      .map((item) => item.replace(activeVariant, ""));
-    const base = classList.filter(
-      (item) => !item.includes(activeVariant) || item.match(textClasses)
-    );
-    triggerClasses.push({ activeIndicator, base });
+  for (const activeVariant of activeVariants) {
+    for (const trigger of triggers) {
+      if (!trigger.className.includes(activeVariant)) {
+        continue;
+      }
+      const classList = [...trigger.classList];
+      const activeIndicator = classList
+        .filter((item) => item.includes(activeVariant))
+        .map((item) => item.replace(activeVariant, ""));
+      const base = classList.filter(
+        (item) => !item.includes(activeVariant) || item.match(textClasses),
+      );
+      triggerClasses.push({ activeIndicator, base });
+    }
   }
   // console.log(triggerClasses);
   return triggerClasses;
